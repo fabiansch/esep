@@ -33,6 +33,7 @@ namespace hal {
 		void motorSlow();
 		void motorFast();
 		void motorRotateClockwise();
+		void motorRotateCounterclockwise();
 
 		void switchPointOpen();
 		void switchPointClose();

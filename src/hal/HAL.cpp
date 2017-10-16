@@ -43,6 +43,10 @@ void HAL::motorRotateClockwise() {
 	_motor->setClockwiseRotation();
 }
 
+void HAL::motorRotateCounterclockwise() {
+	_motor->setCounterclockwiseRotation();
+}
+
 void HAL::switchPointOpen(){
 	_switchPoint->open();
 }

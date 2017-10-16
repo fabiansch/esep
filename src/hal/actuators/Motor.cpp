@@ -53,6 +53,10 @@ void Motor::setClockwiseRotation() {
 	io::GPIO::instance()->setBits(PORT::A, CLOCKWISE_ROTATION);
 }
 
+void Motor::setCounterclockwiseRotation() {
+	io::GPIO::instance()->clearBits(PORT::A, CLOCKWISE_ROTATION);
+}
+
 } /* namespace actuators */
 } /* namespace hal */
 
