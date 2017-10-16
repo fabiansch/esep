@@ -13,7 +13,7 @@ namespace hal {
 HAL::HAL() {
 	_motor = actuators::Motor::instance();
 	_switchPoint = actuators::SwitchPoint::instance();
-	_trafficLight = io::TrafficLight::instance();
+	_trafficLight = mmi::TrafficLight::instance();
 }
 
 HAL::~HAL() {

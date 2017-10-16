@@ -9,11 +9,11 @@
 #include <iostream>
 
 namespace hal {
-namespace io {
+namespace mmi {
+
 constexpr int PIN_RED_LIGHT = 0x80;
 constexpr int PIN_YELLOW_LIGHT = 0x40;
 constexpr int PIN_GREEN_LIGHT = 0x20;
-
 constexpr int PORT_A_ADDR = 0x300;
 
 
@@ -75,5 +75,5 @@ void TrafficLight::blinkGreen(bool fast) {
 	}
 }
 
-} /* namespace io */
+} /* namespace hmi */
 } /* namespace hal */
