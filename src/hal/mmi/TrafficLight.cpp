@@ -27,15 +27,13 @@ TrafficLight *TrafficLight::instance() {
 }
 
 TrafficLight::TrafficLight() {
-	this->blink = mmi::Blink();
+	blink = mmi::Blink();
 	thread = std::thread(std::ref(blink));
-
-	std::cout << "RELEASED" << std::endl;
-
 }
 
 TrafficLight::~TrafficLight() {
-
+	blink.terminate();
+	thread.join();
 }
 
 void TrafficLight::greenLightOn() {
