@@ -27,52 +27,56 @@ TrafficLight *TrafficLight::instance() {
 }
 
 TrafficLight::TrafficLight() {
-	this->blink = mmi::Blink();
+	blink = mmi::Blink();
 	thread = std::thread(std::ref(blink));
-
-	std::cout << "RELEASED" << std::endl;
-
 }
 
 TrafficLight::~TrafficLight() {
-
+	blink.terminate();
+	thread.join();
 }
 
 void TrafficLight::greenLightOn() {
+	blink.remove(PIN_GREEN_LIGHT);
 	io::GPIO::instance()->setBits(PORT::A, PIN_GREEN_LIGHT);
 }
 
 void TrafficLight::yellowLightOn() {
+	blink.remove(PIN_YELLOW_LIGHT);
 	io::GPIO::instance()->setBits(PORT::A, PIN_YELLOW_LIGHT);
 }
 
 void TrafficLight::redLightOn() {
+	blink.remove(PIN_RED_LIGHT);
 	io::GPIO::instance()->setBits(PORT::A, PIN_RED_LIGHT);
 }
 
 void TrafficLight::greenLightOff() {
+	blink.remove(PIN_GREEN_LIGHT);
 	io::GPIO::instance()->clearBits(PORT::A, PIN_GREEN_LIGHT);
 }
 
 void TrafficLight::yellowLightOff() {
+	blink.remove(PIN_YELLOW_LIGHT);
 	io::GPIO::instance()->clearBits(PORT::A, PIN_YELLOW_LIGHT);
 }
 
 void TrafficLight::redLightOff() {
+	blink.remove(PIN_RED_LIGHT);
 	io::GPIO::instance()->clearBits(PORT::A, PIN_RED_LIGHT);
 }
 
 
 void TrafficLight::blinkGreen(bool fast) {
-		this->blink.add(PIN_GREEN_LIGHT, fast);
+	blink.add(PIN_GREEN_LIGHT, fast);
 }
 
 void TrafficLight::blinkYellow(bool fast) {
-		this->blink.add(PIN_YELLOW_LIGHT, fast);
+	blink.add(PIN_YELLOW_LIGHT, fast);
 }
 
 void TrafficLight::blinkRed(bool fast) {
-		this->blink.add(PIN_RED_LIGHT, fast);
+	blink.add(PIN_RED_LIGHT, fast);
 }
 
 } /* namespace hmi */
