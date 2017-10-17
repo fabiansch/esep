@@ -20,8 +20,10 @@ public:
 	virtual ~Blink();
 	void operator()();
 	void add(int bitmask, bool fast);
+	void terminate();
 
 private:
+	bool running;
 	int bitmaskSlow;
 	int bitmaskFast;
 };
