@@ -45,10 +45,17 @@ void Blink::operator()() {
 
 void Blink::add(int bitmask, bool fast) {
 	if (fast) {
-		this->bitmaskFast |= bitmask;
+		bitmaskSlow &= ~bitmask;
+		bitmaskFast |= bitmask;
 	} else {
-		this->bitmaskSlow |= bitmask;
+		bitmaskFast &= ~bitmask;
+		bitmaskSlow |= bitmask;
 	}
+}
+
+void Blink::remove(int bitmask) {
+	bitmaskFast &= ~bitmaskFast;
+	bitmaskSlow &= ~bitmaskSlow;
 }
 
 void Blink::terminate() {

@@ -56,18 +56,25 @@ public:
 
 	/**
 	* @brief makes the green light blink
+	* fast = 1: with frequence of 1 hz
+	* fast = 0: with frequence of 2 hz
 	*/
 	void blinkGreen(bool fast);
 
 	/**
 	* @brief makes the yellow light blink
+	* fast = 1: with frequence of 1 hz
+	* fast = 0: with frequence of 2 hz
 	*/
 	void blinkYellow(bool fast);
 
 	/**
 	* @brief makes the red light blink
+	* fast = 1: with frequence of 1 hz
+	* fast = 0: with frequence of 2 hz
 	*/
 	void blinkRed(bool fast);
+
 
 private:
 	TrafficLight();
