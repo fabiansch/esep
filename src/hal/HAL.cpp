@@ -83,5 +83,13 @@ void HAL::blinkGreen(bool fast) {
 	_trafficLight->blinkGreen(fast);
 }
 
+void HAL::blinkYellow(bool fast) {
+	_trafficLight->blinkYellow(fast);
+}
+
+void HAL::blinkRed(bool fast) {
+	_trafficLight->blinkRed(fast);
+}
+
 
 } /* hal */

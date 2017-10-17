@@ -15,14 +15,10 @@
 namespace hal {
 namespace mmi {
 
-Blink::Blink() {
-	this->fast = fast;
-	this->bitmask = 0;
-}
 
-Blink::Blink(bool fast) {
-	this->fast = fast;
-	this->bitmask = 0;
+Blink::Blink() {
+	this->bitmaskFast = 0;
+	this->bitmaskSlow = 0;
 }
 
 Blink::~Blink() {
@@ -31,24 +27,27 @@ Blink::~Blink() {
 
 void Blink::operator()() {
 	while (true) {
-		if (fast) {
-			hal::io::GPIO::instance()->setBits(PORT::A, this->bitmask);
+			hal::io::GPIO::instance()->setBits(PORT::A, this->bitmaskFast | this->bitmaskSlow);
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-			std::cout << "thread middle wait" << std::endl;
-			hal::io::GPIO::instance()->clearBits(PORT::A, this->bitmask);
+
+			hal::io::GPIO::instance()->clearBits(PORT::A, this->bitmaskFast);
 			std::this_thread::sleep_for(std::chrono::milliseconds(500));
-		} else {
-			std::cout << "thread slow" << std::endl;
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			hal::io::GPIO::instance()->setBits(PORT::A, this->bitmask);
-			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-			hal::io::GPIO::instance()->clearBits(PORT::A, this->bitmask);
-		}
+
+			hal::io::GPIO::instance()->setBits(PORT::A, this->bitmaskFast);
+			hal::io::GPIO::instance()->clearBits(PORT::A, this->bitmaskSlow);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+			hal::io::GPIO::instance()->clearBits(PORT::A, this->bitmaskFast);
+			std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
 
-void Blink::add(int bitmask) {
-	this->bitmask |= bitmask;
+void Blink::add(int bitmask, bool fast) {
+	if (fast) {
+		this->bitmaskFast |= bitmask;
+	} else {
+		this->bitmaskSlow |= bitmask;
+	}
 }
 
 } /* namespace mmi */

@@ -27,6 +27,8 @@ namespace hal {
 		void redLightOff();
 
 		void blinkGreen(bool fast);
+		void blinkRed(bool fast);
+		void blinkYellow(bool fast);
 
 		void motorStart();
 		void motorStop();

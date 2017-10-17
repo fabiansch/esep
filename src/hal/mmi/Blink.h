@@ -17,14 +17,13 @@ public:
 	* @brief blink period in ms
 	*/
 	Blink();
-	Blink(bool fast);
 	virtual ~Blink();
 	void operator()();
-	void add(int bitmask);
+	void add(int bitmask, bool fast);
 
 private:
-	bool fast;
-	int bitmask;
+	int bitmaskSlow;
+	int bitmaskFast;
 };
 
 } /* namespace mmi */
