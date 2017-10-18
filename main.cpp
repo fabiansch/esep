@@ -63,8 +63,6 @@ int main(int argc, char *argv[])
 	WAIT(5000);
 	hal.redLightOff();
 
-	std::cout << "now green of" << std::endl;
-
 	WAIT(20000);
 	cout << "Starting Sortingmachine ... done !" << endl;
 //#ifdef SIMULATION
