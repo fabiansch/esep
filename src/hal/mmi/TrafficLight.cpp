@@ -67,16 +67,16 @@ void TrafficLight::redLightOff() {
 }
 
 
-void TrafficLight::blinkGreen(bool fast) {
-	blink.add(PIN_GREEN_LIGHT, fast);
+void TrafficLight::blinkGreen(Speed speed) {
+	blink.add(PIN_GREEN_LIGHT, speed);
 }
 
-void TrafficLight::blinkYellow(bool fast) {
-	blink.add(PIN_YELLOW_LIGHT, fast);
+void TrafficLight::blinkYellow(Speed speed) {
+	blink.add(PIN_YELLOW_LIGHT, speed);
 }
 
-void TrafficLight::blinkRed(bool fast) {
-	blink.add(PIN_RED_LIGHT, fast);
+void TrafficLight::blinkRed(Speed speed) {
+	blink.add(PIN_RED_LIGHT, speed);
 }
 
 } /* namespace hmi */

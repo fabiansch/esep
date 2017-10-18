@@ -43,13 +43,19 @@ void Blink::operator()() {
 	}
 }
 
-void Blink::add(int bitmask, bool fast) {
-	if (fast) {
+void Blink::add(int bitmask, Speed speed) {
+	switch(speed) {
+	case Speed::fast:
 		bitmaskSlow &= ~bitmask;
 		bitmaskFast |= bitmask;
-	} else {
+		break;
+	case Speed::slow:
 		bitmaskFast &= ~bitmask;
 		bitmaskSlow |= bitmask;
+		break;
+	default:
+		// TODO log that given speed is not implemented
+		break;
 	}
 }
 

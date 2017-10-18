@@ -8,6 +8,8 @@
 #ifndef BLINK_H_
 #define BLINK_H_
 
+#include "Header.h"
+
 namespace hal {
 namespace mmi {
 
@@ -29,7 +31,7 @@ public:
 	 * @param fast = 1: merging with bitmaskFast
 	 * @param fast = 0: merging with bitmaskSlow
 	 */
-	void add(int bitmask, bool fast);
+	void add(int bitmask, Speed speed);
 
 	/**
 	 * @brief removes bitmask from bitmaskFast and bitmaskSlow

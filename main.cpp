@@ -1,3 +1,4 @@
+#include "Header.h"
 #include <sys/neutrino.h>
 #include <cstdlib>
 #include <iostream>
@@ -43,9 +44,9 @@ int main(int argc, char *argv[])
 	hal.redLightOff();
 	hal.greenLightOff();
 
-	hal.blinkGreen(true);
-	hal.blinkRed(true);
-	hal.blinkYellow(true);
+	hal.blinkGreen(Speed::fast);
+	hal.blinkRed(Speed::fast);
+	hal.blinkYellow(Speed::fast);
 	WAIT(5000);
 	hal.redLightOff();
 	WAIT(5000);
@@ -53,9 +54,9 @@ int main(int argc, char *argv[])
 	WAIT(5000);
 	hal.greenLightOff();
 	WAIT(5000);
-	hal.blinkGreen(false);
-	hal.blinkYellow(false);
-	hal.blinkRed(false);
+	hal.blinkGreen(Speed::slow);
+	hal.blinkYellow(Speed::slow);
+	hal.blinkRed(Speed::slow);
 	WAIT(5000);
 	hal.greenLightOff();
 	WAIT(5000);
@@ -63,7 +64,6 @@ int main(int argc, char *argv[])
 	WAIT(5000);
 	hal.redLightOff();
 
-	WAIT(20000);
 	cout << "Starting Sortingmachine ... done !" << endl;
 //#ifdef SIMULATION
 //  IOaccess_close();
