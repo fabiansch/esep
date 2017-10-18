@@ -44,12 +44,26 @@ int main(int argc, char *argv[])
 //	hal.greenLightOff();
 
 	hal.blinkGreen(true);
-	WAIT(2000);
 	hal.blinkRed(true);
-	WAIT(2000);
-	hal.greenLightOff();
 	hal.blinkYellow(true);
+	WAIT(5000);
+	hal.redLightOff();
+	WAIT(5000);
+	hal.yellowLightOff();
+	WAIT(5000);
+	hal.greenLightOff();
+	WAIT(5000);
+	hal.blinkGreen(false);
+	hal.blinkYellow(false);
+	hal.blinkRed(false);
+	WAIT(5000);
+	hal.greenLightOff();
+	WAIT(5000);
+	hal.yellowLightOff();
+	WAIT(5000);
+	hal.redLightOff();
 
+	std::cout << "now green of" << std::endl;
 
 	WAIT(20000);
 	cout << "Starting Sortingmachine ... done !" << endl;
