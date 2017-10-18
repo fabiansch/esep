@@ -22,26 +22,26 @@ int main(int argc, char *argv[])
 
 
 	hal::HAL hal;
-//	hal.motorStart();
-//	hal.motorRotateClockwise();
-//	hal.motorFast();
-//	WAIT(2000);
-//	hal.motorSlow();
-//	WAIT(2000);
-//	hal.motorStop();
-//	WAIT(2000);
-//	hal.switchPointOpen();
-//	WAIT(2000);
-//	hal.switchPointClose();
-//	WAIT(2000);
+	hal.motorStart();
+	hal.motorRotateClockwise();
+	hal.motorFast();
+	WAIT(2000);
+	hal.motorSlow();
+	WAIT(2000);
+	hal.motorStop();
+	WAIT(2000);
+	hal.switchPointOpen();
+	WAIT(2000);
+	hal.switchPointClose();
+	WAIT(2000);
 
-//	hal.yellowLightOn();
-//	hal.redLightOn();
-//	hal.greenLightOn();
-//	WAIT(2000);
-//	hal.yellowLightOff();
-//	hal.redLightOff();
-//	hal.greenLightOff();
+	hal.yellowLightOn();
+	hal.redLightOn();
+	hal.greenLightOn();
+	WAIT(2000);
+	hal.yellowLightOff();
+	hal.redLightOff();
+	hal.greenLightOff();
 
 	hal.blinkGreen(true);
 	hal.blinkRed(true);
