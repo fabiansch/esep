@@ -11,12 +11,14 @@
 namespace hal {
 
 HAL::HAL() {
+	LOG_SCOPE;
 	_motor = actuators::Motor::instance();
 	_switchPoint = actuators::SwitchPoint::instance();
 	_trafficLight = mmi::TrafficLight::instance();
 }
 
 HAL::~HAL() {
+	LOG_SCOPE;
 	delete _motor;
 	delete _switchPoint;
 	delete _trafficLight;

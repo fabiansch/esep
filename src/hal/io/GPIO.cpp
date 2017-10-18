@@ -7,6 +7,7 @@
 
 #include <sys/neutrino.h>
 #include <hw/inout.h>
+#include "header.h"
 
 #include "GPIO.h"
 
@@ -23,12 +24,12 @@ GPIO* GPIO::instance() {
 }
 
 GPIO::GPIO() {
-	// TODO Auto-generated constructor stub
+	LOG_SCOPE;
 
 }
 
 GPIO::~GPIO() {
-	delete _instance;
+	LOG_SCOPE;
 }
 
 void GPIO::gainAccess(){

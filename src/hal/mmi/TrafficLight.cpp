@@ -7,6 +7,7 @@
 
 #include "TrafficLight.h"
 #include <iostream>
+#include "Header.h"
 
 namespace hal {
 namespace mmi {
@@ -27,11 +28,13 @@ TrafficLight *TrafficLight::instance() {
 }
 
 TrafficLight::TrafficLight() {
+	LOG_SCOPE;
 	blink = mmi::Blink();
 	thread = std::thread(std::ref(blink));
 }
 
 TrafficLight::~TrafficLight() {
+	LOG_SCOPE;
 	blink.terminate();
 	thread.join();
 }

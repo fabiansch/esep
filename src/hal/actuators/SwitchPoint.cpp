@@ -7,6 +7,7 @@
 
 #include "SwitchPoint.h"
 #include "GPIO.h"
+#include "Header.h"
 
 constexpr int SWITCHPOINT_OPEN = 0b00010000;
 
@@ -23,12 +24,11 @@ namespace actuators {
 	}
 
 	SwitchPoint::SwitchPoint() {
-		// TODO Auto-generated constructor stub
-
+		LOG_SCOPE;
 	}
 
 	SwitchPoint::~SwitchPoint() {
-		// TODO Auto-generated destructor stub
+		LOG_SCOPE;
 	}
 
 	void SwitchPoint::open(){

@@ -7,6 +7,7 @@
 
 #include "Motor.h"
 #include "GPIO.h"
+#include "Header.h"
 
 constexpr int CLOCKWISE_ROTATION 	= 0b00000001;
 constexpr int MOTOR_SLOW			= 0b00000100;
@@ -25,12 +26,11 @@ Motor *Motor::instance() {
 }
 
 Motor::Motor() {
-	// TODO Auto-generated constructor stub
-
+	LOG_SCOPE;
 }
 
 Motor::~Motor() {
-	delete _instance;
+	LOG_SCOPE;
 }
 
 void Motor::start() {
