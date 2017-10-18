@@ -35,17 +35,17 @@ int main(int argc, char *argv[])
 //	hal.switchPointClose();
 //	WAIT(2000);
 
-	hal.yellowLightOn();
-	hal.redLightOn();
-	hal.greenLightOn();
-	WAIT(2000);
-	hal.yellowLightOff();
-	hal.redLightOff();
-	hal.greenLightOff();
+//	hal.yellowLightOn();
+//	hal.redLightOn();
+//	hal.greenLightOn();
+//	WAIT(2000);
+//	hal.yellowLightOff();
+//	hal.redLightOff();
+//	hal.greenLightOff();
 
 	hal.blinkGreen(true);
 	WAIT(2000);
-	hal.blinkRed(false);
+	hal.blinkRed(true);
 	WAIT(2000);
 	hal.greenLightOff();
 	hal.blinkYellow(true);

@@ -34,7 +34,7 @@ public:
 	/**
 	 * @brief removes bitmask from bitmaskFast and bitmaskSlow
 	 */
-	void remove(int bitmask);
+	void removeBitmask(int bitmask);
 
 	/**
 	 * @brief causes termination of while loop

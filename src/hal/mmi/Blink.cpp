@@ -53,9 +53,9 @@ void Blink::add(int bitmask, bool fast) {
 	}
 }
 
-void Blink::remove(int bitmask) {
-	bitmaskFast &= ~bitmaskFast;
-	bitmaskSlow &= ~bitmaskSlow;
+void Blink::removeBitmask(int bitmask) {
+	bitmaskFast &= ~bitmask;
+	bitmaskSlow &= ~bitmask;
 }
 
 void Blink::terminate() {
