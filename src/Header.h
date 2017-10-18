@@ -5,6 +5,7 @@
  *      Author: abj240
  */
 #include "Signals.h"
+#include "Logger.h"
 
 
 #ifndef HEADER_H_

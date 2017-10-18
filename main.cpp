@@ -20,7 +20,9 @@ int main(int argc, char *argv[])
 	ThreadCtl(_NTO_TCTL_IO_PRIV, 0);
 	cout << "Starting Sortingmachine ..." << endl;
 
-
+	LOG_SCOPE;
+	LOG_SET_LEVEL(DEBUG);
+	LOG_DEBUG<<"hello world \n";
 
 	hal::HAL hal;
 	hal.motorStart();
