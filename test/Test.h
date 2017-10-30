@@ -36,6 +36,9 @@ public:
 	 */
 	void sensorsTest();
 
+	/**
+	*  @brief test singleton thread safeness
+	*/
 	void singletonThreadSafeTest();
 
 	/**

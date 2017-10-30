@@ -150,14 +150,15 @@ void Test::writeSomethingElse(hal::io::GPIO *gpio, int difference) {
 }
 
 void createInstance(){
-	SingletonTest& instance = SingletonTest::instance();
+	GpioTesting& instance = GpioTesting::instance(true);
+	instance.helloWorld();
 }
 
 
 void Test::singletonThreadSafeTest(){
 	cout << "start " << __FUNCTION__ << endl;
 
-	cout << "Get just on singleton created?"<<endl;
+	cout << "Get just one singleton created?"<<endl;
 	thread t1(&createInstance);
 	thread t2(&createInstance);
 	t1.join();
@@ -182,7 +183,7 @@ void Test::threadSafenessInGpioTest(){
 	cout << "# rmw-cycle finished #" 	<< endl;
 	cout << "# ================== #" 	<< endl;
 
-	GpioTesting *gpio = new GpioTesting;
+	GpioTesting *gpio = new GpioTesting();
 	gpio->gainAccess();
 	thread t1(&writeSomethingElse, gpio, 1);
 	thread t2(&writeSomethingElse, gpio, 2);
