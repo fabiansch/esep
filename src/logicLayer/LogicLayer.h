@@ -16,18 +16,16 @@
 #include "ErrorHandler.h"
 #include "Sorting.h"
 #include "Dispatcher.h"
-#include "Observer.h"
 #include "HardwareLayer.h"
 #include "SensorTest.h"
 
 
 namespace logicLayer {
 
-class LogicLayer : public Observer {
+class LogicLayer {
 public:
 	LogicLayer(hardwareLayer::HardwareLayer&);
 	virtual ~LogicLayer();
-	void notify();
 private:
 	hardwareLayer::HardwareLayer& hal;
 

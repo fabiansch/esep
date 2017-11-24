@@ -9,15 +9,19 @@
 #define CONTROLLER_H_
 
 #include "SignalReceiver.h"
+#include "SensorTest.h"
 
 namespace logicLayer {
 
-class Controller: public logicLayer::SignalReceiver {
+class Controller: public SignalReceiver {
 public:
-	Controller();
+	Controller(hardwareLayer::HardwareLayer& hal);
 	virtual ~Controller();
 
 	virtual void operator()();
+
+private:
+	SensorTest sensorTest;
 };
 
 } /* namespace logicLayer */

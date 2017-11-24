@@ -9,23 +9,23 @@
 #define DUMMY_H_
 
 #include "Channel.h"
+#include "HardwareLayer.h"
 #include <thread>
 
 namespace logicLayer {
 
-class Dispatcher {
+class Dispatcher : public Observer {
 public:
 	Dispatcher(
+			hardwareLayer::HardwareLayer&,
 			Channel&,
 			Channel&
 	);
 	virtual ~Dispatcher();
-	void operator()();
-	void terminate();
+	void notify();
 private:
-	std::thread t_;
-	bool running;
 
+	hardwareLayer::HardwareLayer& hal;
 	Channel& controller_;
 	Channel& typeIdent_;
 

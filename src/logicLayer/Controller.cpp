@@ -9,8 +9,8 @@
 
 namespace logicLayer {
 
-Controller::Controller() :
-SignalReceiver::SignalReceiver()
+Controller::Controller(hardwareLayer::HardwareLayer& hal)
+: sensorTest(hal)
 {
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	// TODO Auto-generated constructor stub
