@@ -21,6 +21,7 @@ public:
 	virtual void operator()();
 
 private:
+	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
 };
 
