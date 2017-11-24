@@ -32,7 +32,7 @@ Dispatcher::~Dispatcher() {
 void Dispatcher::operator ()(){
 	Signal sig;
 	while(running){
-		sig.name = Signalname::TEST;
+		sig.name = Signalname::SIGNAL_DUMMY;
 		controller_ << sig;
 		typeIdent_ << sig;
 		std::cout << "dispatcher sended signal ... " << endl;

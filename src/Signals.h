@@ -9,6 +9,7 @@
 #define SIGNALS_H_
 
 #include "Logger.h"
+#include "Parameter.h"
 #include <cstdint>
 
 // conveyer belts
@@ -35,6 +36,9 @@ enum class Signalname : uint16_t {
 	BUTTON_E_STOP_PUSHED,
 	BUTTON_E_STOP_PULLED,
 	// sensors
+	SENSOR_TEST_START,
+	SENSOR_TEST_SUCCESSFUL,
+	SENSOR_TEST_UNSUCCESSFUL,
 	// -- light barriers
 	LB_INPUT_INTERRUPTED,
 	LB_INPUT_FREED,
@@ -59,13 +63,40 @@ enum class Signalname : uint16_t {
 	MOTOR_FAST,
 	MOTOR_SLOW,
 	MOTOR_STOP,
+	MOTOR_START,
+	MOTOR_ROTATE_CLOCKWISE,
+	MOTOR_ROTATE_COUNTER_CLOCKWISE,
+	//switch
+	SWITCH_OPEN,
+	SWITCH_CLOSE,
+	// mmi
+	// traffic light
+	GREEN_LIGHT_ON,
+	GREEN_LIGHT_OFF,
+	YELLOW_LIGHT_ON,
+	YELLOW_LIGHT_OFF,
+	RED_LIGHT_ON,
+	RED_LIGHT_OFF,
+	BLINK_GREEN_FAST,
+	BLINK_GREEN_SLOW,
+	BLINK_YELLOW_FAST,
+	BLINK_YELLOW_SLOW,
+	BLINK_RED_FAST,
+	BLINK_RED_SLOW,
+	// leds
+	Q1_LED_ON,
+	Q1_LED_OFF,
+	Q2_LED_ON,
+	Q2_LED_OFF,
+	RESET_LED_ON,
+	RESET_LED_OFF,
+	START_LED_ON,
+	START_LED_OFF,
 	// serial
 	CONVEYOR_BELT_BUSY,
 	CONVEYOR_BELT_READY,
 	SLIDE_FULL,
 	SLIDE_EMPTY,
-	SEND_ITEM,
-	FEED_WATCHDOG,
 	// timer
 	// -- in
 	START_TIMERS_INPUT,
@@ -87,6 +118,8 @@ enum class Signalname : uint16_t {
 	// calibration
 	CALIBRATION_START,
 	CALIBRATION_STOP,
+	CALIBRATION_SUCCESSFUL,
+	CALIBRATION_UNSUCCESSFUL,
 	MEASURE_REACHING_LB_HEIGHT_START,
 	MEASURE_REACHING_LB_HEIGHT_STOP,
 	MEASURE_REACHING_LB_SWITCH_START,
@@ -99,11 +132,23 @@ enum class Signalname : uint16_t {
 	MEASURE_VELOCITY_FAST_STOP,
 	MEASURE_VELOCITY_SLOW_START,
 	MEASURE_VELOCITY_SLOW_STOP,
+
+	//Serial Interface
+	SERIAL_TRANSFER_ITEM,
+	SERIAL_WATCHDOG_TOKEN,
+	SERIAL_WATCHDOG_FEED,
+
+	//CONNECTION
+	CONNECTION_LOST,
+	CONNECTION_CONNECTED,
+
 	// signal generator
 	SIGNAL_BUFFER_EMPTY,
+	ITEM_ARRIVED,
 
-	//test signal
-	TEST
+	// dummy signal
+	SIGNAL_DUMMY
+
 };
 
 /**
@@ -119,6 +164,13 @@ enum class Signalname : uint16_t {
  * @param name specific signal name
  */
 struct Signal {
+	Signal(Signalname name) :
+	name(name),
+	sender(cb_this),
+	receiver(cb_this)
+	{
+		LOG_SCOPE
+	}
 	Signal(uint8_t sender, uint8_t receiver, Signalname name) :
 	name(name),
 	sender(sender),
@@ -127,7 +179,7 @@ struct Signal {
 		LOG_SCOPE
 	}
 	Signal() :
-		name(Signalname::BUTTON_START_PUSHED),
+		name(Signalname::SIGNAL_DUMMY),
 		sender(0),
 		receiver(0)
 	{

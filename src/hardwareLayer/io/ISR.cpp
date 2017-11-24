@@ -9,11 +9,13 @@
 
 #include "ISR.h"
 #include <sys/neutrino.h>
-#include <hw/inout.h>
 #include "DIO48.h"
 #include "GPIO.h"
 
 #define HW_INTERRUPT 11
+
+constexpr uint8_t UPPER_BYTE = 0xf0;
+constexpr uint8_t FULL_BYTE = 0xff;
 
 using namespace std;
 
@@ -28,35 +30,44 @@ ISR::ISR() {
 }
 
 int ISR::getPendingIntFlags() {
-	return in8(DIO_BASE + DIO_CHG_STATE_IRQ_STATUS);
+	return GPIO::instance().read(DIO_CHG_STATE_IRQ_STATUS);
 }
 
 void ISR::disableInterrupts() {
-	 out8(DIO_BASE + DIO_CHG_STATE_IRQ_ENABLE, 0xff);
+	GPIO::instance().clearBits(DIO_CHG_STATE_IRQ_ENABLE, FULL_BYTE);
+	GPIO::instance().setBits(DIO_CHG_STATE_IRQ_ENABLE, FULL_BYTE);
 }
 
 void ISR::enableInterrupts(int mask) {
-	 out8(DIO_BASE + DIO_CHG_STATE_IRQ_ENABLE, ~(mask));
-}
-
-void ISR::clearPendingIntFlag(int bit) {
-	int tmp = in8(DIO_BASE + DIO_CHG_STATE_IRQ_STATUS);
-	tmp &= ~(1 << bit);
-	out8(DIO_BASE + DIO_CHG_STATE_IRQ_STATUS, tmp);
+	GPIO::instance().clearBits(DIO_CHG_STATE_IRQ_ENABLE, FULL_BYTE);
+	GPIO::instance().setBits(DIO_CHG_STATE_IRQ_ENABLE, ~(mask));
 }
 
 // no debug message allowed, otherwise isr crashes
 void ISR::clearAllPendingIntFlag() {
-	out8(DIO_BASE + DIO_CHG_STATE_IRQ_STATUS, 0);
+	GPIO::instance().clearBits(DIO_CHG_STATE_IRQ_STATUS, FULL_BYTE);
 }
 
 
 const struct sigevent* ISR::mainISR(void* arg, int id) {
-    struct sigevent* event = (struct sigevent*) arg;
-    ISR::clearAllPendingIntFlag();
-    event->sigev_value.sival_int = ((GPIO::instance().read(PORT::C)&0xf0)<<8) |
-    								(GPIO::instance().read(PORT::B)&0xff);
-    return event;
+	int interrupt_service_register;
+	struct sigevent* event = (struct sigevent*) arg;
+
+	// determine the source of the interrupt by reading the Interrupt Status Register
+	interrupt_service_register =
+			GPIO::instance().read(DIO_CHG_STATE_IRQ_STATUS) &
+			(DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
+
+	ISR::clearAllPendingIntFlag();
+
+	/* 	no interrupt? */
+	if (interrupt_service_register == 0) return nullptr; /* then no event */
+
+	int mask = ((GPIO::instance().read(PORT::C) & UPPER_BYTE) << 8) |
+				(GPIO::instance().read(PORT::B) & FULL_BYTE);
+
+	event->sigev_value.sival_int = mask;
+	return event;
 }
 
 

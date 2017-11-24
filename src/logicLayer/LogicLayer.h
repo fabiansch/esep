@@ -15,12 +15,10 @@
 #include "Calibration.h"
 #include "ErrorHandler.h"
 #include "Sorting.h"
-
 #include "Dispatcher.h"
-
 #include "Observer.h"
 #include "HardwareLayer.h"
-
+#include "SensorTest.h"
 
 
 namespace logicLayer {
@@ -41,6 +39,7 @@ private:
 	Sorting& sorting_;
 
 	Dispatcher& dispatcher_;
+	SensorTest sensorTest;
 };
 
 } /* namespace logicLayer */

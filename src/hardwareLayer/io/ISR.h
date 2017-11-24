@@ -45,12 +45,6 @@ private:
 	static int getPendingIntFlags();
 
 	/*
-	 * @brief clears pending Interrupts by bit
-	 * @ret pending interrupt register
-	 */
-	static void clearPendingIntFlag(int bit);
-
-	/*
 	 * @brief clears all pending Interrupts
 	 */
 	static void clearAllPendingIntFlag();

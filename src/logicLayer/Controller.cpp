@@ -28,7 +28,7 @@ void Controller::operator()(){
 		std::cout << "blocking io at controller listener" << endl;
 		sig << channel_;
 		switch (sig.name) {
-			case Signalname::TEST:
+			case Signalname::SIGNAL_DUMMY:
 				std::cout << "Controller receives signal." << endl;
 				break;
 			default:

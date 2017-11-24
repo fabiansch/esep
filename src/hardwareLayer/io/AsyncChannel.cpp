@@ -15,6 +15,16 @@ using namespace std;
 namespace hardwareLayer {
 namespace io {
 
+AsyncMsg::AsyncMsg()
+: type(0)
+, value(0)
+{}
+
+AsyncMsg::AsyncMsg(char type, int value)
+: type(type)
+, value(value)
+{}
+
 AsyncChannel::AsyncChannel() {
 	LOG_SCOPE
 	// creating channel

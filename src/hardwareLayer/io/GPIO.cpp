@@ -38,11 +38,6 @@ void GPIO::gainAccess(){
 	}
 }
 
-
-void GPIO::write(PORT port, port_t val){
-	out8(DIO_BASE+(port_t)port, val);
-}
-
 void GPIO::write(uint8_t address, port_t val){
 	out8(DIO_BASE+(uint8_t)address, val);
 }

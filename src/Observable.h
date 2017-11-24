@@ -10,6 +10,7 @@
 
 #include <vector>
 #include "Observer.h"
+#include "Logger.h"
 
 class Observable {
 public:
@@ -18,9 +19,8 @@ public:
 		if (observers.size() > 0) {
 			for (auto &observer : observers) {
 				if (observer == o) {
-					cout << "Observable: tried double registration. Aborted." << endl;
-					LOG_ERROR<<"tried to register observer for second time";
-					return;
+					LOG_ERROR<<__FUNCTION__<<" tried to register observer for second time.";
+					exit(EXIT_FAILURE);
 				}
 			}
 		}
@@ -33,7 +33,7 @@ public:
 		}
 	}
 private:
-	vector<Observer*> observers;
+	std::vector<Observer*> observers;
 };
 
 #endif /* OBSERVABLE_H_ */

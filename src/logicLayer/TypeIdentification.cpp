@@ -25,7 +25,7 @@ void TypeIdentification::operator()(){
 
 		sig << channel_;
 		switch (sig.name) {
-			case Signalname::TEST:
+			case Signalname::SIGNAL_DUMMY:
 				std::cout << "TypeIdentification receives signal." << endl;
 				break;
 			default:

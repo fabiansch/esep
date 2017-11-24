@@ -8,13 +8,15 @@
 #ifndef ASYNCCHANNEL_H_
 #define ASYNCCHANNEL_H_
 
+namespace hardwareLayer {
+namespace io {
+
 struct AsyncMsg {
+	AsyncMsg();
+	AsyncMsg(char type, int value);
 	char type;
 	int value;
 };
-
-namespace hardwareLayer {
-namespace io {
 
 class AsyncChannel {
 

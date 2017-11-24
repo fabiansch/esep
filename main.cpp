@@ -1,65 +1,76 @@
-#include <iostream>
-#include <thread>
-
 #include "Header.h"
+#include <iostream>
+
+#include "Interface.h"
+#include "Receiver.h"
+#include "Parameter.h"
+
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
 #include "Test.h"
-#include "Semaphore2.h"
-#include "HeightSensor.h"
-#include "Channel.h"
-#include "Timer.h"
 
+
+#include "HeightSensor.h"
+
+#include "ItemBuffer.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
 
+
+
+
 	cout << "Starting Sortingmachine ..." << endl;
 
 	LOG_SCOPE;
 	LOG_SET_LEVEL(DEBUG);
 
-	hardwareLayer::HardwareLayer hal;
-	logicLayer::LogicLayer loLay = logicLayer::LogicLayer(hal);
-	while(true){
-		char c;
-		std::cin >>c;
-		if(c=='q') break;
+	cb_first =  CB_FIRST;
+	cb_all = CB_ALL;
+
+
+	string textInput;
+	do {
+	cout<<"Are you conveyor belt 1? (yes/no):"<<endl;
+	cin >> textInput;
+	} while(!(textInput.compare("yes") xor textInput.compare("no")));
+
+	if(!textInput.compare("yes")) {
+		cb_this =  cb_first;
 	}
-	cout << "programm ends" << endl;
-//
-//
-//	logicLayer::Timer timer = logicLayer::Timer();
-//	thread ReceiverThread(ref(timer));
-//
-//	logicLayer::Dispatcher dispatcher = logicLayer::Dispatcher(c);
-//	thread SenderThread(ref(dispatcher));
-//
-//	SenderThread.join();
-//	ReceiverThread.join();
-//	c.destroy();
-
-	return 0;
+	cin.get(); // get rid of extra return
 
 
+	hardwareLayer::HardwareLayer hal;
+	logicLayer::test::Test test = logicLayer::test::Test(&hal);
 
-//	logicLayer::test::Test test = logicLayer::test::Test(&hal);
-//	test.mmiTest();
-//	uint16_t heightValue;
-//	while (true) {
-//		  heightValue = hal.getHeight();
-//		  cout << heightValue << endl;
-//	}
+	WAIT(5000);
+	test.buttonsTest();
 
-//	test.actuatorsTest();
-//	test.sensorsTest();
-//	test.threadSafenessInGpioTest();
-//	test.singletonThreadSafeTest();
-//	test.sensorsTest();
+	logicLayer::LogicLayer loLay = logicLayer::LogicLayer(hal);
+
+	cin.get();
+	if (cb_this == cb_1) {
+		test.actuatorsTest();
+		test.mmiTest();
+		test.threadSafenessInGpioTest();
+		test.singletonThreadSafeTest();
+	}
+
+	uint16_t heightValue;
+	for(int i = 10; i>0; i--) {
+		  heightValue = hal.getHeight();
+		  cout << heightValue << endl;
+	}
+
+	cout<<"Shut down?"<<endl;
+	cin.get();
+
 
 	cout << "Starting Sortingmachine ... done !" << endl;
 
 	return EXIT_SUCCESS;
+
 }

@@ -11,6 +11,9 @@
 #include "Signals.h"
 #include <thread>
 #include <vector>
+#include "Observable.h"
+#include <chrono>
+#include <thread>
 
 namespace hardwareLayer {
 namespace io {
@@ -39,9 +42,11 @@ struct SPair {
  * siganlPair.low holds signal for lower edge  change of bit
  */
 struct SensorEvent {
-	SensorEvent(const int bitmask, std::string name, SPair signalPair) :
+	SensorEvent(const int bitmask, const std::string name, const int chatterProtectionTime, const SPair signalPair) :
 	bitmask(bitmask),
 	name(name),
+	chatterProtectionTime(chatterProtectionTime),
+	lastTimeTriggered(std::chrono::steady_clock::now()),
 	signalPair(signalPair)
 	{
 		LOG_SCOPE
@@ -50,11 +55,13 @@ struct SensorEvent {
 		LOG_SCOPE
 	}
 	const int bitmask;
-	std::string name;
-	SPair signalPair;
+	const std::string name;
+	const int chatterProtectionTime;
+	std::chrono::steady_clock::time_point lastTimeTriggered;
+	const SPair signalPair;
 };
 
-class SignalGenerator {
+class SignalGenerator : public Observable {
 public:
 	SignalGenerator();
 	virtual ~SignalGenerator();
@@ -73,9 +80,15 @@ public:
 	/*
 	 *@brief: returns nextSignal in signalBuffer.
 	 *
-	 *If signalBuffer is empty it returns Signal(cb_x,cb_x,SIGNAL_BUFFER_EMPTY)
+	 *If signalBuffer is empty it returns Signal(cb_this,cb_this,SIGNAL_BUFFER_EMPTY)
 	 */
 	Signal nextSignal();
+
+	/*
+	 *@brief: test Method to print Event Vector
+	 *
+	 */
+	static void printEvents();
 
 	/*
 	 *@brief: pushs back Signal on signalBuffer.
@@ -89,41 +102,51 @@ public:
 	void clearSignalBuffer();
 
 	/*
-	*@brief: deals with the Clutter of the Switch and the Buttons; Sensors just get triggered once, if they get triggered multiple times in a short defined timeframe
-	*@param: Signal signal
-	*@return: false if clutter
-	*/
-	bool dealWithClatter(Signal signal);
+	 * @brief performs poll on sensors and generates signal when change has occurred and signal's chatter protection has passed
+	 */
+	void pollOnSensors();
 
 	// sensor events for higher byte of PORT C
-	static const SensorEvent BUTTON_START;
-	static const SensorEvent BUTTON_STOP;
-	static const SensorEvent BUTTON_RESET;
-	static const SensorEvent BUTTON_E_STOP;
+	static SensorEvent BUTTON_START;
+	static SensorEvent BUTTON_STOP;
+	static SensorEvent BUTTON_RESET;
+	static SensorEvent BUTTON_E_STOP;
 	// sensor events for PORT B
-	static const SensorEvent LIGHT_BARRIER_INPUT;
-	static const SensorEvent LIGHT_BARRIER_HEIGHT;
-	static const SensorEvent SENSOR_HEIGHT_MATCH;
-	static const SensorEvent LIGHT_BARRIER_SWITCH;
-	static const SensorEvent SENSOR_METAL_MATCH;
-	static const SensorEvent LIGHT_BARRIER_SLIDE;
-	static const SensorEvent SENSOR_SWITCH_OPEN;
-	static const SensorEvent LIGHT_BARRIER_OUTPUT;
+	static SensorEvent LIGHT_BARRIER_INPUT;
+	static SensorEvent LIGHT_BARRIER_HEIGHT;
+	static SensorEvent SENSOR_HEIGHT_MATCH;
+	static SensorEvent LIGHT_BARRIER_SWITCH;
+	static SensorEvent SENSOR_METAL_MATCH;
+	static SensorEvent LIGHT_BARRIER_SLIDE;
+	static SensorEvent SENSOR_SWITCH_OPEN;
+	static SensorEvent LIGHT_BARRIER_OUTPUT;
 
 private:
 	/*
-	 *@brief: initializes and returns const vector<const SensorEvent> events
+	 *@brief: initializes and returns vector<SensorEvent> events
 	 */
-	static const std::vector<const SensorEvent> init_events();
+	static std::vector< SensorEvent> init_events();
+
+	/*
+	*@brief: deals with the Clatter of the Switch and the Buttons; Sensors just get triggered once, if they get triggered multiple times in a short defined timeframe
+	*@param: Signal signal
+	*@return: true if no clatter
+	*/
+	bool noChatterOn(SensorEvent& event);
 
 	/*
 	 * events holds all sensor events
 	 */
-	static const std::vector<const SensorEvent> events;
-	std::thread thread;
+	static std::vector<SensorEvent> events;
+
+	static void chatter_timer(SignalGenerator* signalGenerator, SensorEvent* event);
+
+
+	std::thread signal_generator_th;
 	bool running;
 	int stored_mask;
 	std::vector<Signal> signalBuffer;
+	std::thread chatter_timer_th;
 };
 
 } /* namespace io */

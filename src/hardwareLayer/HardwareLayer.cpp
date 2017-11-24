@@ -6,12 +6,11 @@
  */
 
 #include "HardwareLayer.h"
-#include "GPIO.h"
-#include "Signals.h"
 
 namespace hardwareLayer {
 
 HardwareLayer::HardwareLayer() :
+serial(signalGenerator),
 _motor(actuators::Motor::instance()),
 _switchPoint(actuators::SwitchPoint::instance()),
 _trafficLight(mmi::TrafficLight::instance()),
@@ -146,10 +145,28 @@ void HardwareLayer::clearSignalBuffer() {
 	signalGenerator.clearSignalBuffer();
 }
 
+void HardwareLayer::sendSerial(Signal signal) {
+	serial.send(signal);
+}
+
+void HardwareLayer::sendItemViaSerial(Item* item) {
+	serial.send(item);
+}
+
+Item HardwareLayer::getPassedItem() {
+	return serial.getReceiver().getItemBuffer().pullItem();
+}
+
+int HardwareLayer::getItemBufferSize(){
+	return serial.getReceiver().getItemBuffer().size();
+}
+
 uint16_t HardwareLayer::getHeight() {
 	return _heightSensor.getHeight();
 }
 
-
+io::SignalGenerator& HardwareLayer::getSignalGenerator(){
+	return this->signalGenerator;
+}
 
 } /* hardwareLayer */

@@ -31,7 +31,7 @@ GpioTesting& GpioTesting::instance(bool test) {
 	return instance;
 }
 
-void GpioTesting::write(PORT port, port_t val){
+void GpioTesting::write(uint8_t address, uint8_t val){
 	cout << "# rmw-cycle starting #" << endl;
 	WAIT(500);
 	cout << "# rmw-cycle finished #" << endl;

@@ -5,3 +5,4 @@
 common.mk
 x86
 .metadata
+**/*/Thumbs.db
