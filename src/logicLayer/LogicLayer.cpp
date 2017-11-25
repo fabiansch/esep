@@ -10,31 +10,21 @@
 
 namespace logicLayer {
 
-LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal) :
-hal(hal),
-controller_(*new Controller(hal)),
-typeIdent_(*new TypeIdentification),
-timer_(*new Timer),
-calibration_(*new Calibration),
-errorHandler_(*new ErrorHandler),
-sorting_(*new Sorting),
-dispatcher_(*new Dispatcher(
+LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
+: hal(hal)
+, controller_(hal)
+, dispatcher_(
 		hal,
 		controller_.getChannel(),
 		typeIdent_.getChannel()
-		))
+		)
 , sensorTest(hal)
 {
+	LOG_SCOPE
 }
 
 LogicLayer::~LogicLayer() {
-	cout << "call lol's deconstructor " << endl;
-	delete &dispatcher_;
-	cout << "before typeIdent" << endl;
-	delete &typeIdent_;
-	cout << "after typeIdent" << endl;
-	delete &controller_;
-	cout << "after controller" << endl;
+	LOG_SCOPE
 }
 
 } /* namespace logicLayer */

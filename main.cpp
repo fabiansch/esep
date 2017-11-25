@@ -18,10 +18,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-
-
-
-
 	cout << "Starting Sortingmachine ..." << endl;
 
 	LOG_SCOPE;
@@ -49,7 +45,7 @@ int main(int argc, char *argv[])
 	WAIT(5000);
 	test.buttonsTest();
 
-	logicLayer::LogicLayer loLay = logicLayer::LogicLayer(hal);
+	logicLayer::LogicLayer loLay(hal);
 
 	cin.get();
 	if (cb_this == cb_1) {
