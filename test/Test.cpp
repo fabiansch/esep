@@ -216,6 +216,11 @@ void Test::buttonsTest(){
 						Signalname::BUTTON_E_STOP_PUSHED,
 						Signalname::BUTTON_E_STOP_PULLED);
 
+	buttonTestHelper(  	hardwareLayer::io::SignalGenerator::SENSOR_SWITCH_OPEN,
+						Signalname::SENSOR_SWITCH_IS_OPEN,
+						Signalname::SENSOR_SWITCH_IS_CLOSED);
+
+
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout  << __FUNCTION__ << " successful. " <<endl<<endl;

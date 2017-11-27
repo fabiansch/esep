@@ -38,13 +38,16 @@ private:
 		virtual void lb_slide_freed(){				testFailed(__FUNCTION__);}
 		virtual void lb_output_interrupted(){		testFailed(__FUNCTION__);}
 		virtual void lb_output_freed(){				testFailed(__FUNCTION__);}
+		virtual void item_arrived(){				testFailed(__FUNCTION__);}
 
 		void testFailed(string functionname) {
 			cout<<"Test failed: "<<name()<<", caused of "<<functionname<<endl;
 			hal->motorStop();
 			hal->greenLightOff();
 			hal->blinkRed(Speed::fast);
-			new (this) LB_INPUT_Test;
+			cout<<name()<<" => ";
+			new (this) FAIL_STATE;
+			cout<<name()<<endl;
 		}
 
 		std::string name() const { return typeid(*this).name(); }
@@ -54,7 +57,21 @@ private:
 	} *statePtr;   // a pointer to current state. Used for polymorphism.
 
 
+	// ============================= FAIL STATE =========================================
+	struct FAIL_STATE : public State {
+		virtual void lb_input_interrupted() {
+			cout<<__FUNCTION__<<endl;
+			hal->blinkGreen(Speed::slow);
+			hal->redLightOff();
+			hal->motorRotateClockwise();
+			hal->motorFast();
+			hal->motorStart();
 
+			cout<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			cout<<name()<<endl;
+		}
+	};
 
 
 
@@ -62,14 +79,14 @@ private:
 	struct LB_INPUT_Test : public State {
 		virtual void lb_input_interrupted() {
 			cout<<__FUNCTION__<<endl;
+			hal->blinkGreen(Speed::slow);
+			hal->redLightOff();
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
 		}
 		virtual void lb_input_freed() {
 			cout<<__FUNCTION__<<endl;
-
-			//hal.blinkGreen(Speed::slow);
 
 			cout<<name()<<" => ";
 			new (this) SENSOR_HEIGHT_MATCH_Test;
@@ -81,6 +98,7 @@ private:
 			hal->motorFast();
 			hal->motorStart();
 		}
+		virtual void item_arrived(){}
 	};
 
 	//============================ SENSOR_HEIGHT_MATCH_Test =======================================
@@ -126,9 +144,9 @@ private:
 			if(cb_this == cb_last && hal->getItemBufferSize() > 0) {
 				Item passedItem = hal->getPassedItem();
 				if( abs(passedItem.heightCenter - testItem->heightCenter) < 200) {
-					cout<<"DIFFERENZ IST NICHT ALLZU GROSS."<<endl;
+					cout<<"DIFFERENCE IS ACCEPTABLE."<<endl;
 				} else {
-					cout<<"DIFFERECE TOO HIGH"<<endl;
+					cout<<"DIFFERENCE TOO HIGH"<<endl;
 					testFailed(__FUNCTION__);
 				}
 			}
@@ -205,14 +223,6 @@ private:
 
 	//============================ SENSOR_METAL_NOT_MATCH_Test =======================================
 	struct SENSOR_METAL_NOT_MATCH_Test : public State {
-		// this transition is temporary while shatter protection is not implemented
-		virtual void sensor_switch_is_closed() {
-			cout<<__FUNCTION__<<"======================================= THIS IS ONLY ALLOWED TO HAPPEN TEMPORARY WHILEST SHATTER PROTECTION IS NOT IMPLEMENTED. ==================="<<endl;
-
-			cout<<name()<<" => ";
-			new (this) SENSOR_SWITCH_IS_OPEN_test;
-			cout<<name()<<endl;
-		}
 
 		virtual void sensor_metal_not_match() {
 			cout<<__FUNCTION__<<endl;
@@ -239,14 +249,15 @@ private:
 		virtual void lb_output_interrupted() {
 			cout<<__FUNCTION__<<endl;
 			hal->switchPointClose();
-			if(cb_this == cb_last) {
-				cout<<"WE ARE LAST"<<endl;
-								hal->motorStop();
-				cout<<"please put item on master's input again."<<endl;
-			} else {
+
+			if(cb_this != cb_last) {
 				cout<<"WE ARE NOT LAST"<<endl;
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::SENSOR_TEST_START));
 				hal->sendItemViaSerial(testItem);
+			} else {
+				cout<<"WE ARE LAST"<<endl;
+				hal->motorStop();
+				cout<<"please put item on master's input again."<<endl;
 			}
 		}
 		virtual void lb_output_freed() {
@@ -276,7 +287,7 @@ private:
 		virtual void lb_switch_freed() {}
 		virtual void sensor_height_match(){	}
 		virtual void sensor_height_not_match(){}
-		virtual void sensor_metal_match(){	}
+		virtual void sensor_metal_match(){}
 		virtual void sensor_metal_not_match(){}
 		virtual void lb_slide_interrupted() {
 			cout<<__FUNCTION__<<endl;
@@ -502,6 +513,10 @@ public:
 				break;
 			case Signalname::SWITCH_CLOSE:
 				hal.switchPointClose();
+				break;
+			// item
+			case Signalname::ITEM_ARRIVED:
+				statePtr->item_arrived();
 				break;
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;

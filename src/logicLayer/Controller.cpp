@@ -32,11 +32,6 @@ void Controller::operator()() {
 		signal << channel_;
 		LOG_DEBUG<<"Controller got Signal"<<endl;
 		switch (signal.name) {
-			// sensors
-			case Signalname::SIGNAL_DUMMY: // this is the example for signal START_TEST
-				//statePtr->test();
-				break;
-
 			// Menu
 			case Signalname::TEST:
 				cout<<"Signal test arrived"<<endl;
@@ -45,7 +40,7 @@ void Controller::operator()() {
 				}
 				statePtr->test();
 				break;
-			case Signalname::NORMAL:
+			case Signalname::RUN:
 				cout<<"Signal normal arrived"<<endl;
 				break;
 			case Signalname::CALIBRATION:

@@ -23,6 +23,7 @@ namespace io {
 
 const int NO_CHATTER_TIME = 0;
 const int CHATTER_TIME = 40;
+const int CHATTER_TIME_SWITCH = 100;
 
 SensorEvent SignalGenerator::BUTTON_START(		0b00010000<<8, "BUTTON_START", CHATTER_TIME , SPair(				Signalname::BUTTON_START_PUSHED,
 																													Signalname::BUTTON_START_PULLED));
@@ -42,7 +43,7 @@ SensorEvent SignalGenerator::LIGHT_BARRIER_SWITCH(	0b00001000, "LIGHT_BARRIER_SW
 																													Signalname::LB_SWITCH_INTERRUPTED));
 SensorEvent SignalGenerator::SENSOR_METAL_MATCH(	0b00010000, "SENSOR_METAL_MATCH", NO_CHATTER_TIME, SPair(  		Signalname::SENSOR_METAL_MATCH,
 																						  	  	  	  	  	  	  	Signalname::SENSOR_METAL_NOT_MATCH));
-SensorEvent SignalGenerator::SENSOR_SWITCH_OPEN(	0b00100000, "SENSOR_SWITCH_OPEN", CHATTER_TIME, SPair(			Signalname::SENSOR_SWITCH_IS_OPEN,
+SensorEvent SignalGenerator::SENSOR_SWITCH_OPEN(	0b00100000, "SENSOR_SWITCH_OPEN", CHATTER_TIME_SWITCH, SPair(	Signalname::SENSOR_SWITCH_IS_OPEN,
 																													Signalname::SENSOR_SWITCH_IS_CLOSED));
 SensorEvent SignalGenerator::LIGHT_BARRIER_SLIDE(	0b01000000, "LIGHT_BARRIER_SLIDE", NO_CHATTER_TIME, SPair( 		Signalname::LB_SLIDE_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_SLIDE_INTERRUPTED));

@@ -25,7 +25,7 @@ void Menu::computeInput(){
 		}
 
 		if(!textInput.compare("normal")) {
-			controller_ << Signalname::NORMAL;
+			controller_ << Signalname::RUN;
 		}
 
 		if(!textInput.compare("calibration")) {
