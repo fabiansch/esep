@@ -28,6 +28,9 @@ private:
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
+		virtual void forward(Signal signal){}
+
+		SensorTest* sensorTest;
 	} *statePtr;
 
 	struct Start : public State{
@@ -55,6 +58,9 @@ private:
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			sensorTest->handle(signal);
+		}
 	};
 
 	struct Run : public State{
@@ -84,10 +90,10 @@ private:
 		virtual void calibrate(){}
 	};
 
-	Start stateMember;
+	Test stateMember;
 
 public:
-	Controller(hardwareLayer::HardwareLayer& hal);
+	Controller(hardwareLayer::HardwareLayer&);
 	virtual ~Controller();
 
 	virtual void operator()();
