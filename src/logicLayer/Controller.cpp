@@ -40,6 +40,7 @@ void Controller::operator()() {
 			// Menu
 			case Signalname::TEST:
 				cout<<"Signal test arrived"<<endl;
+				hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::TEST));
 				statePtr->test();
 				break;
 			case Signalname::NORMAL:

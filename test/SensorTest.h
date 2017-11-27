@@ -75,12 +75,12 @@ private:
 			new (this) SENSOR_HEIGHT_MATCH_Test;
 			cout<<name()<<endl;
 		}
-//		virtual void sensor_test_start(){
-//			cout<<__FUNCTION__<<endl;
-//			hal->motorRotateClockwise();
-//			hal->motorFast();
-//			hal->motorStart();
-//		}
+		virtual void sensor_test_start(){
+			cout<<__FUNCTION__<<endl;
+			hal->motorRotateClockwise();
+			hal->motorFast();
+			hal->motorStart();
+		}
 	};
 
 	//============================ SENSOR_HEIGHT_MATCH_Test =======================================
