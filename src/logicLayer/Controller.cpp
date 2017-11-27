@@ -13,28 +13,29 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , sensorTest(hal)
 {
+	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
-	// TODO Auto-generated constructor stub
-	std::cout << "create Controller" << endl;
 }
 
 Controller::~Controller() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
-void Controller::operator()(){
+void Controller::operator()() {
+	LOG_SCOPE
 
-	Signal sig;
-	while(running){
-		std::cout << "blocking io at controller listener" << endl;
-		sig << channel_;
-		switch (sig.name) {
+	Signal signal;
+	while(running) {
+		LOG_DEBUG<<"blocking read on controller channel" << endl;
+		signal << channel_;
+		LOG_DEBUG<<"Controller got Signal"<<endl;
+		switch (signal.name) {
 			// sensors
 			case Signalname::SENSOR_TEST_START:
 				sensorTest.sensor_test_start();
 				break;
 			case Signalname::SENSOR_TEST_SUCCESSFUL:
-				sensorTest.sensor_test_successful(sig.sender);
+				sensorTest.sensor_test_successful(signal.sender);
 				break;
 			case Signalname::SENSOR_HEIGHT_MATCH:
 				sensorTest.sensor_height_match();

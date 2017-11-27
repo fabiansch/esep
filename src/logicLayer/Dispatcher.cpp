@@ -13,24 +13,26 @@ namespace logicLayer {
 
 Dispatcher::Dispatcher(
 		hardwareLayer::HardwareLayer& hal,
-		Channel& controller,
-		Channel& typeIdent
-) :
-hal(hal),
-controller_(controller),
-typeIdent_(typeIdent)
+		Channel<Signal>& controller,
+		Channel<Signal>& timer
+		)
+: hal(hal)
+, controller_(controller)
+, timer_(timer)
 {
-	hal.register_observer(this);
+	LOG_SCOPE
+	hal.getSignalGenerator().register_observer(this);
 }
 
 Dispatcher::~Dispatcher() {
-	cout << "call Dispatcher's deconstructor " << endl;
-	terminate();
+	LOG_SCOPE
 }
 
-void Dispatcher::notify(){
+void Dispatcher::notify() {
+	LOG_SCOPE
 	Signal signal;
 	while((signal = hal.getSignal()).name != Signalname::SIGNAL_BUFFER_EMPTY) {
+		LOG_DEBUG<<"Dispatcher is notified"<<endl;
 
 		switch (signal.name) {
 		// serial
@@ -47,6 +49,7 @@ void Dispatcher::notify(){
 			cb_this.parameterList.showParameters();
 			break;
 		default:
+			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;
 			controller_ << signal;
 			break;
 		}

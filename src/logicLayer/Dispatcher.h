@@ -18,16 +18,16 @@ class Dispatcher : public Observer {
 public:
 	Dispatcher(
 			hardwareLayer::HardwareLayer&,
-			Channel&,
-			Channel&
+			Channel<Signal>&,
+			Channel<Signal>&
 	);
 	virtual ~Dispatcher();
-	void notify();
+	virtual void notify() override;
 private:
 
 	hardwareLayer::HardwareLayer& hal;
-	Channel& controller_;
-	Channel& typeIdent_;
+	Channel<Signal>& controller_;
+	Channel<Signal>& timer_;
 
 
 };

@@ -6,34 +6,32 @@
  */
 #include "Header.h"
 #include "SignalReceiver.h"
-#include "Channel.h"
 
 
 namespace logicLayer {
 
-	SignalReceiver::SignalReceiver() :
-			channel_(10),
-			running(true)
+	SignalReceiver::SignalReceiver()
+	: channel_(10)
+	, running(true)
 	{
-		std::cout << "create SignalReceiver" << endl;
-
+		LOG_SCOPE
 	}
 
 	SignalReceiver::~SignalReceiver() {
-		cout << "call signal receiver's destructor" << endl;
+		LOG_SCOPE
 		terminate();
 	}
 
-	Channel& SignalReceiver::getChannel(){
+	Channel<Signal>& SignalReceiver::getChannel() {
+		LOG_SCOPE
 		return channel_;
 	}
 
-	void SignalReceiver::terminate(){
+	void SignalReceiver::terminate() {
+		LOG_SCOPE
 		running = false;
-		channel_ << Signal();
-		cout << "after channel destroy" << endl;
+		channel_.destroy();
 		receiver_.join();
-		cout << "after join" << endl;
 	}
 
 

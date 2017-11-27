@@ -38,9 +38,8 @@ int main(int argc, char *argv[])
 	}
 	cin.get(); // get rid of extra return
 
-
 	hardwareLayer::HardwareLayer hal;
-	logicLayer::test::Test test = logicLayer::test::Test(&hal);
+	logicLayer::test::Test test(&hal);
 
 	WAIT(5000);
 	test.buttonsTest();
@@ -53,6 +52,7 @@ int main(int argc, char *argv[])
 		test.mmiTest();
 		test.threadSafenessInGpioTest();
 		test.singletonThreadSafeTest();
+		logicLayer::test::Test::channelTest();
 	}
 
 	uint16_t heightValue;

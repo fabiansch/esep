@@ -17,7 +17,6 @@
 #include "Sorting.h"
 #include "Dispatcher.h"
 #include "HardwareLayer.h"
-#include "SensorTest.h"
 
 
 namespace logicLayer {
@@ -36,7 +35,6 @@ private:
 	ErrorHandler errorHandler_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;
-	SensorTest sensorTest;
 };
 
 } /* namespace logicLayer */

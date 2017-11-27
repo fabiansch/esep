@@ -8,21 +8,22 @@
 #ifndef SIGNALRECEIVER_H_
 #define SIGNALRECEIVER_H_
 
-#include "Channel.h"
 #include <thread>
+#include "Channel.h"
 
 
 namespace logicLayer {
+
 
 class SignalReceiver {
 public:
 	SignalReceiver();
 	virtual ~SignalReceiver();
-	Channel& getChannel();
+	Channel<Signal>& getChannel();
 	virtual void operator()() = 0;
 
 protected:
-	Channel channel_;
+	Channel<Signal> channel_;
 	bool running;
 	std::thread receiver_;
 	void terminate();

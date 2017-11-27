@@ -16,9 +16,8 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 , dispatcher_(
 		hal,
 		controller_.getChannel(),
-		typeIdent_.getChannel()
+		timer_.getChannel()
 		)
-, sensorTest(hal)
 {
 	LOG_SCOPE
 }

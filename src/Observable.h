@@ -15,6 +15,7 @@
 class Observable {
 public:
 	void register_observer(Observer* o) {
+		LOG_SCOPE
 		//check if observer already exists
 		if (observers.size() > 0) {
 			for (auto &observer : observers) {

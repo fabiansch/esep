@@ -47,6 +47,8 @@ public:
 	 *  @brief test thread safeness in GPIO class
 	 */
 	void threadSafenessInGpioTest();
+
+	static void channelTest();
 private:
 
 	hardwareLayer::HardwareLayer* _hal;
@@ -59,7 +61,7 @@ private:
 	/**
 	 *	@brief go to next test
 	 */
-	bool nextTest(string functionName);
+	static bool nextTest(string functionName);
 
 	void buttonTestHelper(hardwareLayer::io::SensorEvent signalbitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd);
 

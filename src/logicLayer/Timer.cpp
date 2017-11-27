@@ -10,18 +10,19 @@
 
 namespace logicLayer {
 
-Timer::Timer() :
-SignalReceiver::SignalReceiver()
+Timer::Timer()
+: SignalReceiver::SignalReceiver()
 {
-
+	LOG_SCOPE
 }
 
-void Timer::operator()(){
+void Timer::operator()() {
+	LOG_SCOPE
 
 }
 
 Timer::~Timer() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 } /* namespace logicLayer */

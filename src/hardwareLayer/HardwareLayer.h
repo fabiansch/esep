@@ -23,7 +23,7 @@
 
 namespace hardwareLayer {
 
-	class HardwareLayer : public Observable{
+	class HardwareLayer {
 	public:
 		HardwareLayer();
 		virtual ~HardwareLayer();
