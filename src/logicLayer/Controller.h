@@ -14,15 +14,90 @@
 namespace logicLayer {
 
 class Controller: public SignalReceiver {
-public:
-	Controller(hardwareLayer::HardwareLayer& hal);
-	virtual ~Controller();
-
-	virtual void operator()();
 
 private:
 	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
+
+
+
+	struct State {//top-level state
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal){}
+
+		SensorTest* sensorTest;
+	} *statePtr;
+
+	struct Start : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+	};
+
+	struct Idle : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+	};
+
+	struct Test : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			sensorTest->handle(signal);
+		}
+	};
+
+	struct Run : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+	};
+
+	struct Safe : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+	};
+
+	struct Calibrate : public State{
+		virtual void run(){}
+		virtual void test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+	};
+
+	Test stateMember;
+
+public:
+	Controller(hardwareLayer::HardwareLayer&);
+	virtual ~Controller();
+
+	virtual void operator()();
+
 };
 
 } /* namespace logicLayer */
