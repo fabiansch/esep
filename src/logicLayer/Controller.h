@@ -10,6 +10,7 @@
 
 #include "SignalReceiver.h"
 #include "SensorTest.h"
+#include "ErrorHandler.h"
 
 namespace logicLayer {
 
@@ -18,6 +19,7 @@ class Controller: public SignalReceiver {
 private:
 	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
+	ErrorHandler errorHandler;
 
 
 
@@ -31,6 +33,7 @@ private:
 		virtual void forward(Signal signal){}
 
 		SensorTest* sensorTest;
+		ErrorHandler* errorHandler;
 	} *statePtr;
 
 	struct Start : public State{
@@ -62,6 +65,7 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			sensorTest->handle(signal);
+			errorHandler->setPending(signal);
 		}
 	};
 
@@ -72,6 +76,8 @@ private:
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+		}
 	};
 
 	struct Safe : public State{

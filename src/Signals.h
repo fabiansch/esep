@@ -195,6 +195,10 @@ struct Signal {
 	{
 		LOG_SCOPE
 	}
+	bool operator<(const Signal& signal) const
+	{
+	   return name < signal.name;
+	}
 	Signalname name;
 	uint8_t sender;
 	uint8_t receiver;

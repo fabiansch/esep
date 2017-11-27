@@ -9,8 +9,11 @@
 
 namespace logicLayer {
 
-ErrorHandler::ErrorHandler() {
-	// TODO Auto-generated constructor stub
+ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
+: hal(hal)
+{
+	statePtr = &memberState;
+	statePtr->pendingSignals = &pendingSignals;
 
 }
 
@@ -18,6 +21,9 @@ ErrorHandler::~ErrorHandler() {
 	// TODO Auto-generated destructor stub
 }
 
-void ErrorHandler::operator()(){}
+void ErrorHandler::setPending(Signal signal) {
+	pendingSignals.insert(signal);
+	statePtr->errorOccurred();
+}
 
 } /* namespace logicLayer */

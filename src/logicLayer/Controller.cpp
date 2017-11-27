@@ -12,11 +12,13 @@ namespace logicLayer {
 Controller::Controller(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , sensorTest(hal)
+, errorHandler(hal)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	statePtr->sensorTest = &sensorTest;
+	statePtr->errorHandler = &errorHandler;
 }
 
 Controller::~Controller() {

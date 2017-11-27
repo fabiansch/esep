@@ -8,7 +8,6 @@
 #ifndef SENSORTEST_H_
 #define SENSORTEST_H_
 
-#include "Signals.h"
 #include "HardwareLayer.h"
 #include "Header.h"
 #include "Item.h"

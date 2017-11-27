@@ -36,7 +36,6 @@ private:
 	TypeIdentification typeIdent_;
 	Timer timer_;
 	Calibration calibration_;
-	ErrorHandler errorHandler_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;
 	Menu menu_;
