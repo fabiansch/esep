@@ -34,12 +34,21 @@ void Controller::operator()() {
 		switch (signal.name) {
 			// sensors
 			case Signalname::SIGNAL_DUMMY: // this is the example for signal START_TEST
-				statePtr->test();
+				//statePtr->test();
 				break;
 
 			// Menu
 			case Signalname::TEST:
-
+				cout<<"Signal test arrived"<<endl;
+				statePtr->test();
+				break;
+			case Signalname::NORMAL:
+				cout<<"Signal normal arrived"<<endl;
+				break;
+			case Signalname::CALIBRATION:
+				break;
+			case Signalname::STOP:
+				break;
 
 			default:
 				statePtr->forward(signal);

@@ -44,7 +44,9 @@ private:
 
 	struct Idle : public State{
 		virtual void run(){}
-		virtual void test(){}
+		virtual void test(){
+			new (this) Test;
+		}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -90,7 +92,7 @@ private:
 		virtual void calibrate(){}
 	};
 
-	Test stateMember;
+	Idle stateMember;
 
 public:
 	Controller(hardwareLayer::HardwareLayer&);
