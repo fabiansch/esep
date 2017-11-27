@@ -18,6 +18,102 @@ public:
 	Item();
 	virtual ~Item();
 	void operator()();
+
+private:
+	struct State {//top-level state
+		virtual void lbInputFreed(){}
+		virtual void tfHeightIn(){}
+		virtual void heightMatch(){}
+		virtual void heightNotMatch(){}
+		virtual void lbHeightInt(){}
+		virtual void tfHeightOut(){}
+		virtual void lbHeightFreed(){}
+		virtual void tfSwitchIn(){}
+		virtual void metalMatch(){}
+		virtual void metalNotMatch(){}
+		virtual void lbSwitchInt(){}
+		virtual void tfSwitchOut(){}
+		virtual void lbSwitchFreed(){}
+		virtual void tfOutputIn(){}
+		virtual void lbOutputInt(){}
+		virtual void lbOutputFreed(){}
+		virtual void tfInputIn(){}
+		virtual void lbInputInt(){}
+		virtual void tfSlideIn(){}
+		virtual void lbSlideInt(){}
+		virtual void tfSlideOut(){}
+		virtual void lbSlideFreed(){}
+	} *statePtr;
+
+	struct Idle : public State{
+
+	};
+
+	struct TransportToHeight : public State{
+
+	};
+
+	struct WaitForArrivalAtHeight : public State{
+
+	};
+
+	struct ArrivalAtHeight : public State{
+
+	};
+
+	struct DepatureAtHeight : public State{
+
+	};
+
+	struct WaitForArrivalAtSwitch : public State{
+
+	};
+
+	struct ArrivalAtSwitch : public State{
+
+	};
+
+	struct DepatureAtSwitchToOutput : public State{
+
+	};
+
+	struct DepatureAtSwitchToSlide : public State{
+
+	};
+
+	struct WaitForArrivalAtSlide : public State{
+
+	};
+
+	struct ArrivalAtSlide : public State{
+
+	};
+
+	struct DepatureAtSlide : public State{
+
+	};
+
+	struct SlideIsFull : public State{
+
+	};
+
+	struct WaitForArrivalAtOuput : public State{
+
+	};
+
+	struct ArrivalAtOutput : public State{
+
+	};
+
+	struct DepatureAtOutput : public State{
+
+	};
+
+	struct WaitForArrivalInput : public State{
+
+	};
+
+	Idle stateMember;
 };
 
 } /* namespace logicLayer */

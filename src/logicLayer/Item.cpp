@@ -10,6 +10,7 @@
 namespace logicLayer {
 
 Item::Item() :
+		statePtr(&stateMember),
 SignalReceiver::SignalReceiver()
 {
 	// TODO Auto-generated constructor stub
