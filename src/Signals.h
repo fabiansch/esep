@@ -147,7 +147,13 @@ enum class Signalname : uint16_t {
 	ITEM_ARRIVED,
 
 	// dummy signal
-	SIGNAL_DUMMY
+	SIGNAL_DUMMY,
+
+	//Menu
+	TEST,
+	NORMAL,
+	CALIBRATION,
+	STOP,
 
 };
 

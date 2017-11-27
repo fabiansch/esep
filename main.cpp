@@ -8,6 +8,7 @@
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
 #include "Test.h"
+#include "Menu.h"
 
 
 #include "HeightSensor.h"
@@ -23,49 +24,34 @@ int main(int argc, char *argv[])
 	LOG_SCOPE;
 	LOG_SET_LEVEL(DEBUG);
 
-	cb_first =  CB_FIRST;
-	cb_all = CB_ALL;
+	bool restart = false;
 
-
-	string textInput;
 	do {
-	cout<<"Are you conveyor belt 1? (yes/no):"<<endl;
-	cin >> textInput;
-	} while(!(textInput.compare("yes") xor textInput.compare("no")));
 
-	if(!textInput.compare("yes")) {
-		cb_this =  cb_first;
-	}
-	cin.get(); // get rid of extra return
+		//============== ASSIGNMENT OF CONVEYOR BELT ROLE ==============================
+		cb_first = CB_FIRST;
+		cb_all = CB_ALL;
 
-	hardwareLayer::HardwareLayer hal;
-	logicLayer::test::Test test(&hal);
+		string textInput;
+		do {
+			cout << "Are you conveyor belt 1? (yes/no):" << endl;
+			cin >> textInput;
+		} while (!(textInput.compare("yes") xor textInput.compare("no")));
 
-	WAIT(5000);
-	test.buttonsTest();
+		if (!textInput.compare("yes")) {
+			cb_this = cb_first;
+		}
+		cin.get(); // get rid of extra return
 
-	logicLayer::LogicLayer loLay(hal);
+		//===================== INITIALISATION ==========================================
+		hardwareLayer::HardwareLayer hal;
+		logicLayer::LogicLayer loLay(hal);
+		restart = loLay.getMenu().isRestart();
 
-	cin.get();
-	if (cb_this == cb_1) {
-		test.actuatorsTest();
-		test.mmiTest();
-		test.threadSafenessInGpioTest();
-		test.singletonThreadSafeTest();
-		logicLayer::test::Test::channelTest();
-	}
+		//===================== COMPUTATION OF INPUT ==========================================
+	} while (restart);
 
-	uint16_t heightValue;
-	for(int i = 10; i>0; i--) {
-		  heightValue = hal.getHeight();
-		  cout << heightValue << endl;
-	}
-
-	cout<<"Shut down?"<<endl;
-	cin.get();
-
-
-	cout << "Starting Sortingmachine ... done !" << endl;
+	cout << "===================== Shutting down Sortingmachine =========================" << endl;
 
 	return EXIT_SUCCESS;
 

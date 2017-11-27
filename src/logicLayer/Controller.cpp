@@ -187,6 +187,11 @@ void Controller::operator()() {
 			case Signalname::SWITCH_CLOSE:
 				hal.switchPointClose();
 				break;
+
+			// Menu
+			case Signalname::TEST:
+
+
 			default:
 
 				break;

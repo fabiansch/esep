@@ -17,6 +17,7 @@
 #include "Sorting.h"
 #include "Dispatcher.h"
 #include "HardwareLayer.h"
+#include "Menu.h"
 
 
 namespace logicLayer {
@@ -25,6 +26,9 @@ class LogicLayer {
 public:
 	LogicLayer(hardwareLayer::HardwareLayer&);
 	virtual ~LogicLayer();
+	Controller& getController();
+	Menu& getMenu();
+
 private:
 	hardwareLayer::HardwareLayer& hal;
 
@@ -35,6 +39,7 @@ private:
 	ErrorHandler errorHandler_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;
+	Menu menu_;
 };
 
 } /* namespace logicLayer */
