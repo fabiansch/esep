@@ -14,6 +14,7 @@ Timer::Timer()
 : SignalReceiver::SignalReceiver()
 {
 	LOG_SCOPE
+	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
 void Timer::operator()() {
