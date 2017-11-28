@@ -28,7 +28,19 @@ void ErrorHandler::addPending(Signal signal) {
 }
 
 void ErrorHandler::handle(Signal signal) {
-	statePtr->isPending(signal);
+	switch(signal.name) {
+	case Signalname::BUTTON_E_STOP_PUSHED:
+		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
+		break;
+	case Signalname::BUTTON_RESET_PUSHED:
+		break;
+	case Signalname::BUTTON_START_PUSHED:
+		break;
+	case Signalname::BUTTON_STOP_PUSHED:
+		break;
+	default:
+		statePtr->isPending(signal);
+	}
 }
 
 } /* namespace logicLayer */
