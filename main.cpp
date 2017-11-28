@@ -15,8 +15,10 @@ int main(int argc, char *argv[])
 	LOG_SET_LEVEL(DEBUG);
 	LOG_SCOPE;
 	printStartMessage();
-//	cout << "========================= Start Sortingmachine ============================" << endl;
 
+	LOG_TEST<< "in main methode angekommen" <<endl;
+	LOG_TEST<< "in main methode angekommen" <<endl;
+	LOG_TEST<< "in main methode angekommen" <<endl;
 
 	bool restart = false;
 	do {
@@ -31,7 +33,6 @@ int main(int argc, char *argv[])
 	cout << "===================== Shutting down Sortingmachine =========================" << endl;
 
 	return EXIT_SUCCESS;
-
 }
 
 
@@ -41,7 +42,7 @@ void evaluateIfCb_1() {
 	cb_all = CB_ALL;
 	string textInput;
 	do {
-		cout << "Are you conveyor belt 1? (yes/no):" << endl;
+		cout << "\n\nAre you master conveyor belt? (yes/no):" << endl;
 		cin >> textInput;
 	} while (!(textInput.compare("yes") ^ textInput.compare("no")));
 	if (!textInput.compare("yes")) {

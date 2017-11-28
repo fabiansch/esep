@@ -22,6 +22,9 @@ public:
 private:
 	Channel<Signal>& controller_;
 	bool restart;
+	void printInfo();
+	void printOptions();
+	void testInit();
 };
 }
 

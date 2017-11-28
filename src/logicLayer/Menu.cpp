@@ -17,66 +17,48 @@ Menu::Menu(Channel<Signal>& controller)
 {}
 
 void Menu::computeInput(){
+
+	printInfo();
+
 	string textInput;
-	cout << "Please enter command. Type \"help\" for options.\n" << endl;
 
 	while(true){
 		cin >> textInput;
 		cin.get();
 
 		if(!textInput.compare("test")) {
-			Logger& testLogger = Logger::getLogger();
-			cout << "\nStarts test. \nSome data is needed for logging. \n Enter name:\n" << endl;
-			cin >> textInput;
-			cin.get();
-			testLogger.logTest("Name:\t"+textInput);
-
-			cout << "\nEnter code version:\n" << endl;
-			cin >> textInput;
-			cin.get();
-			testLogger.logTest("Version:\t"+textInput);
-
-			int val = (int) cb_available;
-			val++;
-			int cbCount = 0;
-			while (val > 1) {
-				val >>= 1;
-				cbCount++;
-			}
-			testLogger.logTest("Anzahl:\t"+cbCount);
-			cout<<"ES WURDEN "<<cbCount<<" CONVEYOR BELTS ERKANNT ================"<<endl;
-
-
-			cout << "\nEnter unit number of the tested festo machine:\n" << endl;
-			cin >> textInput;
-			cin.get();
-			testLogger.logTest("Name:\t"+textInput);
-
-			controller_ << Signalname::TEST;
-		}
-
-		if(!textInput.compare("calibration")) {
+			testInit();
+			printInfo();
+		} else	if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
-		}
-
-		if(!textInput.compare("run")) {
+		} else if(!textInput.compare("run")) {
 			controller_ << Signalname::RUN;
-		}
-
-		if (!(textInput.compare("stop"))){
+		} else if (!(textInput.compare("stop"))){
 			controller_ << Signalname::STOP;
-		}
-
-		if (!(textInput.compare("shutdown"))){
+		} else if (!(textInput.compare("shutdown"))){
 			return;
-		}
-
-		if (!(textInput.compare("restart"))){
+		} else if (!(textInput.compare("restart"))){
 			restart = true;
 			return;
+		} else if (!(textInput.compare("help"))){
+			printOptions();
+		} else {
+			cout<< "Invalid command." <<endl;
+			printInfo();
 		}
-		if (!(textInput.compare("help"))){
-			cout<< "You have following options:" <<endl;
+	}
+}
+
+bool Menu::isRestart(){
+	return restart;
+}
+
+void Menu::printInfo() {
+	cout << "\nPlease enter command. Type \"help\" for options." << endl;
+}
+
+void Menu::printOptions() {
+			cout<< "\nYou have following options:" <<endl;
 			cout<< "\ntest\t\tStarts hardware tests. Follow the given instructions." <<endl;
 			cout<< "\ncalibration\tStarts calibration. Follow the given instructions." <<endl;
 			cout<< "\nrun\t\tStarts normal running mode. " <<endl;
@@ -84,12 +66,55 @@ void Menu::computeInput(){
 			cout<< "\nshutdown\tShut down system." <<endl;
 			cout<< "\nrestart\t\tRestart System." <<endl;
 			cout<< "\nhelp\t\tShows this help text.\n" <<endl;
-		}
-	}
 }
 
-bool Menu::isRestart(){
-	return restart;
+void Menu::testInit() {
+	string textInput;
+	LOG_TEST<<"### NEW TEST START ###"<<endl;
+
+	//=============== calculating number of connected conveyor belts ==============
+	int val = (int) cb_available;
+	val++;
+	int cbCount = 0;
+	while (val > 1) {
+		val >>= 1;
+		cbCount++;
+	}
+	LOG_TEST<<"Detected CBs:\t" << cbCount << endl;
+
+	if (cbCount > 0) {
+		cout << "\n"<<cbCount << " conveyor belts detected." << endl;
+	} else {
+		cout << "\n## NO CONVEYOR BELTS DETECTED! ABORTING TEST. ##" << endl;
+		return;
+	}
+
+	//=============== entering name =======================================
+	cout << "\n\nPlease enter required data for testing. \nEnter name:"<< endl;
+	cin >> textInput;
+	cin.get();
+	LOG_TEST<<"Name:\t"<<textInput<<endl;
+
+	//=============== entering code version =======================================
+	cout << "\nEnter code version:" << endl;
+	cin >> textInput;
+	cin.get();
+	LOG_TEST<<"Version:\t"<<textInput<<endl;
+
+
+	//======================= entering each CB number ==========================================
+	for (int i = 1; i <= cbCount; i++) {
+		if (i == 1) {
+			cout << "Enter unit number of the master festo machine:" << endl;
+		} else {
+			cout << "Enter unit number of the festo machine no. :"<< i << endl; }
+
+		cin >> textInput;
+		cin.get();
+		LOG_TEST<<"Festo Machine Nr. "<<i<<": "<<textInput<<endl;
+	}
+
+	controller_ << Signalname::TEST;
 }
 
 Menu::~Menu() {
