@@ -345,8 +345,6 @@ public:
 	{
 		statePtr->hal = &hal;
 		statePtr->testItem = &testItem; // connecting state->testItem with the SensorTest::testItem
-
-		hal.blinkGreen(Speed::slow);
 	}
 
 	virtual ~SensorTest(){};
