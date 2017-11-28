@@ -320,7 +320,6 @@ private:
 			if(sender == cb_last) {
 				LOG_TEST<<"### SENSOR TEST finished ###"<<endl;
 				cout<<"### SENSOR TEST finished ###"<<endl;
-				cout<<"hit enter to go on"<<endl;
 				new (this) LB_INPUT_Test;
 			}
 		}

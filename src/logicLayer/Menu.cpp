@@ -82,9 +82,7 @@ void Menu::testInit() {
 	}
 	LOG_TEST<<"Detected CBs:\t" << cbCount << endl;
 
-	if (cbCount > 0) {
-		cout << "\n"<<cbCount << " conveyor belts detected." << endl;
-	} else {
+	if (cbCount == 0) {
 		cout << "\n## NO CONVEYOR BELTS DETECTED! ABORTING TEST. ##" << endl;
 		return;
 	}
@@ -103,6 +101,8 @@ void Menu::testInit() {
 
 
 	//======================= entering each CB number ==========================================
+	cout << "\n"<<cbCount << " conveyor belts detected." << endl;
+
 	for (int i = 1; i <= cbCount; i++) {
 		if (i == 1) {
 			cout << "Enter unit number of the master festo machine:" << endl;
