@@ -13,6 +13,7 @@
 #include "Item.h"
 #include <iostream>
 #include <string>
+#include <thread>
 
 namespace logicLayer {
 
@@ -21,6 +22,7 @@ private:
 	struct State {//top-level state
 		virtual void sensor_test_start(){			testFailed(__FUNCTION__);}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
+		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted(){		testFailed(__FUNCTION__);}
 		virtual void lb_input_freed(){				testFailed(__FUNCTION__);}
 		virtual void sensor_height_match(){			testFailed(__FUNCTION__);}
@@ -44,6 +46,7 @@ private:
 			hal->motorStop();
 			hal->greenLightOff();
 			hal->blinkRed(Speed::fast);
+			hal->switchPointClose();
 			cout<<name()<<" => ";
 			new (this) FAIL_STATE;
 			cout<<name()<<endl;
@@ -53,6 +56,7 @@ private:
 
 		hardwareLayer::HardwareLayer* hal;
 		Item* testItem;
+		std::thread* timeout_timer_th;
 	} *statePtr;   // a pointer to current state. Used for polymorphism.
 
 
@@ -241,14 +245,17 @@ private:
 		virtual void lb_switch_freed() {
 			cout<<__FUNCTION__<<endl;
 
+			timeout_timer_th->detach();
+			*timeout_timer_th = std::thread(timeout_timer, hal, 2150);
+
 			cout<<name()<<" => ";
-			new (this) LB_OUTPUT_Test;
+			new (this) LB_OUTPUT_INTERRUPTED_Test;
 			cout<<name()<<endl;
 		}
 	};
 
 	//============================ LB_OUTPUT_Test =======================================
-	struct LB_OUTPUT_Test : public State {
+	struct LB_OUTPUT_INTERRUPTED_Test : public State {
 		virtual void lb_output_interrupted() {
 			cout<<__FUNCTION__<<endl;
 			hal->switchPointClose();
@@ -262,7 +269,15 @@ private:
 				hal->motorStop();
 				cout<<"please put item on master's input again."<<endl;
 			}
+			cout<<name()<<" => ";
+			new (this) LB_OUTPUT_FREED_Test;
+			cout<<name()<<endl;
 		}
+		virtual void sensor_switch_is_closed(){}
+	};
+
+	struct LB_OUTPUT_FREED_Test : public State {
+		virtual void sensor_test_timeout() override {}
 		virtual void lb_output_freed() {
 			cout<<__FUNCTION__<<endl;
 			cout<<name()<<" successfully"<<endl;
@@ -332,22 +347,34 @@ private:
 		}
 	};
 
+	static void timeout_timer(hardwareLayer::HardwareLayer* hal, int milliseconds) {
+		if(milliseconds > 0) {
+			WAIT(milliseconds);
+			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::SENSOR_TEST_TIMEOUT));
+		}
+	}
+
 
 	LB_INPUT_Test stateMember;//The memory for the state is part of context object
 
 	hardwareLayer::HardwareLayer& hal;
 	Item testItem;
+	std::thread timeout_timer_th;
 
 public:
 	SensorTest(hardwareLayer::HardwareLayer& hal)
 	: statePtr(&stateMember) // assigning start state
 	, hal(hal)
+	, timeout_timer_th(std::thread(timeout_timer, &hal, 0))
 	{
 		statePtr->hal = &hal;
 		statePtr->testItem = &testItem; // connecting state->testItem with the SensorTest::testItem
+		statePtr->timeout_timer_th = &timeout_timer_th;
 	}
 
-	virtual ~SensorTest(){};
+	virtual ~SensorTest(){
+		timeout_timer_th.join();
+	};
 
 	std::string nameOf(State *state) const { return typeid(*state).name(); }
 
@@ -359,6 +386,9 @@ public:
 				break;
 			case Signalname::SENSOR_TEST_SUCCESSFUL:
 				statePtr->sensor_test_successful(signal.sender);
+				break;
+			case Signalname::SENSOR_TEST_TIMEOUT:
+				statePtr->sensor_test_timeout();
 				break;
 			case Signalname::SENSOR_HEIGHT_MATCH:
 				statePtr->sensor_height_match();
