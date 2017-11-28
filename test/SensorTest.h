@@ -248,9 +248,9 @@ private:
 			timeout_timer_th->detach();
 			*timeout_timer_th = std::thread(timeout_timer, hal, 2150);
 
-			cout<<name()<<" => ";
+			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_INTERRUPTED_Test;
-			cout<<name()<<endl;
+			LOG_TEST<<name()<<endl;
 		}
 	};
 
@@ -269,9 +269,9 @@ private:
 				hal->motorStop();
 				cout<<"please put item on master's input again."<<endl;
 			}
-			cout<<name()<<" => ";
+			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_FREED_Test;
-			cout<<name()<<endl;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_switch_is_closed(){}
 	};
