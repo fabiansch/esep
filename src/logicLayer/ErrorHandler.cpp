@@ -15,7 +15,6 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 	statePtr = &memberState;
 	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
-
 }
 
 ErrorHandler::~ErrorHandler() {

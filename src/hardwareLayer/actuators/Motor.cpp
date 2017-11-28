@@ -23,7 +23,10 @@ Motor& Motor::instance() {
 	return instance;
 }
 
-Motor::Motor() {
+Motor::Motor()
+: locked(false)
+, running(false)
+{
 	LOG_SCOPE;
 }
 
@@ -32,10 +35,14 @@ Motor::~Motor() {
 }
 
 void Motor::start() {
-	io::GPIO::instance().clearBits(PORT::A, MOTOR_STOP);
+	running = true;
+	if(not locked) {
+		io::GPIO::instance().clearBits(PORT::A, MOTOR_STOP);
+	}
 }
 
 void Motor::stop() {
+	running = false;
 	io::GPIO::instance().setBits(PORT::A, MOTOR_STOP);
 }
 
@@ -55,6 +62,19 @@ void Motor::setClockwiseRotation() {
 void Motor::setCounterclockwiseRotation() {
 	io::GPIO::instance().clearBits(PORT::A, CLOCKWISE_ROTATION);
 	io::GPIO::instance().setBits(PORT::A, COUNTERCLOCKWISE_ROTATION);
+}
+
+void Motor::lock(bool lock) {
+	locked = lock;
+	if(locked) {
+		bool running_temp = running;
+		stop();
+		running = running_temp;
+	} else {
+		if(running) {
+			start();
+		}
+	}
 }
 
 } /* namespace actuators */

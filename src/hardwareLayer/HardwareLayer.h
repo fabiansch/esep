@@ -52,6 +52,7 @@ namespace hardwareLayer {
 		void motorStop();
 		void motorSlow();
 		void motorFast();
+		void motorLock(bool lock);
 		void motorRotateClockwise();
 		void motorRotateCounterclockwise();
 

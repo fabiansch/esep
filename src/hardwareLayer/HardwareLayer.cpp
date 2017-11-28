@@ -54,6 +54,10 @@ void HardwareLayer::motorFast() {
 	_motor.clearSlow();
 }
 
+void HardwareLayer::motorLock(bool lock) {
+	_motor.lock(lock);
+}
+
 void HardwareLayer::motorRotateClockwise() {
 	_motor.setClockwiseRotation();
 }

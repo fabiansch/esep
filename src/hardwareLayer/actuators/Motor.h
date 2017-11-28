@@ -49,11 +49,21 @@ public:
 	*/
 	void clearSlow();
 
+	/**
+	* @brief (un)lock motor
+	* @param lock == true -> lock
+	* @param lock == false -> unlock
+	*/
+	void lock(bool lock);
+
 private:
 	Motor();
 	Motor(Motor const&);
 	Motor& operator=(Motor const&);
 	~Motor();
+
+	bool locked;
+	bool running;
 };
 
 } /* namespace actuators */

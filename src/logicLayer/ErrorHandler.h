@@ -25,30 +25,44 @@ private:
 		std::set<Signal>* pendingSignals;
 	} *statePtr;
 
+
+	struct IDLE : public State {
+		IDLE() {
+		}
+		virtual void errorOccurred() {
+			new (this) ERROR;
+		}
+	};
+
 	struct NO_ERROR : public State {
-		virtual void errorOccurred(){
-			hal->motorStop();
-			hal->greenLightOff();
-			hal->blinkRed(Speed::fast);
+		NO_ERROR() {
+			hal->motorLock(false);
+			hal->redLightOff();
+			hal->blinkGreen(Speed::slow);
+		}
+		virtual void errorOccurred() {
 			new (this) ERROR;
 		}
 
 	};
 
 	struct ERROR : public State {
+		ERROR() {
+			hal->motorLock(true);
+			hal->greenLightOff();
+			hal->blinkRed(Speed::fast);
+
+		}
 		virtual void isPending(Signal signal) {
 			pendingSignals->erase(pendingSignals->find(signal));
 
 			if(pendingSignals->empty()) {
-				hal->motorStart();
-				hal->redLightOff();
-				hal->blinkGreen(Speed::slow);
 				new (this) NO_ERROR;
 			}
 		}
 	};
 
-	NO_ERROR memberState;
+	IDLE memberState;
 
 public:
 	ErrorHandler(hardwareLayer::HardwareLayer&);
