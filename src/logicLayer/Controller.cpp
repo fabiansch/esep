@@ -34,13 +34,26 @@ void Controller::operator()() {
 		signal << channel_;
 		LOG_DEBUG<<"Controller got Signal"<<endl;
 		switch (signal.name) {
-			// Menu
+			// serial
+			case Signalname::CONNECTION_LOST:
+				errorHandler.addPending(Signal(Signalname::CONNECTION_CONNECTED));
+				cout<<"CONNECTION LOST"<<endl;
+				LOG_ERROR<<"CONNECTION LOST"<<endl;
+				cb_this.parameterList.showParameters();
+				break;
+			case Signalname::CONNECTION_CONNECTED:
+				errorHandler.handle(signal);
+				cout<<"CONNECTION CONNECTED"<<endl;
+				LOG_DEBUG<<"CONNECTION LOST"<<endl;
+				cb_this.parameterList.showParameters();
+				break;
+			// menu
 			case Signalname::TEST:
-				cout<<"Signal test arrived"<<endl;
 				if(cb_this == cb_1) {
 					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::TEST));
 				}
 				statePtr->test();
+				cout<<"### SENSOR TEST started ###"<<endl;
 				break;
 			case Signalname::RUN:
 				cout<<"Signal normal arrived"<<endl;

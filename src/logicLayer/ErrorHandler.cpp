@@ -13,6 +13,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 {
 	statePtr = &memberState;
+	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
 
 }
@@ -21,9 +22,13 @@ ErrorHandler::~ErrorHandler() {
 	// TODO Auto-generated destructor stub
 }
 
-void ErrorHandler::setPending(Signal signal) {
+void ErrorHandler::addPending(Signal signal) {
 	pendingSignals.insert(signal);
 	statePtr->errorOccurred();
+}
+
+void ErrorHandler::handle(Signal signal) {
+	statePtr->isPending(signal);
 }
 
 } /* namespace logicLayer */

@@ -10,8 +10,7 @@
 namespace logicLayer {
 
 Item::Item() :
-		statePtr(&stateMember),
-SignalReceiver::SignalReceiver()
+		statePtr(&stateMember)
 {
 	// TODO Auto-generated constructor stub
 
@@ -20,7 +19,5 @@ SignalReceiver::SignalReceiver()
 Item::~Item() {
 	// TODO Auto-generated destructor stub
 }
-
-void Item::operator()(){}
 
 } /* namespace logicLayer */

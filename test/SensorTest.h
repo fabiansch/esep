@@ -96,6 +96,10 @@ private:
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
+			cout<<"### SENSOR TEST started ###"<<endl;
+			if(cb_this == cb_1) {
+				cout<<"Please put item (metal above) on master's input."<<endl;
+			}
 		}
 		virtual void item_arrived(){}
 	};
@@ -343,11 +347,6 @@ public:
 		statePtr->testItem = &testItem; // connecting state->testItem with the SensorTest::testItem
 
 		hal.blinkGreen(Speed::slow);
-
-		if(cb_this == cb_1) {
-		cout<<"### SENSOR TEST started ###"<<endl;
-		cout<<"Please put item (metal above) on master's input."<<endl;
-		}
 	}
 
 	virtual ~SensorTest(){};

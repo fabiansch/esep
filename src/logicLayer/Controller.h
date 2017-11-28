@@ -65,7 +65,7 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			sensorTest->handle(signal);
-			errorHandler->setPending(signal);
+			errorHandler->handle(signal);
 		}
 	};
 

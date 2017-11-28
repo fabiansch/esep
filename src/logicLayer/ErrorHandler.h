@@ -26,25 +26,23 @@ private:
 	} *statePtr;
 
 	struct NO_ERROR : public State {
-		NO_ERROR() {
-			hal->redLightOff();
-			hal->blinkGreen(Speed::slow);
-		}
 		virtual void errorOccurred(){
+			hal->motorStop();
+			hal->greenLightOff();
+			hal->blinkRed(Speed::fast);
 			new (this) ERROR;
 		}
 
 	};
 
 	struct ERROR : public State {
-		ERROR() {
-			hal->greenLightOff();
-			hal->blinkRed(Speed::fast);
-		}
 		virtual void isPending(Signal signal) {
 			pendingSignals->erase(pendingSignals->find(signal));
 
 			if(pendingSignals->empty()) {
+				hal->motorStart();
+				hal->redLightOff();
+				hal->blinkGreen(Speed::slow);
 				new (this) NO_ERROR;
 			}
 		}
@@ -54,8 +52,9 @@ private:
 
 public:
 	ErrorHandler(hardwareLayer::HardwareLayer&);
-	virtual ~ErrorHandler();
-	void setPending(Signal);
+	~ErrorHandler();
+	void addPending(Signal);
+	void handle(Signal);
 private:
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;

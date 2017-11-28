@@ -35,19 +35,6 @@ void Dispatcher::notify() {
 		LOG_DEBUG<<"Dispatcher is notified"<<endl;
 
 		switch (signal.name) {
-		// serial
-		case Signalname::CONNECTION_LOST:
-			cout<<"CONNECTION LOST"<<endl;
-			hal.blinkRed(Speed::slow);
-			hal.greenLightOff();
-			cb_this.parameterList.showParameters();
-			break;
-		case Signalname::CONNECTION_CONNECTED:
-			cout<<"CONNECTION CONNECTED"<<endl;
-			hal.blinkGreen(Speed::slow);
-			hal.redLightOff();
-			cb_this.parameterList.showParameters();
-			break;
 		default:
 			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;
 			controller_ << signal;

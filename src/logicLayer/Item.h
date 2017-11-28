@@ -13,11 +13,10 @@
 
 namespace logicLayer {
 
-class Item: public logicLayer::SignalReceiver {
+class Item {
 public:
 	Item();
 	virtual ~Item();
-	void operator()();
 
 private:
 	struct State {//top-level state
