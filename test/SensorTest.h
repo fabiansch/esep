@@ -345,8 +345,6 @@ public:
 	{
 		statePtr->hal = &hal;
 		statePtr->testItem = &testItem; // connecting state->testItem with the SensorTest::testItem
-
-		hal.blinkGreen(Speed::slow);
 	}
 
 	virtual ~SensorTest(){};
@@ -412,6 +410,23 @@ public:
 				statePtr->lb_output_freed();
 				break;
 			// mmi
+			// buttons
+			case Signalname::BUTTON_E_STOP_PUSHED:
+				break;
+			case Signalname::BUTTON_E_STOP_PULLED:
+				break;
+			case Signalname::BUTTON_RESET_PUSHED:
+				break;
+			case Signalname::BUTTON_RESET_PULLED:
+				break;
+			case Signalname::BUTTON_START_PUSHED:
+				break;
+			case Signalname::BUTTON_START_PULLED:
+				break;
+			case Signalname::BUTTON_STOP_PUSHED:
+				break;
+			case Signalname::BUTTON_STOP_PULLED:
+				break;
 			// traffic lights
 			case Signalname::YELLOW_LIGHT_ON:
 				hal.yellowLightOn();
