@@ -53,7 +53,9 @@ void Controller::operator()() {
 					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::TEST));
 				}
 				statePtr->test();
-				cout<<"### SENSOR TEST started ###"<<endl;
+				if (cb_this == cb_1) {
+					cout << "Please put item (metal above) on master's input."<< endl;
+				}
 				break;
 			case Signalname::RUN:
 				cout<<"Signal normal arrived"<<endl;

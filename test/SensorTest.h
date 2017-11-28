@@ -97,15 +97,13 @@ private:
 		}
 		virtual void sensor_test_start(){
 			LOG_TEST<<__FUNCTION__<<endl;
+			LOG_TEST<<"### SENSOR TEST started ###"<<endl;
+		}
+		virtual void item_arrived(){
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
-			LOG_TEST<<"### SENSOR TEST started ###"<<endl;
-			if(cb_this == cb_1) {
-				cout<<"Please put item (metal above) on master's input."<<endl;
-			}
 		}
-		virtual void item_arrived(){}
 	};
 
 	//============================ SENSOR_HEIGHT_MATCH_Test =======================================
