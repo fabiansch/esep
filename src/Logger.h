@@ -24,13 +24,16 @@
 #define LOG_ERROR \
 	if(Logger::getLogger().getLoggingLevel() < ERROR); \
 	else Logger::getLogger().log("ERROR")
+#define LOG_TEST \
+    if(Logger::getLogger().getLoggingLevel() < TEST); \
+	else Logger::getLogger().logTest("TEST")
 
 #define LOG_SET_LEVEL(value) Logger::getLogger().setLoggingLevel(value);
 #define LOG_SCOPE LogScope logscope(__FUNCTION__);
 
 using namespace std;
 
-enum LEVEL {ERROR,WARNING,DEBUG};
+enum LEVEL {TEST,ERROR,WARNING,DEBUG};
 
 class Logger{
 public:
@@ -44,10 +47,7 @@ public:
     }
 
 	ofstream& logTest(string s) { // return ofstream, so cascading <<..<<..<< is possible.
-		time_t rawtime;
-		time(&rawtime);
-		testLogfile_ << asctime(localtime(&rawtime)) << " " << s << " "; // time ticks in seconds. Check OS for more accurate timer.
-		testLogfile_ << endl;
+		testLogfile_ << s << " "; // time ticks in seconds. Check OS for more accurate timer.
 		return testLogfile_;
 	}
 
@@ -62,7 +62,8 @@ private:
 	{		logfile_.open("logging.txt",ios::trunc);
 			logfile_<<"LOGFILE. Build: "<<__DATE__<<", "<<__TIME__<<endl;
 			testLogfile_.open("testLog.txt", ios::trunc);
-			}
+			testLogfile_<<"TESTLOGFILE. Build: "<<__DATE__<<", "<<__TIME__<<endl;
+	}
 	~Logger(){		logfile_<<"END OF LOGFILE"<<endl; logfile_.close(); testLogfile_.close();}
 
 	LEVEL logginglevel_;
