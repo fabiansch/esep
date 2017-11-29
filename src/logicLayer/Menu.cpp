@@ -46,9 +46,9 @@ void Menu::computeInput(){
 			test::Test::channelTest();
 		} else if(!textInput.compare("test sensors")) {
 			initSensorTest();
-			controller_ << Signalname::TEST;
+			controller_ << Signalname::SENSOR_TEST;
 		} else if(!textInput.compare("test buttons")) {
-			cout<<"not yet implemented."<<endl;
+			test::Test::buttonsTest();
 		} else if(!textInput.compare("test all")) {
 			test::Test::actuatorsTest(hal);
 			test::Test::mmiTest(hal);
@@ -56,7 +56,7 @@ void Menu::computeInput(){
 			test::Test::threadSafenessInGpioTest();
 			test::Test::channelTest();
 			initSensorTest();
-			controller_ << Signalname::TEST;
+			controller_ << Signalname::SENSOR_TEST;
 		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {

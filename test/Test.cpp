@@ -19,12 +19,14 @@ using namespace std;
 namespace logicLayer{
 namespace test{
 
+vector<Signal> Test::testSignalBuffer = vector<Signal>();
 
-Test::Test(hardwareLayer::HardwareLayer* hal) {
-	_hal = hal;
+
+Test::Test() {
 }
 
 Test::~Test() {
+
 }
 
 
@@ -202,6 +204,10 @@ void Test::mmiTest(hardwareLayer::HardwareLayer& hal){
 }
 
 
+void Test::testSignalBufferAdd(Signal signal) {
+	testSignalBuffer.push_back(signal);
+}
+
 void Test::buttonsTest(){
 	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
 	cout << "hit return to start."<<endl;
@@ -235,7 +241,7 @@ void Test::buttonsTest(){
 
 void Test::buttonTestHelper(hardwareLayer::io::SensorEvent signalBitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd) {
 
-	_hal->clearSignalBuffer();
+	testSignalBuffer.clear();
 
 	cout <<endl<< "test " << signalBitmask.name << "\n - please trigger button one or several times. Hit return key afterwards."<<endl;
 
@@ -246,7 +252,7 @@ void Test::buttonTestHelper(hardwareLayer::io::SensorEvent signalBitmask, Signal
 	int failureCounter = 0;
 	Signal signal;
 
-	while ((signal = _hal->getSignal()).name != Signalname::SIGNAL_BUFFER_EMPTY) {
+	while ((signal = nextSignal()).name != Signalname::SIGNAL_BUFFER_EMPTY) {
 
 		if (signal.name == eventTriggerStart) {
 			pushedCounter++;
@@ -267,6 +273,16 @@ void Test::buttonTestHelper(hardwareLayer::io::SensorEvent signalBitmask, Signal
 				"pushed successfully "   << pushedCounter << " time(s))\n" <<
 				"pulled successfully "   << pulledCounter  << " time(s))\n" << endl;
 	}
+}
+
+Signal Test::nextSignal() {
+	LOG_SCOPE
+	Signal signal(Signalname::SIGNAL_BUFFER_EMPTY);
+	if (not testSignalBuffer.empty()) {
+		signal = testSignalBuffer.front();
+		testSignalBuffer.erase(testSignalBuffer.begin());
+	}
+	return signal;
 }
 
 void createInstance(){

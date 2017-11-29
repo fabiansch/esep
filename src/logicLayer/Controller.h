@@ -12,6 +12,7 @@
 #include "SensorTest.h"
 #include "ErrorHandler.h"
 #include "Menu.h"
+#include "Test.h"
 
 namespace logicLayer {
 
@@ -27,7 +28,8 @@ private:
 	struct State {//top-level state
 		virtual void run(){}
 		virtual void stop(){ new (this) Idle;}
-		virtual void test(){}
+		virtual void sensor_test(){}
+		virtual void button_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -40,7 +42,7 @@ private:
 
 	struct Start : public State{
 		virtual void run(){}
-		virtual void test(){}
+		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -52,8 +54,11 @@ private:
 			Menu::printInfo();
 		}
 		virtual void run(){}
-		virtual void test(){
-			new (this) Test;
+		virtual void sensor_test(){
+			new (this) Sensor_Test;
+		}
+		virtual void button_test(){
+			new (this) Button_Test;
 		}
 		virtual void alert(){}
 		virtual void restart(){}
@@ -61,9 +66,9 @@ private:
 		virtual void calibrate(){}
 	};
 
-	struct Test : public State{
+	struct Sensor_Test : public State{
 		virtual void run(){}
-		virtual void test(){}
+		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -74,9 +79,22 @@ private:
 		}
 	};
 
+	struct Button_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::testSignalBufferAdd(signal);
+			errorHandler->handle(signal);
+		}
+	};
+
 	struct Run : public State{
 		virtual void run(){}
-		virtual void test(){}
+		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -88,7 +106,7 @@ private:
 	struct Safe : public State{
 		virtual void run(){}
 		virtual void stop(){/* do nothing */ }
-		virtual void test(){}
+		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -97,7 +115,7 @@ private:
 
 	struct Calibrate : public State{
 		virtual void run(){}
-		virtual void test(){}
+		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}

@@ -18,7 +18,7 @@ namespace test{
 
 class Test {
 public:
-	Test( hardwareLayer::HardwareLayer* hal);
+	Test();
 	virtual ~Test();
 
 	/**
@@ -31,12 +31,17 @@ public:
 	 */
 	static void mmiTest(hardwareLayer::HardwareLayer& hal);
 
+	/*
+	 * @brief adds signal to testSignalBuffer
+	 */
+	static void testSignalBufferAdd(Signal signal);
+
 	/**
 	 *@brief test buttons
 	 *@brief just working without LogicLayer started. LogicLayer is using
 	 *@brief SensorTest for testing other sensors
 	 */
-	void buttonsTest();
+	static void buttonsTest();
 
 	/**
 	*  @brief test singleton thread safeness
@@ -50,9 +55,6 @@ public:
 
 	static void channelTest();
 private:
-
-	hardwareLayer::HardwareLayer* _hal;
-
 	/**
 	 *
 	 */
@@ -63,8 +65,11 @@ private:
 	 */
 	static bool nextTest(string functionName);
 
-	void buttonTestHelper(hardwareLayer::io::SensorEvent signalbitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd);
+	static Signal nextSignal();
 
+	static void buttonTestHelper(hardwareLayer::io::SensorEvent signalbitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd);
+
+	static vector<Signal> testSignalBuffer;
 };
 
 

@@ -48,14 +48,23 @@ void Controller::operator()() {
 				cb_this.parameterList.showParameters();
 				break;
 			// menu
-			case Signalname::TEST:
+			case Signalname::SENSOR_TEST:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::TEST));
+					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::SENSOR_TEST));
 				}
-				statePtr->test();
+				statePtr->sensor_test();
 				if (cb_this == cb_1) {
 					cout << "################ Automated Sensor Test Start ###############" << endl;
 					cout << "Please put item (metal above) on master's input."<< endl;
+				}
+				break;
+			case Signalname::BUTTON_TEST:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::BUTTON_TEST));
+				}
+				statePtr->button_test();
+				if (cb_this == cb_1) {
+					cout << "################ Button Test Start ###############" << endl;
 				}
 				break;
 			case Signalname::RUN:
