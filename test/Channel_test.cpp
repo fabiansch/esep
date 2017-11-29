@@ -123,6 +123,10 @@ private:
 
 void Test::channelTest() {
 
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
+
 	constexpr int SEC_10 = 20;
 	constexpr int BUFFER_SIZE = 3;
 
@@ -226,7 +230,7 @@ void Test::channelTest() {
 	}
 
 
-	cout<<"## Finish Channel Test ##"<<endl;
+	cout<<"## Finish Channel Test ##"<<endl<<endl;
 	nextTest(__FUNCTION__);
 }
 

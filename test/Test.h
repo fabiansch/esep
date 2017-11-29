@@ -24,12 +24,12 @@ public:
 	/**
 	 *  @brief test actuators
 	 */
-	void actuatorsTest();
+	static void actuatorsTest(hardwareLayer::HardwareLayer& hal);
 
 	/**
 	 *  @brief test mmi
 	 */
-	void mmiTest();
+	static void mmiTest(hardwareLayer::HardwareLayer& hal);
 
 	/**
 	 *@brief test buttons
@@ -41,12 +41,12 @@ public:
 	/**
 	*  @brief test singleton thread safeness
 	*/
-	void singletonThreadSafeTest();
+	static void singletonThreadSafeTest();
 
 	/**
 	 *  @brief test thread safeness in GPIO class
 	 */
-	void threadSafenessInGpioTest();
+	static void threadSafenessInGpioTest();
 
 	static void channelTest();
 private:

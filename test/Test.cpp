@@ -28,177 +28,184 @@ Test::~Test() {
 }
 
 
-void Test::actuatorsTest(){
+void Test::actuatorsTest(hardwareLayer::HardwareLayer& hal){
 
-	cout << "start " << __FUNCTION__ << endl;
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
 
 	cout << "test motor (counterclockwise, fast) " << endl;
-	_hal->motorStart();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
-	_hal->motorRotateCounterclockwise();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_COUNTER_CLOCKWISE));
-	_hal->motorFast();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_FAST));
+	hal.motorStart();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
+	hal.motorRotateCounterclockwise();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_COUNTER_CLOCKWISE));
+	hal.motorFast();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_FAST));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test motor (counterclockwise, slow) " << endl;
-	_hal->motorStart();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
-	_hal->motorRotateCounterclockwise();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_COUNTER_CLOCKWISE));
-	_hal->motorSlow();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_SLOW));
+	hal.motorStart();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
+	hal.motorRotateCounterclockwise();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_COUNTER_CLOCKWISE));
+	hal.motorSlow();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_SLOW));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test motor (clockwise, fast) " << endl;
-	_hal->motorStart();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
-	_hal->motorRotateClockwise();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_CLOCKWISE));
-	_hal->motorFast();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_FAST));
+	hal.motorStart();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_START));
+	hal.motorRotateClockwise();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_ROTATE_CLOCKWISE));
+	hal.motorFast();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_FAST));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test motor (clockwise, slow) " << endl;
-	_hal->motorSlow();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_SLOW));
+	hal.motorSlow();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_SLOW));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test motor stop" << endl;
-	_hal->motorStop();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_STOP));
+	hal.motorStop();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::MOTOR_STOP));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test open switch point - please continue soon" << endl;
-	_hal->switchPointOpen();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::SWITCH_OPEN));
+	hal.switchPointOpen();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::SWITCH_OPEN));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test close switch point " << endl;
-	_hal->switchPointClose();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::SWITCH_CLOSE));
+	hal.switchPointClose();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::SWITCH_CLOSE));
 
 	if( !nextTest(__FUNCTION__) ) return;
 
-	cout << __FUNCTION__ <<  "  successful." << endl;
+	cout << __FUNCTION__ <<  "  successful." << endl<<endl;
 
 }
 
 
-void Test::mmiTest(){
+void Test::mmiTest(hardwareLayer::HardwareLayer& hal){
 
-	cout << "start " << __FUNCTION__ << endl;
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
+
 	cout<< "testButtonLEDs on: Reset,Start,Q1,Q2" <<endl;
-	_hal->Q1LEDOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::Q1_LED_ON));
-	_hal->Q2LEDOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::Q2_LED_ON));
-	_hal->ResetLEDOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RESET_LED_ON));
-	_hal->StartLEDOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::START_LED_ON));
+	hal.Q1LEDOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::Q1_LED_ON));
+	hal.Q2LEDOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::Q2_LED_ON));
+	hal.ResetLEDOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RESET_LED_ON));
+	hal.StartLEDOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::START_LED_ON));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout<< "testButtonLEDs off: Reset,Start,Q1,Q2" <<endl;
-	_hal->Q1LEDOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::Q1_LED_OFF));
-	_hal->Q2LEDOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::Q2_LED_OFF));
-	_hal->ResetLEDOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RESET_LED_OFF));
-	_hal->StartLEDOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::START_LED_OFF));
+	hal.Q1LEDOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::Q1_LED_OFF));
+	hal.Q2LEDOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::Q2_LED_OFF));
+	hal.ResetLEDOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RESET_LED_OFF));
+	hal.StartLEDOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::START_LED_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test lamps on: red, yellow, green" << endl;
-	_hal->yellowLightOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_ON));
-	_hal->redLightOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_ON));
-	_hal->greenLightOn();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::GREEN_LIGHT_ON));
+	hal.yellowLightOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_ON));
+	hal.redLightOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_ON));
+	hal.greenLightOn();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::GREEN_LIGHT_ON));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking fast: red, yellow, green " << endl;
-	_hal->blinkGreen(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_FAST));
-	_hal->blinkRed(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_FAST));
-	_hal->blinkYellow(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_FAST));
+	hal.blinkGreen(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_FAST));
+	hal.blinkRed(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_FAST));
+	hal.blinkYellow(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_FAST));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking fast: yellow, green" << endl;
-	_hal->redLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
+	hal.redLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking fast: green" << endl;
-	_hal->yellowLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
+	hal.yellowLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking slow: red, yellow, green" << endl;
-	_hal->blinkGreen(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
-	_hal->blinkYellow(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
-	_hal->blinkRed(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
+	hal.blinkGreen(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
+	hal.blinkYellow(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
+	hal.blinkRed(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking slow: yellow, green" << endl;
-	_hal->redLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
+	hal.redLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking slow: green" << endl;
-	_hal->yellowLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
+	hal.yellowLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking slow: red, yellow, green" << endl;
-	_hal->blinkGreen(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
-	_hal->blinkYellow(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
-	_hal->blinkRed(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
+	hal.blinkGreen(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
+	hal.blinkYellow(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
+	hal.blinkRed(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking fast: red, yellow, green" << endl;
-	_hal->blinkGreen(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_FAST));
-	_hal->blinkYellow(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_FAST));
-	_hal->blinkRed(Speed::fast);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_FAST));
+	hal.blinkGreen(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_FAST));
+	hal.blinkYellow(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_FAST));
+	hal.blinkRed(Speed::fast);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_FAST));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking slow: red, yellow, green" << endl;
-	_hal->blinkGreen(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
-	_hal->blinkYellow(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
-	_hal->blinkRed(Speed::slow);
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
+	hal.blinkGreen(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_GREEN_SLOW));
+	hal.blinkYellow(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_YELLOW_SLOW));
+	hal.blinkRed(Speed::slow);
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::BLINK_RED_SLOW));
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout << "test blinking: nothing" << endl;
-	_hal->greenLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::GREEN_LIGHT_OFF));
-	_hal->yellowLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
-	_hal->redLightOff();
-	_hal->sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
+	hal.greenLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::GREEN_LIGHT_OFF));
+	hal.yellowLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::YELLOW_LIGHT_OFF));
+	hal.redLightOff();
+	hal.sendSerial(Signal(cb_this, cb_all, Signalname::RED_LIGHT_OFF));
 	if( !nextTest(__FUNCTION__) ) return;
 
-	cout  << __FUNCTION__ << " successful. " << endl;
+	cout  << __FUNCTION__ << " successful. " << endl<<endl;
 }
 
 
 void Test::buttonsTest(){
-	cout << "start " << __FUNCTION__ <<endl;
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
 
 	buttonTestHelper(	hardwareLayer::io::SignalGenerator::BUTTON_START,
 						Signalname::BUTTON_START_PUSHED,
@@ -269,7 +276,9 @@ void createInstance(){
 
 
 void Test::singletonThreadSafeTest(){
-	cout << "start " << __FUNCTION__ << endl;
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
 
 	cout << "Get one singleton created and Two Hello Worlds?"<<endl;
 	thread t1(&createInstance);
@@ -289,7 +298,9 @@ void Test::writeSomethingElse(hardwareLayer::io::GPIO *gpio, int difference) {
 }
 
 void Test::threadSafenessInGpioTest(){
-	cout << "start " << __FUNCTION__ << endl;
+	cout << "################ start " << __FUNCTION__ << " ####################" << endl;
+	cout << "hit return to start."<<endl;
+	cin.get();
 
 	cout << "Looks the same?"<<endl;
 	cout << "######################" 	<< endl;
@@ -305,6 +316,7 @@ void Test::threadSafenessInGpioTest(){
 	thread t2(&writeSomethingElse, gpio, 2);
 	t1.join();
 	t2.join();
+	delete gpio;
 	cout << "######################" << endl;
 
 	if( !nextTest(__FUNCTION__) ) return;

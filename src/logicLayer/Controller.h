@@ -11,6 +11,7 @@
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
+#include "Menu.h"
 
 namespace logicLayer {
 
@@ -25,6 +26,7 @@ private:
 
 	struct State {//top-level state
 		virtual void run(){}
+		virtual void stop(){ new (this) Idle;}
 		virtual void test(){}
 		virtual void alert(){}
 		virtual void restart(){}
@@ -45,7 +47,10 @@ private:
 		virtual void calibrate(){}
 	};
 
-	struct Idle : public State{
+	struct Idle : public State {
+		Idle(){
+			Menu::printInfo();
+		}
 		virtual void run(){}
 		virtual void test(){
 			new (this) Test;
@@ -82,6 +87,7 @@ private:
 
 	struct Safe : public State{
 		virtual void run(){}
+		virtual void stop(){/* do nothing */ }
 		virtual void test(){}
 		virtual void alert(){}
 		virtual void restart(){}

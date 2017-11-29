@@ -312,7 +312,7 @@ private:
 		virtual void lb_slide_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" successfully"<<endl;
-			hal->sendSerial(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
+			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
 
 			if(cb_this != cb_1) {
 				LOG_TEST<<name()<<" => ";
@@ -331,8 +331,10 @@ private:
 		virtual void sensor_test_successful(uint8_t sender) {
 			LOG_TEST<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
 			if(sender == cb_last) {
-				LOG_TEST<<"### SENSOR TEST finished ###"<<endl;
-				cout<<"### SENSOR TEST finished ###"<<endl;
+				LOG_TEST<<"################ Automated Sensor Test finished ###################"<<endl;
+				cout<<    "################ Automated Sensor Test finished ###################"<<endl;
+				cout<<"Result stored in testLog.txt"<<endl<<endl<<endl;
+				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::STOP));
 				new (this) LB_INPUT_Test;
 			}
 		}

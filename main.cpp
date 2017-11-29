@@ -16,10 +16,6 @@ int main(int argc, char *argv[])
 	LOG_SCOPE;
 	printStartMessage();
 
-	LOG_TEST<< "in main methode angekommen" <<endl;
-	LOG_TEST<< "in main methode angekommen" <<endl;
-	LOG_TEST<< "in main methode angekommen" <<endl;
-
 	bool restart = false;
 	do {
 		evaluateIfCb_1();

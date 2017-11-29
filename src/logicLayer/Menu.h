@@ -9,22 +9,24 @@
 #define MENU_H_
 
 #include "Channel.h"
+#include "HardwareLayer.h"
 
 namespace logicLayer {
 
 class Menu {
 public:
-	Menu(Channel<Signal>&);
+	Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>&);
 	virtual ~Menu();
 	void computeInput();
 	bool isRestart();
+	static void printInfo();
 
 private:
+	hardwareLayer::HardwareLayer& hal;
 	Channel<Signal>& controller_;
 	bool restart;
-	void printInfo();
 	void printOptions();
-	void testInit();
+	void initSensorTest();
 };
 }
 

@@ -54,6 +54,7 @@ void Controller::operator()() {
 				}
 				statePtr->test();
 				if (cb_this == cb_1) {
+					cout << "################ Automated Sensor Test Start ###############" << endl;
 					cout << "Please put item (metal above) on master's input."<< endl;
 				}
 				break;
@@ -63,6 +64,10 @@ void Controller::operator()() {
 			case Signalname::CALIBRATION:
 				break;
 			case Signalname::STOP:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::STOP));
+				}
+				statePtr->stop();
 				break;
 
 			default:

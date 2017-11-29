@@ -18,7 +18,7 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 		controller_.getChannel(),
 		timer_.getChannel()
 		)
-, menu_(controller_.getChannel())
+, menu_(hal, controller_.getChannel())
 {
 	LOG_SCOPE
 

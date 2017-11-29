@@ -8,17 +8,17 @@
 #include "Menu.h"
 #include "Logger.h"
 #include "Parameter.h"
+#include "Test.h"
 
 namespace logicLayer {
 
-Menu::Menu(Channel<Signal>& controller)
-: controller_(controller),
-  restart(false)
+Menu::Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>& controller)
+: hal(hal)
+, controller_(controller)
+, restart(false)
 {}
 
 void Menu::computeInput(){
-
-	printInfo();
 
 	string textInput;
 
@@ -27,8 +27,13 @@ void Menu::computeInput(){
 		cin.get();
 
 		if(!textInput.compare("test")) {
-			testInit();
-			printInfo();
+			test::Test::actuatorsTest(hal);
+			test::Test::mmiTest(hal);
+			test::Test::singletonThreadSafeTest();
+			test::Test::threadSafenessInGpioTest();
+			test::Test::channelTest();
+			initSensorTest();
+			controller_ << Signalname::TEST;
 		} else	if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {
@@ -54,7 +59,7 @@ bool Menu::isRestart(){
 }
 
 void Menu::printInfo() {
-	cout << "\nPlease enter command. Type \"help\" for options." << endl;
+	cout << "\n##################### Main Menu ##############################\nPlease enter command. Type \"help\" for options." << endl;
 }
 
 void Menu::printOptions() {
@@ -68,9 +73,11 @@ void Menu::printOptions() {
 			cout<< "\nhelp\t\tShows this help text.\n" <<endl;
 }
 
-void Menu::testInit() {
+void Menu::initSensorTest() {
 	string textInput;
-	LOG_TEST<<"### NEW TEST START ###"<<endl;
+	LOG_TEST<<"################ Initialize Automated Sensor Test ####################"<<endl;
+	cout<<"################ Initialize Automated Sensor Test ####################"<<endl;
+
 
 	//=============== calculating number of connected conveyor belts ==============
 	int val = (int) cb_available;
@@ -113,8 +120,6 @@ void Menu::testInit() {
 		cin.get();
 		LOG_TEST<<"Festo Machine Nr. "<<i<<": "<<textInput<<endl;
 	}
-
-	controller_ << Signalname::TEST;
 }
 
 Menu::~Menu() {
