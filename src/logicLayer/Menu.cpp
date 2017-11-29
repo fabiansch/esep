@@ -22,11 +22,34 @@ void Menu::computeInput(){
 
 	string textInput;
 
-	while(true){
+	while(true) {
 		cin >> textInput;
 		cin.get();
 
 		if(!textInput.compare("test")) {
+			cout<<"please specify test:"<<endl<<endl;
+			cout<<"actuators"<<endl;
+			cout<<"mmi"<<endl;
+			cout<<"threadSafeness"<<endl;
+			cout<<"channel"<<endl;
+			cout<<"sensors"<<endl;
+			cout<<"buttons"<<endl;
+			cout<<"all"<<endl<<endl;
+		} else if(!textInput.compare("test actuators")) {
+			test::Test::actuatorsTest(hal);
+		} else if(!textInput.compare("test mmi")) {
+			test::Test::mmiTest(hal);
+		} else if(!textInput.compare("test threadSafeness")) {
+			test::Test::singletonThreadSafeTest();
+			test::Test::threadSafenessInGpioTest();
+		} else if(!textInput.compare("test channel")) {
+			test::Test::channelTest();
+		} else if(!textInput.compare("test sensors")) {
+			initSensorTest();
+			controller_ << Signalname::TEST;
+		} else if(!textInput.compare("test buttons")) {
+			cout<<"not yet implemented."<<endl;
+		} else if(!textInput.compare("test all")) {
 			test::Test::actuatorsTest(hal);
 			test::Test::mmiTest(hal);
 			test::Test::singletonThreadSafeTest();
@@ -34,7 +57,7 @@ void Menu::computeInput(){
 			test::Test::channelTest();
 			initSensorTest();
 			controller_ << Signalname::TEST;
-		} else	if(!textInput.compare("calibration")) {
+		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {
 			controller_ << Signalname::RUN;
