@@ -313,7 +313,13 @@ private:
 		virtual void lb_slide_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" successfully"<<endl;
-			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
+			hal->sendSerial(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
+			if (cb_this == cb_1){
+				LOG_TEST<<name()<<" => ";
+				new (this) OTHER_CBs_Test;
+				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
+				LOG_TEST<<name()<<endl;
+			}
 		}
 	};
 
