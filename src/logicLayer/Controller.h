@@ -80,6 +80,7 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
+			LOG_DEBUG<<"forward"<<endl;
 			sensorTest->handle(signal);
 			errorHandler->handle(signal);
 		}
