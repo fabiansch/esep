@@ -50,6 +50,7 @@ void ErrorHandler::handle(Signal signal) {
 	default:
 		statePtr->isPending(signal);
 	}
+	cout<<"ESTOPPPUSHED COUNTER "<<eStopPushedCounter<<endl;
 }
 
 } /* namespace logicLayer */
