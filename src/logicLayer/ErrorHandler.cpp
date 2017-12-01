@@ -11,6 +11,7 @@ namespace logicLayer {
 
 ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
+, eStopPushedCounter(0)
 {
 	statePtr = &memberState;
 	statePtr->hal = &hal;
@@ -30,6 +31,15 @@ void ErrorHandler::handle(Signal signal) {
 	switch(signal.name) {
 	case Signalname::BUTTON_E_STOP_PUSHED:
 		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
+		hal.sendSerial(Signal(cb_this, cb_available, signal.name));
+		eStopPushedCounter++;
+		break;
+	case Signalname::BUTTON_E_STOP_PULLED:
+		statePtr->isPending(signal);
+		hal.sendSerial(Signal(cb_this, cb_available, signal.name));
+		if(eStopPushedCounter>0) {
+			eStopPushedCounter--;
+		}
 		break;
 	case Signalname::BUTTON_RESET_PUSHED:
 		break;

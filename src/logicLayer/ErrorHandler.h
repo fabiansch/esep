@@ -72,6 +72,7 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;
+	int eStopPushedCounter;
 };
 
 } /* namespace logicLayer */
