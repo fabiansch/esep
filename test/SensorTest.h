@@ -291,6 +291,7 @@ private:
 
 	//============================ LB_SLIDE_Test =======================================
 	struct LB_SLIDE_Test : public State {
+		virtual void sensor_test_timeout() override {} // from output test still accepted...
 		virtual void lb_input_interrupted() {
 			hal->motorRotateClockwise();
 			hal->motorFast();

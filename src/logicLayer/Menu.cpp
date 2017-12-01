@@ -35,28 +35,32 @@ void Menu::computeInput(){
 			cout<<"sensors"<<endl;
 			cout<<"buttons"<<endl;
 			cout<<"all"<<endl<<endl;
-		} else if(!textInput.compare("test actuators")) {
+			cin >> textInput;
+			cin.get();
+
+			if(!textInput.compare("actuators")) {
 			test::Test::actuatorsTest(hal);
-		} else if(!textInput.compare("test mmi")) {
-			test::Test::mmiTest(hal);
-		} else if(!textInput.compare("test threadSafeness")) {
-			test::Test::singletonThreadSafeTest();
-			test::Test::threadSafenessInGpioTest();
-		} else if(!textInput.compare("test channel")) {
-			test::Test::channelTest();
-		} else if(!textInput.compare("test sensors")) {
-			initSensorTest();
-			controller_ << Signalname::SENSOR_TEST;
-		} else if(!textInput.compare("test buttons")) {
-			test::Test::buttonsTest();
-		} else if(!textInput.compare("test all")) {
-			test::Test::actuatorsTest(hal);
-			test::Test::mmiTest(hal);
-			test::Test::singletonThreadSafeTest();
-			test::Test::threadSafenessInGpioTest();
-			test::Test::channelTest();
-			initSensorTest();
-			controller_ << Signalname::SENSOR_TEST;
+			} else if(!textInput.compare("mmi")) {
+				test::Test::mmiTest(hal);
+			} else if(!textInput.compare("threadSafeness")) {
+				test::Test::singletonThreadSafeTest();
+				test::Test::threadSafenessInGpioTest();
+			} else if(!textInput.compare("channel")) {
+				test::Test::channelTest();
+			} else if(!textInput.compare("sensors")) {
+				initSensorTest();
+				controller_ << Signalname::SENSOR_TEST;
+			} else if(!textInput.compare("buttons")) {
+				test::Test::buttonsTest();
+			} else if(!textInput.compare("all")) {
+				test::Test::actuatorsTest(hal);
+				test::Test::mmiTest(hal);
+				test::Test::singletonThreadSafeTest();
+				test::Test::threadSafenessInGpioTest();
+				test::Test::channelTest();
+				initSensorTest();
+				controller_ << Signalname::SENSOR_TEST;
+			}
 		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {
