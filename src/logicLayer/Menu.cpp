@@ -39,10 +39,10 @@ void Menu::computeInput(){
 			cin.get();
 
 			if(!textInput.compare("actuators")) {
-				controller_ << Signalname::SENSOR_TEST;
+				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::actuatorsTest(hal);
 			} else if(!textInput.compare("mmi")) {
-				controller_ << Signalname::SENSOR_TEST;
+				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::mmiTest(hal);
 			} else if(!textInput.compare("threadSafeness")) {
 				test::Test::singletonThreadSafeTest();

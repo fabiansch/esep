@@ -153,6 +153,7 @@ enum class Signalname : uint16_t {
 	//Menu
 	SENSOR_TEST,
 	BUTTON_TEST,
+	ACTUATOR_TEST,
 	RUN,
 	CALIBRATION,
 	STOP,

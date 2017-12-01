@@ -23,13 +23,12 @@ private:
 	SensorTest sensorTest;
 	ErrorHandler errorHandler;
 
-
-
 	struct State {//top-level state
 		virtual void run(){}
 		virtual void stop(){ new (this) Idle;}
 		virtual void sensor_test(){}
 		virtual void button_test(){}
+		virtual void actuator_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -38,6 +37,7 @@ private:
 
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
+		hardwareLayer::HardwareLayer* hal;
 	} *statePtr;
 
 	struct Start : public State{
@@ -60,11 +60,8 @@ private:
 		virtual void button_test(){
 			new (this) Button_Test;
 		}
-		virtual void mmi_test(){
-			new (this) Mmi_Test;
-		}
-		virtual void actuators_test(){
-			new (this) Actuators_Test;
+		virtual void actuator_test(){
+			new (this) Actuator_Test;
 		}
 		virtual void alert(){}
 		virtual void restart(){}
@@ -85,33 +82,20 @@ private:
 		}
 	};
 
+	struct Actuator_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::actuatorsTestHelper(hal, signal);
+			errorHandler->handle(signal);
+		}
+	};
+
 	struct Button_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
-		}
-	};
-
-	struct Mmi_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
-		}
-	};
-
-	struct Actuators_Test : public State{
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}

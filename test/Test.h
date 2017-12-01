@@ -26,6 +26,8 @@ public:
 	 */
 	static void actuatorsTest(hardwareLayer::HardwareLayer& hal);
 
+	static void actuatorsTestHelper(hardwareLayer::HardwareLayer* hal, Signal& signal);
+
 	/**
 	 *  @brief test mmi
 	 */

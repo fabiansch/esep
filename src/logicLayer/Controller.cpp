@@ -19,6 +19,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal)
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	statePtr->sensorTest = &sensorTest;
 	statePtr->errorHandler = &errorHandler;
+	statePtr->hal = &hal;
 }
 
 Controller::~Controller() {
