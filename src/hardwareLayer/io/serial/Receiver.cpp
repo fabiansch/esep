@@ -49,10 +49,12 @@ namespace serial {
 								evaluateTokenAndSendFeed(msg);
 							}
 							registerOnToken(msg);
+							forwardIfNotMaster(msg);
 							break;
 						case Signalname::SERIAL_WATCHDOG_FEED:
 							evaluateFeed(msg);
 							dog_.feed();
+							forwardIfNotMaster(msg);
 						break;
 						case Signalname::SERIAL_TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
@@ -66,11 +68,14 @@ namespace serial {
 							);
 						break;
 						default: // push signal to logic layer
-							sgen_.pushBackOnSignalBuffer(msg.signal);
+							if(msg.signal.sender != cb_this) {
+								sgen_.pushBackOnSignalBuffer(msg.signal);
+								forward(msg);
+							}
 						break;
 					}
 				}
-			forwardIfNotMaster(msg);
+
 			}
 			else if (msg.checkNumber == WRONG_CN) {  // timeout of blocking receive
 
@@ -129,8 +134,12 @@ namespace serial {
 
 	void Receiver::forwardIfNotMaster(Message& msg) {
 		if (cb_this != cb_1 && msg.signal.receiver > 0) {
-			serial_.send(msg);
+			forward(msg);
 		}
+	}
+
+	void Receiver::forward(Message& msg) {
+		serial_.send(msg);
 	}
 
 	void Receiver::setNext_cb() {

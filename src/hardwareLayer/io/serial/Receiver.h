@@ -33,6 +33,7 @@ private:
 	void registerOnToken(Message& msg);
 	void sendFeed();
 	void evaluateFeed(const Message& msg);
+	void forward(Message& msg);
 	void forwardIfNotMaster(Message& msg);
 
     Interface& serial_;
