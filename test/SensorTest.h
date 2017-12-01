@@ -274,6 +274,7 @@ private:
 		virtual void sensor_switch_is_closed(){}
 	};
 
+	//============================ LB_OUTPUT_FREED_Test =======================================
 	struct LB_OUTPUT_FREED_Test : public State {
 		virtual void sensor_test_timeout() override {}
 		virtual void lb_output_freed() {
@@ -291,7 +292,6 @@ private:
 
 	//============================ LB_SLIDE_Test =======================================
 	struct LB_SLIDE_Test : public State {
-		virtual void sensor_test_timeout() override {} // from output test still accepted...
 		virtual void lb_input_interrupted() {
 			hal->motorRotateClockwise();
 			hal->motorFast();
@@ -301,7 +301,10 @@ private:
 		virtual void lb_height_interrupted() {}
 		virtual void lb_height_freed() {}
 		virtual void lb_switch_interrupted() {}
-		virtual void lb_switch_freed() {}
+		virtual void lb_switch_freed() {
+			timeout_timer_th->detach();
+			*timeout_timer_th = std::thread(timeout_timer, hal, 2000);
+		}
 		virtual void sensor_height_match(){	}
 		virtual void sensor_height_not_match(){}
 		virtual void sensor_metal_match(){}
