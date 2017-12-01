@@ -23,6 +23,7 @@ private:
 
 		hardwareLayer::HardwareLayer* hal;
 		std::set<Signal>* pendingSignals;
+		int* eStopCounter;
 	} *statePtr;
 
 
@@ -56,7 +57,7 @@ private:
 		virtual void isPending(Signal signal) {
 			pendingSignals->erase(pendingSignals->find(signal));
 
-			if(pendingSignals->empty()) {
+			if(pendingSignals->empty() && *eStopCounter == 0) {
 				new (this) NO_ERROR;
 			}
 		}
@@ -72,7 +73,7 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;
-	int eStopPushedCounter;
+	int eStopCounter;
 };
 
 } /* namespace logicLayer */
