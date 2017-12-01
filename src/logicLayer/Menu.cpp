@@ -39,6 +39,7 @@ void Menu::computeInput(){
 			cin.get();
 
 			if(!textInput.compare("actuators")) {
+				controller_ << Signalname::SENSOR_TEST;
 				test::Test::actuatorsTest(hal);
 			} else if(!textInput.compare("mmi")) {
 				test::Test::mmiTest(hal);

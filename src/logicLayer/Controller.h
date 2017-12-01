@@ -38,7 +38,6 @@ private:
 
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
-		Test* test;
 	} *statePtr;
 
 	struct Start : public State{
@@ -107,7 +106,6 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
-			test->handle(signal);
 			errorHandler->handle(signal);
 		}
 	};

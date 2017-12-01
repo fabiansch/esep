@@ -356,10 +356,5 @@ bool Test::nextTest(string functionName){
 	}
 }
 
-void Test::handle(Signal signal){
-
-}
-
-
 } /* test */
 } /* logicLayer */
