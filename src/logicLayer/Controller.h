@@ -60,6 +60,12 @@ private:
 		virtual void button_test(){
 			new (this) Button_Test;
 		}
+		virtual void mmi_test(){
+			new (this) Mmi_Test;
+		}
+		virtual void actuators_test(){
+			new (this) Actuators_Test;
+		}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
@@ -80,6 +86,32 @@ private:
 	};
 
 	struct Button_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::testSignalBufferAdd(signal);
+			errorHandler->handle(signal);
+		}
+	};
+
+	struct Mmi_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::testSignalBufferAdd(signal);
+			errorHandler->handle(signal);
+		}
+	};
+
+	struct Actuators_Test : public State{
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
