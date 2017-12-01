@@ -51,7 +51,7 @@ void Controller::operator()() {
 			// menu
 			case Signalname::SENSOR_TEST:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::SENSOR_TEST));
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::SENSOR_TEST));
 				}
 				statePtr->sensor_test();
 				if (cb_this == cb_1) {
@@ -68,6 +68,15 @@ void Controller::operator()() {
 					cout << "################ Button Test Start ###############" << endl;
 				}
 				break;
+			case Signalname::ACTUATOR_TEST:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::ACTUATOR_TEST));
+				}
+				statePtr->actuator_test();
+				if (cb_this == cb_1) {
+					cout << "################ Actuator Test Start ###############" << endl;
+				}
+				break;
 			case Signalname::RUN:
 				cout<<"Signal normal arrived"<<endl;
 				break;
@@ -75,11 +84,10 @@ void Controller::operator()() {
 				break;
 			case Signalname::STOP:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::STOP));
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::STOP));
 				}
 				statePtr->stop();
 				break;
-
 			default:
 				statePtr->forward(signal);
 				break;
