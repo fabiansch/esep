@@ -25,7 +25,12 @@ private:
 
 	struct State {//top-level state
 		virtual void run(){}
-		virtual void stop(){ new (this) Idle;}
+		virtual void stop() {
+			hal->redLightOff();
+			hal->yellowLightOff();
+			hal->greenLightOn();
+			new (this) Idle;
+		}
 		virtual void sensor_test(){}
 		virtual void button_test(){}
 		virtual void actuator_test(){}
