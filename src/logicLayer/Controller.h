@@ -124,6 +124,32 @@ private:
 		}
 	};
 
+	struct Channel_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::testSignalBufferAdd(signal);
+			errorHandler->handle(signal);
+		}
+	};
+
+	struct ThreadSafeness_Test : public State{
+		virtual void run(){}
+		virtual void sensor_test(){}
+		virtual void alert(){}
+		virtual void restart(){}
+		virtual void ready(){}
+		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			test::Test::testSignalBufferAdd(signal);
+			errorHandler->handle(signal);
+		}
+	};
+
 	struct Run : public State{
 		virtual void run(){}
 		virtual void sensor_test(){}
