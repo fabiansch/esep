@@ -283,15 +283,14 @@ private:
 			LOG_TEST<<name()<<" successfully"<<endl;
 			if(cb_this != cb_last) {
 				cout<<"Test continues on next conveyer belt. When item reaches last conveyer belt's output, please put it on input of master again."<<endl;
-				WAIT(1000);
-				hal->motorStop();
-
+				std::thread thread = std::thread(motor_stop_timer,hal,1000);
+				thread.detach();
 				LOG_TEST<<name()<<" => ";
-				new (this) LB_SLIDE_Test;
+				new (this) LB_OUTPUT_TIMEOUT_State;
 				LOG_TEST<<name()<<endl;
 			} else {
 				LOG_TEST<<name()<<" => ";
-				new (this) LB_OUTPUT_TIMEOUT_State;
+				new (this) LB_SLIDE_Test;
 				LOG_TEST<<name()<<endl;
 			}
 		}
@@ -336,6 +335,18 @@ private:
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" successfully"<<endl;
 			hal->sendSerial(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_SLIDE_TIMEOUT_State;
+			LOG_TEST<<name()<<endl;
+
+		}
+	};
+
+
+	//============================ LB_SLIDE_TIMEOUT_State =======================================
+	struct LB_SLIDE_TIMEOUT_State: public State {
+		virtual void sensor_test_timeout() {
+
 			if (cb_this == cb_1){
 				LOG_TEST<<name()<<" => ";
 				new (this) OTHER_CBs_Test;
@@ -371,6 +382,13 @@ private:
 		if(milliseconds > 0) {
 			WAIT(milliseconds);
 			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::SENSOR_TEST_TIMEOUT));
+		}
+	}
+
+	static void motor_stop_timer(hardwareLayer::HardwareLayer* hal, int milliseconds) {
+		if(milliseconds > 0) {
+			WAIT(milliseconds);
+			hal->motorStop();
 		}
 	}
 
