@@ -39,7 +39,7 @@ void Menu::computeInput(){
 			cin.get();
 
 			if(!textInput.compare("actuators")) {
-			test::Test::actuatorsTest(hal);
+				test::Test::actuatorsTest(hal);
 			} else if(!textInput.compare("mmi")) {
 				test::Test::mmiTest(hal);
 			} else if(!textInput.compare("threadSafeness")) {

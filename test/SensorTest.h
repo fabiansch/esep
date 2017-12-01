@@ -314,16 +314,6 @@ private:
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" successfully"<<endl;
 			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
-
-			if(cb_this != cb_1) {
-				LOG_TEST<<name()<<" => ";
-				new (this) LB_INPUT_Test;;
-				LOG_TEST<<name()<<endl;
-			} else {
-				LOG_TEST<<name()<<" => ";
-				new (this) OTHER_CBs_Test;;
-				LOG_TEST<<name()<<endl;
-			}
 		}
 	};
 
