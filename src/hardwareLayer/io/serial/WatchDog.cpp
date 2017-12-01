@@ -49,6 +49,8 @@ void WatchDog::operator()(){
 		WAIT(period);
 		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
+		if(cb_this == cb_1) serial_.send(token);
+		WAIT(period);
 
 		if(status == Connection::LOST && dogWasFed){
 			status = Connection::CONNECTED;
