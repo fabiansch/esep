@@ -51,6 +51,7 @@ void Menu::computeInput(){
 				initSensorTest();
 				controller_ << Signalname::SENSOR_TEST;
 			} else if(!textInput.compare("buttons")) {
+				controller_ << Signalname::BUTTON_TEST;
 				test::Test::buttonsTest();
 			} else if(!textInput.compare("all")) {
 				test::Test::actuatorsTest(hal);
