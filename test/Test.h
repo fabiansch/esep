@@ -54,6 +54,7 @@ public:
 	static void threadSafenessInGpioTest();
 
 	static void channelTest();
+	void handle(Signal signal);
 private:
 	/**
 	 *

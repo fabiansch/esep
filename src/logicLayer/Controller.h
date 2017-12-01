@@ -38,6 +38,7 @@ private:
 
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
+		Test* test;
 	} *statePtr;
 
 	struct Start : public State{
@@ -55,16 +56,16 @@ private:
 		}
 		virtual void run(){}
 		virtual void sensor_test(){
-			new (this) Sensor_Test;
+			new (this) Test;
 		}
 		virtual void button_test(){
-			new (this) Button_Test;
+			new (this) Test;
 		}
 		virtual void mmi_test(){
-			new (this) Mmi_Test;
+			new (this) Test;
 		}
 		virtual void actuators_test(){
-			new (this) Actuators_Test;
+			new (this) Test;
 		}
 		virtual void alert(){}
 		virtual void restart(){}
@@ -98,7 +99,7 @@ private:
 		}
 	};
 
-	struct Mmi_Test : public State{
+	struct	Test : public State{
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
@@ -106,46 +107,7 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
-		}
-	};
-
-	struct Actuators_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
-		}
-	};
-
-	struct Channel_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
-		}
-	};
-
-	struct ThreadSafeness_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-			test::Test::testSignalBufferAdd(signal);
+			test->handle(signal);
 			errorHandler->handle(signal);
 		}
 	};
