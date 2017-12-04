@@ -44,6 +44,7 @@ void ErrorHandler::handle(Signal signal) {
 		cb_this.parameterList.showParameters();
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
+		cout<<"BUTTON_E_STOP_PUSHED"<<endl;
 		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
@@ -52,6 +53,7 @@ void ErrorHandler::handle(Signal signal) {
 		cout<<"ESTOPPPUSHED COUNTER "<<eStopCounter<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
+		cout<<"BUTTON_E_STOP_PULLED"<<endl;
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
 		}

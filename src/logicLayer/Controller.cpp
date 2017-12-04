@@ -35,6 +35,19 @@ void Controller::operator()() {
 		signal << channel_;
 		LOG_DEBUG<<"Controller got Signal"<<endl;
 		switch (signal.name) {
+			// errorHandler
+			case Signalname::CONNECTION_LOST:
+				// just forward to errorHandler
+				break;
+			case Signalname::CONNECTION_CONNECTED:
+				// just forward to errorHandler
+				break;
+			case Signalname::BUTTON_E_STOP_PULLED:
+				// just forward to errorHandler
+				break;
+			case Signalname::BUTTON_E_STOP_PUSHED:
+				// just forward to errorHandler
+				break;
 			// menu
 			case Signalname::SENSOR_TEST:
 				if(cb_this == cb_1) {
