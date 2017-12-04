@@ -406,10 +406,7 @@ private:
 			LOG_TEST << name() << " => ";
 			new (this) OTHER_CBs_Test;
 			LOG_TEST << name() << endl;
-			if(cb_this != cb_last) {
-				cout<< "Finished sensor test on conveyor belt unit. Put Item on next conveyor belt unit."<< endl;
-			}
-			hal->getSignalGenerator().pushBackOnSignalBuffer( Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
+			hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 		}
 
 
@@ -419,6 +416,7 @@ private:
 	struct OTHER_CBs_Test : public State {
 		virtual void sensor_test_successful(uint8_t sender) {
 			LOG_TEST<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
 			if(sender == cb_last) {
 				LOG_TEST<<"################ Automated Sensor Test finished ###################"<<endl;
 				cout<<    "################ Automated Sensor Test finished ###################"<<endl;
