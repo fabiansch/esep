@@ -147,16 +147,19 @@ void SignalGenerator::pollOnSensors() {
 
 void SignalGenerator::pushBackOnSignalBuffer(Signal signal) {
 	LOG_SCOPE
-
+	mutex.lock();
 	signalBuffer.push_back(signal);
 	LOG_DEBUG << "signal pushed";
 	notify_observers();
+	mutex.unlock();
 }
 
 void SignalGenerator::clearSignalBuffer() {
 	LOG_SCOPE
 
+	mutex.lock();
 	signalBuffer.clear();
+	mutex.unlock();
 	if(signalBuffer.size() != 0){
 		LOG_ERROR<<__FUNCTION__<<": could not clear signalBuffer"<<endl;
 	}

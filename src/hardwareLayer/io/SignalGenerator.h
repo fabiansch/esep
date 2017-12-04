@@ -14,6 +14,7 @@
 #include "Observable.h"
 #include <chrono>
 #include <thread>
+#include <mutex>
 
 namespace hardwareLayer {
 namespace io {
@@ -91,13 +92,13 @@ public:
 	static void printEvents();
 
 	/*
-	 *@brief: pushs back Signal on signalBuffer.
+	 *@brief: threadsafely pushs back Signal on signalBuffer.
 	 *@param: signal Signal
 	 */
 	void pushBackOnSignalBuffer(Signal signal);
 
 	/*
-	 *@brief clears signalBuffer
+	 *@brief threadsafely clears signalBuffer
 	 */
 	void clearSignalBuffer();
 
@@ -147,6 +148,7 @@ private:
 	int stored_mask;
 	std::vector<Signal> signalBuffer;
 	std::thread chatter_timer_th;
+	std::mutex mutex;
 };
 
 } /* namespace io */
