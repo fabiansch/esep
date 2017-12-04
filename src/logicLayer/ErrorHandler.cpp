@@ -26,9 +26,7 @@ ErrorHandler::~ErrorHandler() {
 
 void ErrorHandler::addPending(Signal signal) {
 	pendingSignals.insert(signal);
-	cout<<"INSERTED"<<endl;
 	statePtr->errorOccurred();
-	cout<<"ERROR OCCURRED"<<endl;
 }
 
 void ErrorHandler::handle(Signal signal) {
@@ -46,29 +44,22 @@ void ErrorHandler::handle(Signal signal) {
 		cb_this.parameterList.showParameters();
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
-		cout<<"BUTTON_E_STOP_PUSHED"<<endl;
 		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
-		cout<<"ADDED"<<endl;
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
-			cout<<"SENT"<<endl;
 		}
 		eStopCounter++;
-		cout<<"COUNTED"<<endl;
-		cout<<"ESTOP COUNTER "<<eStopCounter<<endl;
+		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
-		cout<<"BUTTON_E_STOP_PULLED"<<endl;
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
-			cout<<"SENT"<<endl;
 		}
 		if(eStopCounter>0) {
 			eStopCounter--;
 		}
-		cout<<"ESTOP COUNTER "<<eStopCounter<<endl;
+		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		statePtr->isPending(signal);
-		cout<<"isPending"<<endl;
 		break;
 	case Signalname::BUTTON_RESET_PUSHED:
 		break;
