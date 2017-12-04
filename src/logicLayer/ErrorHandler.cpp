@@ -30,6 +30,18 @@ void ErrorHandler::addPending(Signal signal) {
 
 void ErrorHandler::handle(Signal signal) {
 	switch(signal.name) {
+	case Signalname::CONNECTION_LOST:
+		addPending(Signal(Signalname::CONNECTION_CONNECTED));
+		cout<<"CONNECTION LOST"<<endl;
+		cb_this.parameterList.showParameters();
+		LOG_WARNING<<"ERROR CONNECTION LOST"<<endl;
+		break;
+	case Signalname::CONNECTION_CONNECTED:
+		statePtr->isPending(signal);
+		cout<<"CONNECTION CONNECTED"<<endl;
+		LOG_DEBUG<<"CONNECTION CONNECTED"<<endl;
+		cb_this.parameterList.showParameters();
+		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
 		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
 		if(signal.sender == cb_this) {

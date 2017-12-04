@@ -35,17 +35,6 @@ void Controller::operator()() {
 		signal << channel_;
 		LOG_DEBUG<<"Controller got Signal"<<endl;
 		switch (signal.name) {
-			// serial
-			case Signalname::CONNECTION_LOST:
-				cout<<"CONNECTION LOST"<<endl;
-				LOG_ERROR<<"CONNECTION LOST"<<endl;
-				cb_this.parameterList.showParameters();
-				break;
-			case Signalname::CONNECTION_CONNECTED:
-				cout<<"CONNECTION CONNECTED"<<endl;
-				LOG_DEBUG<<"CONNECTION LOST"<<endl;
-				cb_this.parameterList.showParameters();
-				break;
 			// menu
 			case Signalname::SENSOR_TEST:
 				if(cb_this == cb_1) {
