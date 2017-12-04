@@ -55,6 +55,7 @@ private:
 			hal->greenLightOff();
 			hal->blinkRed(Speed::fast);
 			hal->switchPointClose();
+			hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_UNSUCCESSFUL));
 			LOG_TEST<<name()<<" => ";
 			new (this) FAIL_STATE;
 			LOG_TEST<<name()<<endl;
@@ -70,7 +71,7 @@ private:
 
 	// ============================= FAIL STATE =========================================
 	struct FAIL_STATE : public State {
-		virtual void sensor_test_start(){			testFailed(__FUNCTION__);
+		virtual void sensor_test_start() {
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
 			LOG_TEST<<name()<<endl;
