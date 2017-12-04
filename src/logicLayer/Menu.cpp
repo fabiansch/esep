@@ -26,11 +26,6 @@ void Menu::computeInput(){
 		cin >> textInput;
 		cin.get();
 
-		if(cb_this != cb_1) {
-			cout<<"please input commands on conveyer belt 1 (master)."<<endl;
-			continue;
-		}
-
 		if(!textInput.compare("test")) {
 			cout<<"please specify test:"<<endl<<endl;
 			cout<<"actuators"<<endl;
@@ -59,6 +54,7 @@ void Menu::computeInput(){
 				controller_ << Signalname::SENSOR_TEST;
 			} else if(!textInput.compare("buttons")) {
 				controller_ << Signalname::BUTTON_TEST;
+				test::Test::buttonsTest();
 			} else if(!textInput.compare("all")) {
 				test::Test::actuatorsTest(hal);
 				test::Test::mmiTest(hal);

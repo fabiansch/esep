@@ -6,7 +6,6 @@
  */
 
 #include "Controller.h"
-#include "Test.h"
 
 namespace logicLayer {
 
@@ -60,9 +59,12 @@ void Controller::operator()() {
 				break;
 			case Signalname::BUTTON_TEST:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_TEST));
+					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::BUTTON_TEST));
 				}
 				statePtr->button_test();
+				if (cb_this == cb_1) {
+					cout << "################ Button Test Start ###############" << endl;
+				}
 				break;
 			case Signalname::ACTUATOR_TEST:
 				if(cb_this == cb_1) {
