@@ -99,6 +99,10 @@ private:
 	};
 
 	struct Button_Test : public State{
+		Button_Test(){
+			cout << "################ Button Test Start ###############" << endl;
+			test::Test::buttonsTest();
+		}
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
