@@ -63,7 +63,7 @@ void Controller::operator()() {
 				break;
 			case Signalname::ACTUATOR_TEST:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available - cb_this, Signalname::ACTUATOR_TEST));
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::ACTUATOR_TEST));
 				}
 				statePtr->actuator_test();
 				if (cb_this == cb_1) {

@@ -39,9 +39,11 @@ void Menu::computeInput(){
 			cin.get();
 
 			if(!textInput.compare("actuators")) {
+				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::actuatorsTest(hal);
 			} else if(!textInput.compare("mmi")) {
+				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::mmiTest(hal);
 			} else if(!textInput.compare("threadSafeness")) {
@@ -50,12 +52,16 @@ void Menu::computeInput(){
 			} else if(!textInput.compare("channel")) {
 				test::Test::channelTest();
 			} else if(!textInput.compare("sensors")) {
+				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				initSensorTest();
 				controller_ << Signalname::SENSOR_TEST;
 			} else if(!textInput.compare("buttons")) {
 				controller_ << Signalname::BUTTON_TEST;
 				test::Test::buttonsTest();
 			} else if(!textInput.compare("all")) {
+				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
+
+				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::actuatorsTest(hal);
 				test::Test::mmiTest(hal);
 				test::Test::singletonThreadSafeTest();

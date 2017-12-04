@@ -88,7 +88,9 @@ private:
 
 	struct Actuator_Test : public State{
 		virtual void run(){}
-		virtual void sensor_test(){}
+		virtual void sensor_test(){
+			new (this) Sensor_Test;
+		}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
