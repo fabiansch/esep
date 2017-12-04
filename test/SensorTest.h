@@ -266,7 +266,7 @@ private:
 			} else {
 				LOG_TEST<<"WE ARE LAST"<<endl;
 				hal->motorStop();
-				cout<<"please put item on master's input again."<<endl;
+				cout<<"Please put item on master's input again."<<endl;
 			}
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_FREED_Test;
@@ -333,8 +333,6 @@ private:
 		}
 		virtual void lb_slide_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
-			LOG_TEST<<name()<<" successfully"<<endl;
-			hal->sendSerial(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SLIDE_TIMEOUT_State;
 			LOG_TEST<<name()<<endl;
@@ -346,13 +344,13 @@ private:
 	//============================ LB_SLIDE_TIMEOUT_State =======================================
 	struct LB_SLIDE_TIMEOUT_State: public State {
 		virtual void sensor_test_timeout() {
-
-			if (cb_this == cb_1){
-				LOG_TEST<<name()<<" => ";
-				new (this) OTHER_CBs_Test;
-				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
-				LOG_TEST<<name()<<endl;
+			LOG_TEST << name() << " => ";
+			new (this) OTHER_CBs_Test;
+			LOG_TEST << name() << endl;
+			if(cb_this != cb_last) {
+				cout<< "Finished sensor test on conveyor belt unit. Put Item on next conveyor belt unit."<< endl;
 			}
+			hal->getSignalGenerator().pushBackOnSignalBuffer( Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 		}
 	};
 
