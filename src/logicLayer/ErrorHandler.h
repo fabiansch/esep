@@ -55,7 +55,7 @@ private:
 
 		}
 		virtual void isPending(Signal signal) {
-			pendingSignals->erase(pendingSignals->find(signal));
+			pendingSignals->erase(signal);
 
 			if(pendingSignals->empty() && *eStopCounter == 0) {
 				new (this) NO_ERROR;
