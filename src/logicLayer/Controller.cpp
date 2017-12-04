@@ -79,6 +79,7 @@ void Controller::operator()() {
 				if(cb_this == cb_1) {
 					hal.sendSerial(Signal(cb_this, cb_available, Signalname::STOP));
 				}
+				statePtr->forward(Signalname::STOP);
 				statePtr->stop();
 				break;
 			default:

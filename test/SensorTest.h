@@ -21,6 +21,14 @@ class SensorTest {
 private:
 	struct State {//top-level state
 		virtual void sensor_test_start(){			testFailed(__FUNCTION__);}
+		virtual void stop() {
+			LOG_TEST<<__FUNCTION__<<endl;
+			LOG_TEST<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
+			cout<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
+			LOG_TEST<<name()<<" => ";
+			new (this) FAIL_STATE;
+			LOG_TEST<<name()<<endl;
+		}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted(){		testFailed(__FUNCTION__);}
@@ -412,6 +420,8 @@ public:
 		timeout_timer_th.join();
 	};
 
+
+
 	std::string nameOf(State *state) const { return typeid(*state).name(); }
 
 	void handle(Signal signal){
@@ -596,6 +606,9 @@ public:
 			// item
 			case Signalname::ITEM_ARRIVED:
 				statePtr->item_arrived();
+				break;
+			case Signalname::STOP:
+				statePtr->stop();
 				break;
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
