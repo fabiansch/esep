@@ -26,7 +26,9 @@ ErrorHandler::~ErrorHandler() {
 
 void ErrorHandler::addPending(Signal signal) {
 	pendingSignals.insert(signal);
+	cout<<"INSERTED"<<endl;
 	statePtr->errorOccurred();
+	cout<<"ERROR OCCURRED"<<endl;
 }
 
 void ErrorHandler::handle(Signal signal) {
@@ -53,7 +55,7 @@ void ErrorHandler::handle(Signal signal) {
 		}
 		eStopCounter++;
 		cout<<"COUNTED"<<endl;
-		cout<<"ESTOPPPUSHED COUNTER "<<eStopCounter<<endl;
+		cout<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
 		cout<<"BUTTON_E_STOP_PULLED"<<endl;
@@ -64,7 +66,7 @@ void ErrorHandler::handle(Signal signal) {
 		if(eStopCounter>0) {
 			eStopCounter--;
 		}
-		cout<<"ESTOPPPUSHED COUNTER "<<eStopCounter<<endl;
+		cout<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		statePtr->isPending(signal);
 		cout<<"isPending"<<endl;
 		break;
