@@ -676,6 +676,7 @@ public:
 			break;
 			case Signalname::SENSOR_TEST_TIMER_START:
 				timeout_input_th = std::thread( timeout_timer, &hal, 1000 );
+				timeout_input_th.detach();
 			break;
 			case Signalname::STOP:
 				statePtr->stop();
