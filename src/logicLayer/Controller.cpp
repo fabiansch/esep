@@ -13,12 +13,14 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
+, calibration(hal)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	statePtr->sensorTest = &sensorTest;
 	statePtr->errorHandler = &errorHandler;
+	statePtr->calibration = &calibration;
 	statePtr->hal = &hal;
 }
 
@@ -76,6 +78,11 @@ void Controller::operator()() {
 				cout<<"Signal RUN arrived"<<endl;
 				break;
 			case Signalname::CALIBRATION:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::ACTUATOR_TEST));
+					cout << "################ Actuator Test Start ###############" << endl;
+				}
+				statePtr->actuator_test();
 				break;
 			case Signalname::STOP:
 				if(cb_this == cb_1) {

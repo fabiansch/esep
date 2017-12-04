@@ -11,6 +11,7 @@
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
+#include "Calibration.h"
 #include "Menu.h"
 #include "Test.h"
 
@@ -22,6 +23,7 @@ private:
 	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
 	ErrorHandler errorHandler;
+	Calibration calibration;
 
 	struct State {//top-level state
 		virtual void run(){}
@@ -40,6 +42,7 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal){}
 
+		Calibration* calibration;
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
 		hardwareLayer::HardwareLayer* hal;
@@ -119,8 +122,7 @@ private:
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
-		}
+		virtual void forward(Signal signal) {}
 	};
 
 	struct Safe : public State{
@@ -140,6 +142,9 @@ private:
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+
+		}
 	};
 
 	Idle stateMember;

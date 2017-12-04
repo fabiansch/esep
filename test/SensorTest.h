@@ -77,7 +77,6 @@ private:
 	};
 
 
-
 	//============================ LB_INPUT_Test =======================================
 	struct LB_INPUT_Test : public State {
 		virtual void lb_input_interrupted() {
