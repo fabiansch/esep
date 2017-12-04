@@ -69,14 +69,7 @@ private:
 
 	// ============================= FAIL STATE =========================================
 	struct FAIL_STATE : public State {
-		virtual void lb_input_interrupted() {
-			LOG_TEST<<__FUNCTION__<<endl;
-			hal->blinkGreen(Speed::slow);
-			hal->redLightOff();
-			hal->motorRotateClockwise();
-			hal->motorFast();
-			hal->motorStart();
-
+		virtual void sensor_test_start(){			testFailed(__FUNCTION__);
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
 			LOG_TEST<<name()<<endl;
