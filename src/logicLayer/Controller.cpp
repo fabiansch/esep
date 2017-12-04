@@ -91,7 +91,7 @@ void Controller::operator()() {
 				break;
 		}
 
-		errorHandler->handle(signal);
+		errorHandler.handle(signal);
 	}
 }
 
