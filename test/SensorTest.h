@@ -427,7 +427,9 @@ private:
 				LOG_TEST<<"################ Automated Sensor Test finished ###################"<<endl;
 				cout<<    "################ Automated Sensor Test finished ###################"<<endl;
 				cout<<"Result stored in testLog.txt"<<endl<<endl<<endl;
+				LOG_TEST<<name()<<" => ";
 				new (this) LB_INPUT_Test;
+				LOG_TEST<<name()<<endl;
 				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::STOP));
 			}
 		}
