@@ -25,9 +25,7 @@ private:
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
 			cout<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
-			LOG_TEST<<name()<<" => ";
-			new (this) FAIL_STATE;
-			LOG_TEST<<name()<<endl;
+			testFailed(__FUNCTION__);
 		}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
