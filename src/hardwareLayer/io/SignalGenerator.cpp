@@ -23,6 +23,7 @@ namespace io {
 
 const int NO_CHATTER_TIME = 0;
 const int CHATTER_TIME = 40;
+const int CHATTER_TIME_ESTOP = 200;
 const int CHATTER_TIME_SWITCH = 100;
 
 SensorEvent SignalGenerator::BUTTON_START(		0b00010000<<8, "BUTTON_START", CHATTER_TIME , SPair(				Signalname::BUTTON_START_PUSHED,
@@ -31,7 +32,7 @@ SensorEvent SignalGenerator::BUTTON_STOP( 		0b00100000<<8, "BUTTON_STOP", CHATTE
 																													Signalname::BUTTON_STOP_PUSHED));
 SensorEvent SignalGenerator::BUTTON_RESET( 		0b01000000<<8, "BUTTON_RESET", CHATTER_TIME, SPair(					Signalname::BUTTON_RESET_PUSHED,
 																													Signalname::BUTTON_RESET_PULLED));
-SensorEvent SignalGenerator::BUTTON_E_STOP(		0b10000000<<8, "BUTTON_E_STOP", CHATTER_TIME, SPair(	  			Signalname::BUTTON_E_STOP_PULLED,
+SensorEvent SignalGenerator::BUTTON_E_STOP(		0b10000000<<8, "BUTTON_E_STOP", CHATTER_TIME_ESTOP, SPair(	  		Signalname::BUTTON_E_STOP_PULLED,
 																						  	  	  	  	  	  	 	Signalname::BUTTON_E_STOP_PUSHED));
 SensorEvent SignalGenerator::LIGHT_BARRIER_INPUT( 	0b00000001, "LIGHT_BARRIER_INPUT", NO_CHATTER_TIME, SPair( 		Signalname::LB_INPUT_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_INPUT_INTERRUPTED));
