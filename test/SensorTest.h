@@ -20,6 +20,7 @@ namespace logicLayer {
 class SensorTest {
 private:
 	struct State {//top-level state
+		virtual void sensor_test_enter_on_enter(){			testFailed(__FUNCTION__);}
 		virtual void sensor_test_start(){			testFailed(__FUNCTION__);}
 		virtual void stop() {
 			LOG_TEST<<__FUNCTION__<<endl;
@@ -77,17 +78,20 @@ private:
 	};
 
 
-
 	//============================ LB_INPUT_Test =======================================
 	struct LB_INPUT_Test : public State {
 		virtual void lb_input_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->blinkGreen(Speed::slow);
 			hal->redLightOff();
+		}
+
+		virtual void sensor_test_enter_on_enter() {
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
 		}
+
 		virtual void lb_input_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
@@ -95,16 +99,20 @@ private:
 			new (this) SENSOR_HEIGHT_MATCH_Test;
 			LOG_TEST<<name()<<endl;
 		}
+
 		virtual void sensor_test_start(){
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<"### SENSOR TEST started ###"<<endl;
 		}
+
 		virtual void item_arrived(){
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
 		}
+
 	};
+
 
 	//============================ SENSOR_HEIGHT_MATCH_Test =======================================
 	struct SENSOR_HEIGHT_MATCH_Test : public State {
@@ -118,6 +126,10 @@ private:
 			new (this) SENSOR_HEIGHT_NOT_MATCH_Test;
 			LOG_TEST<<name()<<endl;
 		}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 	//============================ SENSOR_HEIGHT_NOT_MATCH_Test =======================================
@@ -129,6 +141,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_HEIGHT_INTERRUPT_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -159,6 +175,10 @@ private:
 			new (this) SENSOR_HEIGHT_MATCH_2_Test;
 			LOG_TEST<<name()<<endl;
 		}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 	//============================ SENSOR_HEIGHT_MATCH_2_Test =======================================
@@ -172,6 +192,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_HEIGHT_FREE_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -191,6 +215,10 @@ private:
 			new (this) SENSOR_METAL_MATCH_Test;
 			LOG_TEST<<name()<<endl;
 		}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 	//============================ SENSOR_METAL_MATCH_Test =======================================
@@ -201,6 +229,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SWITCH_INTERRUPT_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -213,6 +245,10 @@ private:
 			LOG_TEST<<name()<<endl;
 			hal->switchPointOpen();
 		}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 	//============================ SENSOR_SWITCH_IS_OPEN_test =======================================
@@ -223,6 +259,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) SENSOR_METAL_NOT_MATCH_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -235,6 +275,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SWITCH_FREE_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -249,6 +293,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_INTERRUPTED_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -272,6 +320,10 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_switch_is_closed(){}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 	//============================ LB_OUTPUT_FREED_Test =======================================
@@ -294,6 +346,8 @@ private:
 			}
 		}
 		virtual void sensor_switch_is_closed() {}
+
+
 	};
 
 	//============================ LB_OUTPUT_TIMEOUT_State =======================================
@@ -305,6 +359,8 @@ private:
 			new (this) LB_SLIDE_Test;
 			LOG_TEST<<name()<<endl;
 		}
+
+
 	};
 
 	//============================ LB_SLIDE_Test =======================================
@@ -337,6 +393,10 @@ private:
 			LOG_TEST<<name()<<endl;
 
 		}
+
+		virtual void sensor_test_timeout(){
+
+		}
 	};
 
 
@@ -351,6 +411,8 @@ private:
 			}
 			hal->getSignalGenerator().pushBackOnSignalBuffer( Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 		}
+
+
 	};
 
 	//============================ OTHER_CBs_Test =======================================
@@ -372,6 +434,10 @@ private:
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
 			LOG_TEST<<name()<<endl;
+		}
+
+		virtual void sensor_test_timeout(){
+
 		}
 	};
 
@@ -395,6 +461,7 @@ private:
 	hardwareLayer::HardwareLayer& hal;
 	Item testItem;
 	std::thread timeout_timer_th;
+	std::thread timeout_input_th;
 
 public:
 	SensorTest(hardwareLayer::HardwareLayer& hal)
@@ -598,9 +665,16 @@ public:
 			case Signalname::ITEM_ARRIVED:
 				statePtr->item_arrived();
 				break;
+			case Signalname::SENSOR_TEST_ENTER:
+				statePtr->sensor_test_enter_on_enter();
+			break;
+			case Signalname::SENSOR_TEST_TIMER_START:
+				timeout_input_th = std::thread( timeout_timer, &hal, 1000 );
+			break;
 			case Signalname::STOP:
 				statePtr->stop();
-				break;
+			break;
+
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
 				exit(EXIT_FAILURE);
