@@ -11,7 +11,7 @@
 namespace logicLayer {
 
 	SignalReceiver::SignalReceiver()
-	: channel_(10)
+	: channel_(100)
 	, running(true)
 	{
 		LOG_SCOPE
