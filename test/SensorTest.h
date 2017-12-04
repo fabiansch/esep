@@ -80,6 +80,7 @@ private:
 
 	//============================ LB_INPUT_Test =======================================
 	struct LB_INPUT_Test : public State {
+		virtual void stop() {}
 		virtual void lb_input_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->blinkGreen(Speed::slow);
@@ -406,7 +407,11 @@ private:
 			LOG_TEST << name() << " => ";
 			new (this) OTHER_CBs_Test;
 			LOG_TEST << name() << endl;
-			hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
+			if(cb_this == cb_1) {
+				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
+			} else {
+				hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
+			}
 		}
 
 
