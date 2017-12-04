@@ -12,7 +12,7 @@ namespace logicLayer {
 
 TypeIdentification::TypeIdentification()
 {
-	receiver_ = std::thread(std::ref(*this));
+	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
 TypeIdentification::~TypeIdentification() {

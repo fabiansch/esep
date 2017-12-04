@@ -37,13 +37,11 @@ void Controller::operator()() {
 		switch (signal.name) {
 			// serial
 			case Signalname::CONNECTION_LOST:
-				errorHandler.addPending(Signal(Signalname::CONNECTION_CONNECTED));
 				cout<<"CONNECTION LOST"<<endl;
 				LOG_ERROR<<"CONNECTION LOST"<<endl;
 				cb_this.parameterList.showParameters();
 				break;
 			case Signalname::CONNECTION_CONNECTED:
-				errorHandler.handle(signal);
 				cout<<"CONNECTION CONNECTED"<<endl;
 				LOG_DEBUG<<"CONNECTION LOST"<<endl;
 				cb_this.parameterList.showParameters();
@@ -78,7 +76,7 @@ void Controller::operator()() {
 				}
 				break;
 			case Signalname::RUN:
-				cout<<"Signal normal arrived"<<endl;
+				cout<<"Signal RUN arrived"<<endl;
 				break;
 			case Signalname::CALIBRATION:
 				break;
@@ -92,6 +90,8 @@ void Controller::operator()() {
 				statePtr->forward(signal);
 				break;
 		}
+
+		errorHandler->handle(signal);
 	}
 }
 

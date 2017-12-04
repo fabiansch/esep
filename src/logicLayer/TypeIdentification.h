@@ -13,7 +13,7 @@
 
 namespace logicLayer {
 
-class TypeIdentification: public logicLayer::SignalReceiver {
+class TypeIdentification: public SignalReceiver {
 public:
 	TypeIdentification();
 	virtual ~TypeIdentification();

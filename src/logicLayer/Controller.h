@@ -83,7 +83,6 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			sensorTest->handle(signal);
-			errorHandler->handle(signal);
 		}
 	};
 
@@ -96,7 +95,6 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			test::Test::actuatorsTestHelper(hal, signal);
-			errorHandler->handle(signal);
 		}
 	};
 
@@ -109,7 +107,6 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			test::Test::testSignalBufferAdd(signal);
-			errorHandler->handle(signal);
 		}
 	};
 
