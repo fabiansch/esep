@@ -55,6 +55,7 @@ void Controller::operator()() {
 				if (cb_this == cb_1) {
 					cout << "################ Automated Sensor Test Start ###############" << endl;
 					cout << "Please put item (metal above) on master's input."<< endl;
+					//start timer
 				}
 				break;
 			case Signalname::BUTTON_TEST:

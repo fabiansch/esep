@@ -20,6 +20,7 @@ namespace logicLayer {
 class SensorTest {
 private:
 	struct State {//top-level state
+		virtual void sensor_test_enter_on_input(){			testFailed(__FUNCTION__);}
 		virtual void sensor_test_start(){			testFailed(__FUNCTION__);}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
@@ -78,24 +79,16 @@ private:
 	};
 
 
-
 	//============================ LB_INPUT_Test =======================================
 	struct LB_INPUT_Test : public State {
 		virtual void lb_input_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->blinkGreen(Speed::slow);
 			hal->redLightOff();
-			hal->motorRotateClockwise();
-			hal->motorFast();
-			hal->motorStart();
+			new (this) LB_INPUT_Wait_for_Enter;
+			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this, cb_this, Signalname::ITEM_ON_INPUT));
 		}
-		virtual void lb_input_freed() {
-			LOG_TEST<<__FUNCTION__<<endl;
 
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_MATCH_Test;
-			LOG_TEST<<name()<<endl;
-		}
 		virtual void sensor_test_start(){
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<"### SENSOR TEST started ###"<<endl;
@@ -104,6 +97,23 @@ private:
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
+		}
+	};
+
+	//============================ LB_INPUT_Wait_for_Enter =======================================
+	struct LB_INPUT_Wait_for_Enter : public State {
+		virtual void sensor_test_enter_on_input(){
+			hal->motorRotateClockwise();
+			hal->motorFast();
+			hal->motorStart();
+		}
+
+		virtual void lb_input_freed() {
+			LOG_TEST<<__FUNCTION__<<endl;
+
+			LOG_TEST<<name()<<" => ";
+			new (this) SENSOR_HEIGHT_MATCH_Test;
+			LOG_TEST<<name()<<endl;
 		}
 	};
 
@@ -598,6 +608,9 @@ public:
 			// item
 			case Signalname::ITEM_ARRIVED:
 				statePtr->item_arrived();
+				break;
+			case Signalname::ITEM_ON_INPUT:
+				cout << "Item on Input. Please hit enter!" << endl;
 				break;
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
