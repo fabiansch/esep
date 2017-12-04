@@ -17,6 +17,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
 	statePtr->eStopCounter = &eStopCounter;
+	hal.blinkGreen(Speed::slow);
 }
 
 ErrorHandler::~ErrorHandler() {

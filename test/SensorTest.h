@@ -21,6 +21,14 @@ class SensorTest {
 private:
 	struct State {//top-level state
 		virtual void sensor_test_start(){			testFailed(__FUNCTION__);}
+		virtual void stop() {
+			LOG_TEST<<__FUNCTION__<<endl;
+			LOG_TEST<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
+			cout<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
+			LOG_TEST<<name()<<" => ";
+			new (this) FAIL_STATE;
+			LOG_TEST<<name()<<endl;
+		}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted(){		testFailed(__FUNCTION__);}
@@ -266,7 +274,7 @@ private:
 			} else {
 				LOG_TEST<<"WE ARE LAST"<<endl;
 				hal->motorStop();
-				cout<<"please put item on master's input again."<<endl;
+				cout<<"Please put item on master's input again."<<endl;
 			}
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_FREED_Test;
@@ -333,8 +341,6 @@ private:
 		}
 		virtual void lb_slide_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
-			LOG_TEST<<name()<<" successfully"<<endl;
-			hal->sendSerial(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SLIDE_TIMEOUT_State;
 			LOG_TEST<<name()<<endl;
@@ -346,13 +352,13 @@ private:
 	//============================ LB_SLIDE_TIMEOUT_State =======================================
 	struct LB_SLIDE_TIMEOUT_State: public State {
 		virtual void sensor_test_timeout() {
-
-			if (cb_this == cb_1){
-				LOG_TEST<<name()<<" => ";
-				new (this) OTHER_CBs_Test;
-				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this,cb_1,Signalname::SENSOR_TEST_SUCCESSFUL));
-				LOG_TEST<<name()<<endl;
+			LOG_TEST << name() << " => ";
+			new (this) OTHER_CBs_Test;
+			LOG_TEST << name() << endl;
+			if(cb_this != cb_last) {
+				cout<< "Finished sensor test on conveyor belt unit. Put Item on next conveyor belt unit."<< endl;
 			}
+			hal->getSignalGenerator().pushBackOnSignalBuffer( Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 		}
 	};
 
@@ -413,6 +419,8 @@ public:
 	virtual ~SensorTest(){
 		timeout_timer_th.join();
 	};
+
+
 
 	std::string nameOf(State *state) const { return typeid(*state).name(); }
 
@@ -598,6 +606,9 @@ public:
 			// item
 			case Signalname::ITEM_ARRIVED:
 				statePtr->item_arrived();
+				break;
+			case Signalname::STOP:
+				statePtr->stop();
 				break;
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
