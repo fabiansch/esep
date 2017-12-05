@@ -71,7 +71,7 @@ void Controller::operator()() {
 				}
 				break;
 			case Signalname::RUN:
-				cout<<"Signal RUN arrived"<<endl;
+				statePtr->run();
 				break;
 			case Signalname::CALIBRATION:
 				break;

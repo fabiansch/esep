@@ -30,6 +30,7 @@ Item::~Item() {
 
 
 void Item::handle(Signal signal){
+	cout << "signal bubbles to item." << endl;
 	switch (signal.name) {
 		case Signalname::SIGNAL_DUMMY:
 			//silent is golden
