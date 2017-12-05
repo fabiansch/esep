@@ -366,7 +366,7 @@ private:
 		virtual void lb_switch_interrupted() {}
 		virtual void lb_switch_freed() {
 			timeout_timer_th->detach();
-			*timeout_timer_th = std::thread(timeout_timer, hal, 2000);
+			*timeout_timer_th = std::thread(timeout_timer, hal, 5000);
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SLIDE_INT_Test;
 			LOG_TEST<<name()<<endl;
@@ -388,6 +388,7 @@ private:
 
 	//============================ LB_SLIDE_Test =======================================
 	struct LB_SLIDE_INT_Test : public State {
+		virtual void sensor_height_not_match(){}
 
 		virtual void lb_slide_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
