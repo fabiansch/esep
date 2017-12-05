@@ -28,10 +28,11 @@ struct Message {
 
 	}
 
-	Message(logicLayer::Item item) :
-	Message(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM))
+	Message(logicLayer::Item item)
+	: checkNumber(CORRECT_CN)
+	, signal(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM))
+	, item(item)
 	{
-		this->item = item;
 	}
 
 	Message(Signal signal) :
@@ -46,9 +47,9 @@ struct Message {
 
 	}
 
-	Message(Signal signal, int checkNumber) :
-	checkNumber(checkNumber),
-	signal(signal)
+	Message(Signal signal, int checkNumber)
+	: checkNumber(checkNumber)
+	, signal(signal)
 	{
 
 	}

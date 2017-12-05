@@ -5,23 +5,18 @@
  *      Author: abx724
  */
 
+#include "HardwareLayer.h"
 #include "Item.h"
 
 namespace logicLayer {
 
-Item::Item() :
-	statePtr( &stateMember )
+Item::Item( hardwareLayer::HardwareLayer& hal, Channel<Signal>& timerChannel) :
+	hal_(  hal ),
+	timerChannel_(timerChannel),
+	statePtr(&stateMember)
 {
 	next_ = NULL;
 	previous_ = NULL;
-}
-
-Item::Item( Item* prev, Item* next) :
-	next_(prev),
-	previous_(next),
-	statePtr(&stateMember)
-{
-
 }
 
 Item::~Item() {

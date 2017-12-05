@@ -9,14 +9,18 @@
 #ifndef ITEM_H_
 #define ITEM_H_
 
+#include "Channel.h"
 #include "SignalReceiver.h"
+
+namespace hardwareLayer {
+	class HardwareLayer;
+}
 
 namespace logicLayer {
 
 class Item {
 public:
-	Item();
-	Item( Item*, Item* );
+	Item( hardwareLayer::HardwareLayer& , Channel<Signal>& );
 	virtual ~Item();
 
 	void handle( Signal );
@@ -28,6 +32,9 @@ private:
 
 	Item* next_;
 	Item* previous_;
+
+	hardwareLayer::HardwareLayer& hal_;
+	Channel<Signal>& timerChannel_;
 
 	struct State {//top-level state
 		virtual void lbInputFreed(){}
