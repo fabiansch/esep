@@ -76,7 +76,7 @@ void Controller::operator()() {
 			case Signalname::CALIBRATION:
 				if(cb_this == cb_1) {
 					hal.sendSerial(Signal(cb_this, cb_available, Signalname::CALIBRATION));
-					cout << "################ Actuator Test Start ###############" << endl;
+					cout << "################ Calibration Start ###############" << endl;
 				}
 				statePtr->calibrate();
 				break;

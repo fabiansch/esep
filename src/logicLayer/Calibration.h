@@ -52,63 +52,90 @@ private:
 
 			hardwareLayer::HardwareLayer* hal;
 			Item* testItem;
-			steady_clock::time_point firstTime;
-			steady_clock::time_point secondTime;
-			steady_clock::time_point startTime;
-
-
+			steady_clock::time_point timeFrameStart;
+			steady_clock::time_point timeFrameStop;
+			steady_clock::time_point totalTimeStart;
 
 		} *statePtr;
 
+
+
 		// ============================= FAIL STATE =========================================
 		struct FAIL_STATE : public State {
-			virtual void calibration(){
+			virtual void calibration_start(){
 				new (this) WaitingForItem;
 			}
 		};
 
+		// ============================= IDLE =========================================
 		struct IDLE: public State {
-			virtual void calibration(){
+			virtual void calibration_start(){
 				new (this) WaitingForItem;
 			}
 		};
 
 
-		//============================ START_STATE =======================================
+		//============================ WAITING FOR ITEM =======================================
 		struct WaitingForItem: public State {
 			WaitingForItem() {
 				hal->blinkGreen(Speed::slow);
 				hal->blinkYellow(Speed::slow);
 				hal->blinkRed(Speed::slow);
 			}
-			virtual void lb_input_INT(){
+			virtual void lb_input_interrupted() override {
+				new (this) ArrivalAtInput;
+			}
+			virtual void item_arrived(){
+				new (this) ItemArrived;
+			}
+		};
+
+		//============================ ITEM ARRIVED =======================================
+		struct ItemArrived: public State {
+			ItemArrived() {
+				timeFrameStart = steady_clock::now();
+				hal->motorFast();
+				hal->motorRotateClockwise();
+				hal->motorStart();
+			}
+			virtual void lb_input_interrupted(){
+				//	set value in parameter pattern
+				time_output_to_input = duration_cast<milliseconds>(steady_clock::now()-timeFrameStart).count();
 				new (this) ArrivalAtInput;
 			}
 		};
 
+
+		//============================ ARRIVAL AT INPUT =======================================
 		struct ArrivalAtInput: public State {
 			ArrivalAtInput(){
 				hal->motorRotateClockwise();
 				hal->motorFast();
+				hal->motorStart();
 			}
 			virtual void lb_input_freed(){
 				new (this) DepartureInput;
 			}
 		};
 
+		//============================ DEPARTURE INPUT =======================================
 		struct DepartureInput: public State {
 			DepartureInput(){
-				firstTime = steady_clock::now();
-				startTime = firstTime;
+				timeFrameStart = steady_clock::now();
 			}
-			virtual void lb_height_int(){
+			virtual void lb_height_interrupted(){
 				new (this) ArrivalAtHeight;
 			}
 		};
 
+		//============================ ARRIVAL AT HIGHT =======================================
 		struct ArrivalAtHeight: public State {
 			ArrivalAtHeight(){
-				durationInputToHeight = duration_cast <milliseconds> (firstTime - secondTime).count();
+				cout<<"=======h hallo ====="<<endl;
+				//TODO	FUNKTIONIERT AB HIER NICHT. NOCHMAL DIE ZEITERFASSUNG CHECKEN
+				cout<<"TIME "<<duration_cast<microseconds>(steady_clock::now()- timeFrameStart).count()<<endl;
+				time_input_to_height = duration_cast<microseconds>(steady_clock::now()- timeFrameStart).count();
+				time_input_to_height.parameterList.showParameters();
 			}
 		};
 

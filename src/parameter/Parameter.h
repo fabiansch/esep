@@ -70,13 +70,13 @@ extern Parameter<uint8_t> cb_first;
 extern Parameter<uint8_t> cb_last;
 extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
-extern Parameter<int> durationEnterCB;
-extern Parameter<int> durationInputToHeight;
-extern Parameter<int> durationHeightToSwitch;
-extern Parameter<int> durationSwitchToOutput;
-extern Parameter<int> durationSwitchToSlide;
-extern Parameter<int> durationLBSlideFreed;
-extern Parameter<int> durationTotal;
-extern Parameter<double> fastToSlowFactor;
+extern Parameter<int> time_output_to_input;
+extern Parameter<int> time_input_to_height;
+extern Parameter<int> time_height_to_switch;
+extern Parameter<int> time_switch_to_output;
+extern Parameter<int> time_switch_to_slide;
+extern Parameter<int> time_lb_slide_freed;
+extern Parameter<int> time_cb_unit_total;
+extern Parameter<double> slow_factor;
 
 #endif /* PARAMETER_H_ */

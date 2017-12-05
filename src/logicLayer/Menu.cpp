@@ -73,6 +73,7 @@ void Menu::computeInput(){
 			}
 		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
+			controller_ << Signal(Signalname::CALIBRATION_START);
 		} else if(!textInput.compare("run")) {
 			controller_ << Signalname::RUN;
 		} else if (!(textInput.compare("stop"))){

@@ -63,6 +63,15 @@ namespace logicLayer {
 			case Signalname::LB_OUTPUT_FREED:
 				statePtr->lb_output_freed();
 				break;
+			// sensors
+			case Signalname::SENSOR_HEIGHT_MATCH:
+				break;
+			case Signalname::SENSOR_HEIGHT_NOT_MATCH:
+				break;
+			case Signalname::SENSOR_METAL_MATCH:
+				break;
+			case Signalname::SENSOR_METAL_NOT_MATCH:
+				break;
 			// mmi
 			// buttons
 			case Signalname::BUTTON_E_STOP_PUSHED:
