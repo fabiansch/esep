@@ -27,6 +27,9 @@ private:
 			LOG_TEST<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
 			cout<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
 			testFailed(__FUNCTION__);
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_unsuccessful(uint8_t sender){	testFailed(__FUNCTION__);}
