@@ -26,32 +26,11 @@ namespace logicLayer {
 	void Calibration::handle(Signal signal){
 		switch (signal.name) {
 			// sensors
-			case Signalname::SENSOR_TEST_START:
-				statePtr->sensor_test_start();
+			case Signalname::CALIBRATION_START:
+				statePtr->calibration_start();
 				break;
-			case Signalname::SENSOR_TEST_SUCCESSFUL:
-				statePtr->sensor_test_successful(signal.sender);
-				break;
-			case Signalname::SENSOR_TEST_TIMEOUT:
-				statePtr->sensor_test_timeout();
-				break;
-			case Signalname::SENSOR_HEIGHT_MATCH:
-				statePtr->sensor_height_match();
-				break;
-			case Signalname::SENSOR_HEIGHT_NOT_MATCH:
-				statePtr->sensor_height_not_match();
-				break;
-			case Signalname::SENSOR_METAL_MATCH:
-				statePtr->sensor_metal_match();
-				break;
-			case Signalname::SENSOR_METAL_NOT_MATCH:
-				statePtr->sensor_metal_not_match();
-				break;
-			case Signalname::SENSOR_SWITCH_IS_OPEN:
-				statePtr->sensor_switch_is_open();
-				break;
-			case Signalname::SENSOR_SWITCH_IS_CLOSED:
-				statePtr->sensor_switch_is_closed();
+			case Signalname::CALIBRATION_SUCCESSFUL:
+				statePtr->calibration_successful(signal.sender);
 				break;
 			// light barriers
 			case Signalname::LB_INPUT_INTERRUPTED:
@@ -210,7 +189,7 @@ namespace logicLayer {
 				statePtr->stop();
 				break;
 			default:
-				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
+				LOG_ERROR<<"Calibration does not support following Signal: "<<(int)signal.name<<endl;
 				exit(EXIT_FAILURE);
 				break;
 		}

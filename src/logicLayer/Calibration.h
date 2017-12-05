@@ -15,6 +15,7 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include "Channel.h"
 
 using namespace std::chrono;
 namespace logicLayer {
@@ -22,23 +23,16 @@ namespace logicLayer {
 class Calibration {
 private:
 	struct State {//top-level state
-			virtual void sensor_test_start(){			calibrationFailed(__FUNCTION__);}
+			virtual void calibration_start(){			calibrationFailed(__FUNCTION__);}
 			virtual void stop() {
 				LOG_TEST<<__FUNCTION__<<endl;
 				LOG_TEST<<"CALIBRATION ABORTED BY MAIN MENU."<<endl;
 				cout<<"CALIBRATION ABORTED BY MAIN MENU."<<endl;
 				calibrationFailed(__FUNCTION__);
 			}
-			virtual void sensor_test_successful(uint8_t sender){	calibrationFailed(__FUNCTION__);}
-			virtual void sensor_test_timeout(){			calibrationFailed(__FUNCTION__);}
+			virtual void calibration_successful(uint8_t sender){	calibrationFailed(__FUNCTION__);}
 			virtual void lb_input_interrupted(){		calibrationFailed(__FUNCTION__);}
 			virtual void lb_input_freed(){				calibrationFailed(__FUNCTION__);}
-			virtual void sensor_height_match(){			calibrationFailed(__FUNCTION__);}
-			virtual void sensor_height_not_match(){		calibrationFailed(__FUNCTION__);}
-			virtual void sensor_metal_match(){			calibrationFailed(__FUNCTION__);}
-			virtual void sensor_metal_not_match(){		calibrationFailed(__FUNCTION__);}
-			virtual void sensor_switch_is_open(){		calibrationFailed(__FUNCTION__);}
-			virtual void sensor_switch_is_closed(){		calibrationFailed(__FUNCTION__);}
 			virtual void lb_height_interrupted(){		calibrationFailed(__FUNCTION__);}
 			virtual void lb_height_freed(){				calibrationFailed(__FUNCTION__);}
 			virtual void lb_switch_interrupted(){		calibrationFailed(__FUNCTION__);}
@@ -58,29 +52,73 @@ private:
 
 			hardwareLayer::HardwareLayer* hal;
 			Item* testItem;
+			steady_clock::time_point firstTime;
+			steady_clock::time_point secondTime;
+			steady_clock::time_point startTime;
+
+
 
 		} *statePtr;
 
 		// ============================= FAIL STATE =========================================
 		struct FAIL_STATE : public State {
 			virtual void calibration(){
-				new (this) START_STATE;
+				new (this) WaitingForItem;
 			}
 		};
+
+		struct IDLE: public State {
+			virtual void calibration(){
+				new (this) WaitingForItem;
+			}
+		};
+
 
 		//============================ START_STATE =======================================
-		struct START_STATE: public State {
-			virtual void lb_input_freed(){
+		struct WaitingForItem: public State {
+			WaitingForItem() {
+				hal->blinkGreen(Speed::slow);
+				hal->blinkYellow(Speed::slow);
+				hal->blinkRed(Speed::slow);
+			}
+			virtual void lb_input_INT(){
+				new (this) ArrivalAtInput;
+			}
+		};
 
+		struct ArrivalAtInput: public State {
+			ArrivalAtInput(){
+				hal->motorRotateClockwise();
+				hal->motorFast();
+			}
+			virtual void lb_input_freed(){
+				new (this) DepartureInput;
+			}
+		};
+
+		struct DepartureInput: public State {
+			DepartureInput(){
+				firstTime = steady_clock::now();
+				startTime = firstTime;
+			}
+			virtual void lb_height_int(){
+				new (this) ArrivalAtHeight;
+			}
+		};
+
+		struct ArrivalAtHeight: public State {
+			ArrivalAtHeight(){
+				durationInputToHeight = duration_cast <milliseconds> (firstTime - secondTime).count();
 			}
 		};
 
 
-		START_STATE stateMember;
+		IDLE stateMember;
+
 
 		hardwareLayer::HardwareLayer& hal;
-
 		milliseconds timeStart;
+
 		milliseconds getSystemTime() {
 			return duration_cast< milliseconds >(system_clock::now().time_since_epoch());
 		}

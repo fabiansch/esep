@@ -7,6 +7,9 @@
 
 #include "Parameter.h"
 #include "Signals.h"
+#include <chrono>
+#include <ctime>
+
 
 // all parameters need to call standard constructor here
 
@@ -16,4 +19,5 @@ Parameter<uint8_t> cb_first(	"first conveyer belt");
 Parameter<uint8_t> cb_last(		"last conveyer belt");
 Parameter<uint8_t> cb_all(		"all conveyer belts");
 Parameter<uint8_t> cb_available("available conveyer belts");
+Parameter<int> durationInputToHeight("Duration from LB Input to LB Height");
 

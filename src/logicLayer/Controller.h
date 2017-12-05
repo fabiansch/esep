@@ -14,6 +14,7 @@
 #include "Calibration.h"
 #include "Menu.h"
 #include "Test.h"
+#include "Channel.h"
 
 namespace logicLayer {
 
