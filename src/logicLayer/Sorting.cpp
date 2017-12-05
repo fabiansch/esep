@@ -12,10 +12,12 @@ namespace logicLayer {
 
 Sorting::Sorting()
 {
+	LOG_SCOPE
+	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
 Sorting::~Sorting() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 /**

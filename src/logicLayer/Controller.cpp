@@ -56,10 +56,6 @@ void Controller::operator()() {
 					hal.sendSerial(Signal(cb_this, cb_available, Signalname::SENSOR_TEST));
 				}
 				statePtr->sensor_test();
-				if (cb_this == cb_1) {
-					cout << "################ Automated Sensor Test Start ###############" << endl;
-					cout << "Please put item (metal above) on master's input."<< endl;
-				}
 				break;
 			case Signalname::BUTTON_TEST:
 				statePtr->button_test();

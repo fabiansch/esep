@@ -37,7 +37,7 @@ private:
 	Timer timer_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;
-	Menu menu_;
+	Menu menu_;  // have to be last one
 };
 
 } /* namespace logicLayer */

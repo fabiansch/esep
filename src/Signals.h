@@ -145,7 +145,12 @@ enum class Signalname : uint16_t {
 
 	// signal generator
 	SIGNAL_BUFFER_EMPTY,
+
+	//ITEM
 	ITEM_ARRIVED,
+	SENSOR_TEST_ENTER,
+	SENSOR_TEST_TIMER_START,
+	ITEM_ON_INPUT_TIMEOUT,
 
 	// dummy signal
 	SIGNAL_DUMMY,

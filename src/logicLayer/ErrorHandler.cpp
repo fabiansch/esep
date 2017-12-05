@@ -13,6 +13,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , eStopCounter(0)
 {
+	LOG_SCOPE
 	statePtr = &memberState;
 	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
@@ -21,7 +22,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 }
 
 ErrorHandler::~ErrorHandler() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 void ErrorHandler::addPending(Signal signal) {
@@ -44,23 +45,21 @@ void ErrorHandler::handle(Signal signal) {
 		cb_this.parameterList.showParameters();
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
-		cout<<"BUTTON_E_STOP_PUSHED"<<endl;
 		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
 		}
 		eStopCounter++;
-		cout<<"ESTOPPPUSHED COUNTER "<<eStopCounter<<endl;
+		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
-		cout<<"BUTTON_E_STOP_PULLED"<<endl;
 		if(signal.sender == cb_this) {
 			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
 		}
 		if(eStopCounter>0) {
 			eStopCounter--;
 		}
-		cout<<"ESTOPPPUSHED COUNTER "<<eStopCounter<<endl;
+		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		statePtr->isPending(signal);
 		break;
 	case Signalname::BUTTON_RESET_PUSHED:

@@ -14,13 +14,12 @@ namespace logicLayer {
 	, hal(hal)
 
 	{
+		LOG_SCOPE
 		statePtr->hal = &hal;
 	}
-	// TODO Auto-generated constructor stub
-
-
 
 	Calibration::~Calibration() {
+		LOG_SCOPE
 	}
 
 

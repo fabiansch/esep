@@ -12,14 +12,16 @@ namespace logicLayer {
 
 TypeIdentification::TypeIdentification()
 {
+	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
 TypeIdentification::~TypeIdentification() {
-	cout << "STOP" << endl;
+	LOG_SCOPE
 }
 
 void TypeIdentification::operator()(){
+	LOG_SCOPE
 	Signal sig;
 	while(running){
 

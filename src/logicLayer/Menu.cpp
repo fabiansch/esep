@@ -16,7 +16,9 @@ Menu::Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>& controller)
 : hal(hal)
 , controller_(controller)
 , restart(false)
-{}
+{
+	LOG_SCOPE
+}
 
 void Menu::computeInput(){
 
@@ -54,7 +56,6 @@ void Menu::computeInput(){
 			} else if(!textInput.compare("sensors")) {
 				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				initSensorTest();
-				controller_ << Signalname::SENSOR_TEST;
 			} else if(!textInput.compare("buttons")) {
 				controller_ << Signalname::BUTTON_TEST;
 				test::Test::buttonsTest();
@@ -156,10 +157,24 @@ void Menu::initSensorTest() {
 		cin.get();
 		LOG_TEST<<"Festo Machine Nr. "<<i<<": "<<textInput<<endl;
 	}
+
+	controller_ << Signalname::SENSOR_TEST; //init
+
+	//wait for input
+	cout << "################ Automated Sensor Test Start ###############" << endl;
+	cout << "Please put item (metal above) on master's input."<< endl;
+	cout << "Continue with Enter..."<< endl;
+	cin.get();
+
+	controller_ << Signalname::SENSOR_TEST_TIMER_START;
+	controller_ << Signalname::SENSOR_TEST_ENTER;
+
+
+
 }
 
 Menu::~Menu() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 } /* namespace logicLayer */
