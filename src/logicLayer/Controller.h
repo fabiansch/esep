@@ -8,6 +8,7 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
+#include "Channel.h"
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
@@ -157,7 +158,7 @@ private:
 	Idle stateMember;
 
 public:
-	Controller(hardwareLayer::HardwareLayer&);
+	Controller(hardwareLayer::HardwareLayer&, Channel<Signal>& );
 	virtual ~Controller();
 
 	virtual void operator()();
