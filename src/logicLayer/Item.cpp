@@ -10,7 +10,7 @@
 
 namespace logicLayer {
 
-Item::Item( hardwareLayer::HardwareLayer& hal, Channel<Signal>& timerChannel) :
+Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel) :
 	hal_(  hal ),
 	timerChannel_(timerChannel),
 	statePtr(&stateMember)

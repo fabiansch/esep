@@ -13,7 +13,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timer
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
-, head_(hal, timerChannel)
+, head_(&hal, &timerChannel)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE

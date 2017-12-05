@@ -20,7 +20,7 @@ namespace logicLayer {
 
 class Item {
 public:
-	Item( hardwareLayer::HardwareLayer& , Channel<Signal>& );
+	Item( hardwareLayer::HardwareLayer* , Channel<Signal>* );
 	virtual ~Item();
 
 	void handle( Signal );
@@ -33,8 +33,8 @@ private:
 	Item* next_;
 	Item* previous_;
 
-	hardwareLayer::HardwareLayer& hal_;
-	Channel<Signal>& timerChannel_;
+	hardwareLayer::HardwareLayer* hal_;
+	Channel<Signal>* timerChannel_;
 
 	struct State {//top-level state
 		virtual void lbInputFreed(){}
