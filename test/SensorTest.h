@@ -342,14 +342,10 @@ private:
 				cout<<"Test continues on next conveyer belt. When item reaches last conveyer belt's output, please put it on input of master again."<<endl;
 				std::thread thread = std::thread(motor_stop_timer,hal,1000);
 				thread.detach();
-				LOG_TEST<<name()<<" => ";
-				new (this) AFTER_OUTPUT_STATE;
-				LOG_TEST<<name()<<endl;
-			} else {
-				LOG_TEST<<name()<<" => ";
-				new (this) LB_SLIDE_INT_Test;
-				LOG_TEST<<name()<<endl;
 			}
+			LOG_TEST<<name()<<" => ";
+			new (this) AFTER_OUTPUT_STATE;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_switch_is_closed() {}
 
@@ -391,7 +387,7 @@ private:
 
 	//============================ LB_SLIDE_Test =======================================
 	struct LB_SLIDE_INT_Test : public State {
-		virtual void sensor_height_not_match(){}
+		virtual void sensor_metal_not_match(){}
 
 		virtual void lb_slide_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
@@ -409,10 +405,6 @@ private:
 			} else {
 				hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 			}
-		}
-
-		virtual void sensor_test_timeout(){
-
 		}
 	};
 
