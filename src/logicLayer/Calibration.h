@@ -12,7 +12,7 @@
 
 namespace logicLayer {
 
-class Calibration: public logicLayer::SignalReceiver {
+class Calibration: public SignalReceiver {
 public:
 	Calibration();
 	virtual ~Calibration();

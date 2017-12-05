@@ -10,14 +10,19 @@
 namespace logicLayer {
 
 Calibration::Calibration() {
-	// TODO Auto-generated constructor stub
-
+	LOG_SCOPE
+	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
 Calibration::~Calibration() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
-void Calibration::operator()(){}
+void Calibration::operator()(){
+	Signal signal;
+	while(running) {
+		signal << channel_;
+	}
+}
 
 } /* namespace logicLayer */

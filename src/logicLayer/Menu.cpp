@@ -16,7 +16,9 @@ Menu::Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>& controller)
 : hal(hal)
 , controller_(controller)
 , restart(false)
-{}
+{
+	LOG_SCOPE
+}
 
 void Menu::computeInput(){
 
@@ -172,7 +174,7 @@ void Menu::initSensorTest() {
 }
 
 Menu::~Menu() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 } /* namespace logicLayer */

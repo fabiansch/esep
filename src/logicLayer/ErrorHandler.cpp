@@ -13,6 +13,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , eStopCounter(0)
 {
+	LOG_SCOPE
 	statePtr = &memberState;
 	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
@@ -21,7 +22,7 @@ ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 }
 
 ErrorHandler::~ErrorHandler() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 void ErrorHandler::addPending(Signal signal) {
