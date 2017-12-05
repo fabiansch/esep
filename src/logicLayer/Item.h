@@ -37,99 +37,132 @@ private:
 	Channel<Signal>* timerChannel_;
 
 	struct State {//top-level state
-		virtual void lbInputFreed(){}
-		virtual void tfHeightIn(){}
-		virtual void heightMatch(){}
-		virtual void heightNotMatch(){}
-		virtual void lbHeightInt(){}
-		virtual void tfHeightOut(){}
-		virtual void lbHeightFreed(){}
-		virtual void tfSwitchIn(){}
-		virtual void metalMatch(){}
-		virtual void metalNotMatch(){}
-		virtual void lbSwitchInt(){}
-		virtual void tfSwitchOut(){}
-		virtual void lbSwitchFreed(){}
-		virtual void tfOutputIn(){}
-		virtual void lbOutputInt(){}
-		virtual void lbOutputFreed(){}
-		virtual void tfInputIn(){}
-		virtual void lbInputInt(){}
-		virtual void tfSlideIn(){}
-		virtual void lbSlideInt(){}
-		virtual void tfSlideOut(){}
-		virtual void lbSlideFreed(){}
-	} *statePtr;
+			virtual void lbInputInt(){}
+			virtual void itemArrived(){}
+			virtual void lbSwitchInt(){}
+			virtual void lbOutputInt(){}
 
-	struct ArrivalInput : public State{
+			Item* item_;
+			hardwareLayer::HardwareLayer* hal_;
 
-	};
+		} *statePtr;
 
-	struct TransportToHeight : public State{
+		struct Init : public State{
 
-	};
+			virtual void lbInputInt(){
+				if( cb_this == cb_first ){
+					new (this) ArrivalInput;
+				}
+			}
 
-	struct WaitForArrivalAtHeight : public State{
+			virtual void itemArrived(){
+				if( cb_this == cb_last ){
+					new (this) ArrivalInput;
+				}
+			}
+		};
 
-	};
 
-	struct ArrivalAtHeight : public State{
+		struct ArrivalInput : public State{
 
-	};
+			ArrivalInput(){
+				//entry action
+				hal_->motorFast();
+				hal_->motorRotateClockwise();
+				hal_->motorStart();
+			}
 
-	struct DepatureAtHeight : public State{
+			virtual void lbSwitchInt(){
+				new (this) ArrivalSwitch;
+			}
 
-	};
+		};
 
-	struct WaitForArrivalAtSwitch : public State{
+		struct TransportToHeight : public State{
 
-	};
+		};
 
-	struct ArrivalAtSwitch : public State{
+		struct WaitForArrivalAtHeight : public State{
 
-	};
+		};
 
-	struct DepatureAtSwitchToOutput : public State{
+		struct ArrivalAtHeight : public State{
 
-	};
+		};
 
-	struct DepatureAtSwitchToSlide : public State{
+		struct DepatureAtHeight : public State{
 
-	};
+		};
 
-	struct WaitForArrivalAtSlide : public State{
+		struct WaitForArrivalAtSwitch : public State{
 
-	};
+		};
 
-	struct ArrivalAtSlide : public State{
+		struct ArrivalSwitch : public State{
 
-	};
+			//entry actions
+			ArrivalSwitch(){
+				hal_->switchPointOpen();
+			}
 
-	struct DepatureAtSlide : public State{
+			virtual void lbOutputInt(){
+				new (this) ArrivalOutput;
+			}
 
-	};
+		};
 
-	struct SlideIsFull : public State{
+		struct DepatureAtSwitchToOutput : public State{
 
-	};
+		};
 
-	struct WaitForArrivalAtOuput : public State{
+		struct DepatureAtSwitchToSlide : public State{
 
-	};
+		};
 
-	struct ArrivalAtOutput : public State{
+		struct WaitForArrivalAtSlide : public State{
 
-	};
+		};
 
-	struct DepatureAtOutput : public State{
+		struct ArrivalAtSlide : public State{
 
-	};
+		};
 
-	struct WaitForArrivalInput : public State{
+		struct DepatureAtSlide : public State{
 
-	};
+		};
 
-	ArrivalInput stateMember;
+		struct SlideIsFull : public State{
+
+		};
+
+		struct WaitForArrivalAtOuput : public State{
+
+		};
+
+		struct ArrivalOutput : public State{
+			ArrivalOutput(){
+
+				hal_->switchPointClose();
+
+				if(cb_this == cb_last){
+					hal_->motorStop();
+				}
+
+				if(cb_this == cb_first){
+					hal_->sendItemViaSerial(*item_);
+				}
+			}
+		};
+
+		struct DepatureAtOutput : public State{
+
+		};
+
+		struct WaitForArrivalInput : public State{
+
+		};
+
+		Init stateMember;
 };
 
 } /* namespace logicLayer */

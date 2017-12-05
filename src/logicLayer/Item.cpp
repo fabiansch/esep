@@ -17,6 +17,9 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel) :
 {
 	next_ = NULL;
 	previous_ = NULL;
+
+	statePtr->hal_ = hal_;
+	//statePtr->item_ = this;
 }
 
 Item::~Item() {
