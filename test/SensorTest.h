@@ -367,12 +367,22 @@ private:
 		virtual void lb_switch_freed() {
 			timeout_timer_th->detach();
 			*timeout_timer_th = std::thread(timeout_timer, hal, 2000);
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_SLIDE_INT_Test;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_height_match(){	}
 		virtual void sensor_height_not_match(){}
 		virtual void sensor_metal_match(){}
 		virtual void sensor_metal_not_match(){}
-
+		virtual void sensor_test_unsuccessful(uint8_t sender) {
+			LOG_TEST<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Please restart test. Type 'stop' to go back to main menu."<<endl;
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
+		}
 
 	};
 
