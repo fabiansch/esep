@@ -70,6 +70,8 @@ void Menu::computeInput(){
 				test::Test::channelTest();
 				initSensorTest();
 				controller_ << Signalname::SENSOR_TEST;
+			} else {
+				printInfo();
 			}
 		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
