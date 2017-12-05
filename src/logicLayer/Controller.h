@@ -74,7 +74,9 @@ private:
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
-		virtual void calibrate(){}
+		virtual void calibrate(){
+			new (this) Calibrate;
+		}
 	};
 
 	struct Sensor_Test : public State{
@@ -143,7 +145,7 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
-
+			calibration->handle(signal);
 		}
 	};
 

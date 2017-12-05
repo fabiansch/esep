@@ -79,10 +79,10 @@ void Controller::operator()() {
 				break;
 			case Signalname::CALIBRATION:
 				if(cb_this == cb_1) {
-					hal.sendSerial(Signal(cb_this, cb_available, Signalname::ACTUATOR_TEST));
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::CALIBRATION));
 					cout << "################ Actuator Test Start ###############" << endl;
 				}
-				statePtr->actuator_test();
+				statePtr->calibrate();
 				break;
 			case Signalname::STOP:
 				if(cb_this == cb_1) {
