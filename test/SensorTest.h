@@ -78,7 +78,11 @@ private:
 		FAIL_STATE() {
 			cout<<"type 'stop' to go back to main menu."<<endl;
 		}
-		virtual void stop() override {}
+		virtual void stop() override {
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
+		}
 		virtual void sensor_test_start() {
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
