@@ -180,44 +180,9 @@ private:
 					testFailed(__FUNCTION__);
 				}
 			}
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_MATCH_2_Test;
-			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-	//============================ SENSOR_HEIGHT_MATCH_2_Test =======================================
-	struct SENSOR_HEIGHT_MATCH_2_Test : public State {
-		virtual void sensor_height_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-		}
-		virtual void sensor_height_not_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
-			new (this) LB_HEIGHT_FREE_Test;
-			LOG_TEST<<name()<<endl;
-		}
-
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-	//============================ LB_HEIGHT_FREE_Test =======================================
-	struct LB_HEIGHT_FREE_Test : public State {
-		virtual void sensor_height_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_MATCH_2_Test;
-			LOG_TEST<<name()<<endl;
-		}
-		virtual void lb_height_freed() {
+		virtual void lb_height_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
@@ -232,6 +197,8 @@ private:
 
 	//============================ SENSOR_METAL_MATCH_Test =======================================
 	struct SENSOR_METAL_MATCH_Test : public State {
+		virtual void sensor_height_match() override {}
+		virtual void sensor_height_not_match() override {}
 		virtual void sensor_metal_match() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
