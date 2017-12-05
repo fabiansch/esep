@@ -69,7 +69,7 @@ namespace hardwareLayer {
 		/**
 		 *  @brief Sends Item via serial interface to other machine(s)
 		 */
-		void sendItemViaSerial(Item* item);
+		void sendItemViaSerial(logicLayer::Item* item);
 
 		/**
 		 * @brief 	If a pending signal exists
@@ -82,7 +82,7 @@ namespace hardwareLayer {
 		 * @brief	gets passed item
 		 * @return	returns the last passed Item from ItemBuffer.
 		 */
-		Item getPassedItem();
+		logicLayer::Item getPassedItem();
 
 		/**
 		 *

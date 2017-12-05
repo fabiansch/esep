@@ -16,9 +16,19 @@ namespace logicLayer {
 class Item {
 public:
 	Item();
+	Item( Item*, Item* );
 	virtual ~Item();
 
+	void handle( Signal );
+
+	int heightAbsolute;
+	int heightCenter;
+
 private:
+
+	Item* next_;
+	Item* previous_;
+
 	struct State {//top-level state
 		virtual void lbInputFreed(){}
 		virtual void tfHeightIn(){}
@@ -44,7 +54,7 @@ private:
 		virtual void lbSlideFreed(){}
 	} *statePtr;
 
-	struct Idle : public State{
+	struct ArrivalInput : public State{
 
 	};
 
@@ -112,7 +122,7 @@ private:
 
 	};
 
-	Idle stateMember;
+	ArrivalInput stateMember;
 };
 
 } /* namespace logicLayer */

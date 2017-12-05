@@ -28,7 +28,7 @@ struct Message {
 
 	}
 
-	Message(Item item) :
+	Message(logicLayer::Item item) :
 	Message(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM))
 	{
 		this->item = item;
@@ -56,7 +56,7 @@ struct Message {
 
 	int checkNumber;
 	Signal signal;
-	Item item;
+	logicLayer::Item item;
 };
 
 } /* namespace serial */

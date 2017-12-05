@@ -11,6 +11,7 @@
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
+#include "Item.h"
 #include "Menu.h"
 #include "Test.h"
 
@@ -22,6 +23,12 @@ private:
 	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
 	ErrorHandler errorHandler;
+
+	/**
+	 *  @brief Head element in item queue
+	 */
+
+	Item head_;
 
 	struct State {//top-level state
 		virtual void run(){}
@@ -43,6 +50,7 @@ private:
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
 		hardwareLayer::HardwareLayer* hal;
+		Item* head_;
 	} *statePtr;
 
 	struct Start : public State{
@@ -58,7 +66,9 @@ private:
 		Idle(){
 			Menu::printInfo();
 		}
-		virtual void run(){}
+		virtual void run(){
+			new (this) Run;
+		}
 		virtual void sensor_test(){
 			new (this) Sensor_Test;
 		}
@@ -120,6 +130,7 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
+			head_->handle( signal );
 		}
 	};
 

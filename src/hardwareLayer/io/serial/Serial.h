@@ -23,7 +23,7 @@ public:
 	Serial(SignalGenerator& signalGenerator);
 	virtual ~Serial();
 	void send(Signal& signal);
-	void send(Item* item);
+	void send(logicLayer::Item* item);
 	Receiver& getReceiver();
 
 private:

@@ -32,7 +32,7 @@ void Serial::send(Signal& signal) {
 	_serialClockwise.send(message);
 }
 
-void Serial::send(Item* item) {
+void Serial::send(logicLayer::Item* item) {
 	// TODO error handling
 	Message message(*item);
 	_serialClockwise.send(message);
