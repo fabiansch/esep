@@ -294,7 +294,7 @@ private:
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			timeout_timer_th->detach();
-			*timeout_timer_th = std::thread(timeout_timer, hal, 2150);
+			*timeout_timer_th = std::thread(timeout_timer, hal, 2250);
 
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_INTERRUPTED_Test;
