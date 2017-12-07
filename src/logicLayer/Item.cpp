@@ -10,17 +10,36 @@
 
 namespace logicLayer {
 
-Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel) :
-	hal_(  hal ),
-	timerChannel_(timerChannel),
-	statePtr(&stateMember)
+Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel)
+:	hal_(  hal )
+,	timerChannel_(timerChannel)
+,	statePtr(&stateMember)
 {
-	next_ = NULL;
-	previous_ = NULL;
+	next_ = nullptr;
+	previous_ = nullptr;
 
 	statePtr->hal_ = hal_;
-	//statePtr->item_ = this;
+	statePtr->item_ = this;
 }
+
+Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bool head )
+:	hal_(  hal )
+,	timerChannel_(timerChannel)
+,	statePtr(&stateMember)
+{
+	next_ = nullptr;
+	previous_ = nullptr;
+	statePtr->hal_ = hal_;
+
+	cout<<"hello"<<endl;
+
+	if (head) {
+		new (statePtr) Init;
+		cout<<typeid((*statePtr)).name()<<endl;
+	}
+	statePtr->item_ = this;
+}
+
 
 Item::~Item() {
 	// TODO Auto-generated destructor stub
@@ -34,19 +53,19 @@ void Item::handle(Signal signal){
 			//silent is golden
 		break;
 		case Signalname::LB_INPUT_INTERRUPTED:
-			statePtr->lbInputInt();
+			statePtr->lbInputInt( signal );
 		break;
 		case Signalname::ITEM_ARRIVED:
-			statePtr->itemArrived();
+			statePtr->itemArrived( signal );
 		break;
 		case Signalname::LB_SWITCH_INTERRUPTED:
-			statePtr->lbSwitchInt();
+			statePtr->lbSwitchInt( signal );
 		break;
 		case Signalname::LB_OUTPUT_INTERRUPTED:
-			statePtr->lbOutputInt();
+			statePtr->lbOutputInt( signal );
 		break;
 		default:
-			cout << "signal bubbles to item." << endl;
+			cout <<__FUNCTION__<< "default" << endl;
 		break;
 	}
 }

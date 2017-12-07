@@ -58,14 +58,16 @@ namespace serial {
 						break;
 						case Signalname::SERIAL_TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
-							itemBuffer_.pushItem(msg.item);
-							sgen_.pushBackOnSignalBuffer(
-									Signal(
-											msg.signal.sender,
-											msg.signal.receiver,
-											Signalname::ITEM_ARRIVED
-									)
-							);
+							if(msg.signal.sender != cb_this) {
+								itemBuffer_.pushItem(msg.item);
+								sgen_.pushBackOnSignalBuffer(
+										Signal(
+												msg.signal.sender,
+												msg.signal.receiver,
+												Signalname::ITEM_ARRIVED
+										)
+								);
+							}
 						break;
 						default: // push signal to logic layer
 							if(msg.signal.sender != cb_this) {

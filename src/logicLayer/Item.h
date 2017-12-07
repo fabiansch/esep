@@ -21,6 +21,7 @@ namespace logicLayer {
 class Item {
 public:
 	Item( hardwareLayer::HardwareLayer* , Channel<Signal>* );
+	Item( hardwareLayer::HardwareLayer* , Channel<Signal>*, bool head );
 	virtual ~Item();
 
 	void handle( Signal );
@@ -41,10 +42,26 @@ private:
 	Channel<Signal>* timerChannel_;
 
 	struct State {//top-level state
-			virtual void lbInputInt(){}
-			virtual void itemArrived(){}
-			virtual void lbSwitchInt(){}
-			virtual void lbOutputInt(){}
+			virtual void lbInputInt( Signal signal ){ forwardSignal( signal ); }
+			virtual void itemArrived( Signal signal ){ forwardSignal( signal ); }
+			virtual void lbSwitchInt( Signal signal ){ forwardSignal( signal ); }
+			virtual void lbOutputInt( Signal signal ){ forwardSignal( signal ); }
+
+			void createItem(){
+				item_->previous_ = new Item(item_->hal_, item_->timerChannel_);
+			}
+
+			void forwardSignal( Signal signal ){
+				cout<<"forwardSignal"<<endl;
+				if(item_->previous_ == nullptr ){
+					cout<<"nullptr"<<endl;
+					createItem();
+				}
+				cout<<"before handle"<<endl;
+				item_->previous_->handle( signal );
+				cout<<"after handle"<<endl;
+
+			}
 
 			Item* item_;
 			hardwareLayer::HardwareLayer* hal_;
@@ -53,28 +70,30 @@ private:
 
 		struct Init : public State{
 
-			virtual void lbInputInt(){
-				if( cb_this == cb_first ){
-					new (this) ArrivalInput;
-				}
-			}
-
-			virtual void itemArrived(){
-				if( cb_this == cb_last ){
-					new (this) ArrivalInput;
-				}
-			}
 		};
 
 
 		struct ArrivalInput : public State{
 
-			ArrivalInput(){
-				//entry action
-				Item::startMotor(hal_);
+			virtual void lbInputInt( Signal signal )override {
+				cout<<"InputInt"<<endl;
+				if( cb_this == cb_first ) {
+					Item::startMotor(hal_);
+				}
+				cout<<"end InputInt"<<endl;
+
 			}
 
-			virtual void lbSwitchInt(){
+			virtual void itemArrived( Signal signal )override {
+				if( cb_this == cb_last ){
+					Item::startMotor(hal_);
+				}
+			}
+
+			virtual void lbOutputInt( Signal signal ) override {
+
+			}
+			virtual void lbSwitchInt( Signal signal )override {
 				new (this) ArrivalSwitch;
 			}
 	};
@@ -106,7 +125,7 @@ private:
 				Item::openSwitchPoint(hal_);
 			}
 
-			virtual void lbOutputInt(){
+			virtual void lbOutputInt( Signal signal )override {
 				new (this) ArrivalOutput;
 			}
 
@@ -154,7 +173,7 @@ private:
 
 		};
 
-		Init stateMember;
+		ArrivalInput stateMember;
 };
 
 } /* namespace logicLayer */
