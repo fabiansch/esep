@@ -39,4 +39,15 @@ void Item::handle(Signal signal){
 	}
 }
 
+void Item::startMotor(hardwareLayer::HardwareLayer* hal_) {
+	if (hal != nullptr) {
+		hal_->motorFast();
+		hal_->motorRotateClockwise();
+		hal_->motorStart();
+	} else {
+		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
 } /* namespace logicLayer */

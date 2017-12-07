@@ -25,6 +25,8 @@ public:
 
 	void handle( Signal );
 
+	static void startMotor(hardwareLayer::HardwareLayer* hal_);
+
 	int heightAbsolute;
 	int heightCenter;
 
@@ -67,16 +69,13 @@ private:
 
 			ArrivalInput(){
 				//entry action
-				hal_->motorFast();
-				hal_->motorRotateClockwise();
-				hal_->motorStart();
+				Item::startMotor(hal_);
 			}
 
 			virtual void lbSwitchInt(){
 				new (this) ArrivalSwitch;
 			}
-
-		};
+	};
 
 		struct TransportToHeight : public State{
 
@@ -102,7 +101,7 @@ private:
 
 			//entry actions
 			ArrivalSwitch(){
-				hal_->switchPointOpen();
+//				hal_->switchPointOpen();
 			}
 
 			virtual void lbOutputInt(){
@@ -142,14 +141,14 @@ private:
 		struct ArrivalOutput : public State{
 			ArrivalOutput(){
 
-				hal_->switchPointClose();
+//				hal_->switchPointClose();
 
 				if(cb_this == cb_last){
-					hal_->motorStop();
+//					hal_->motorStop();
 				}
 
 				if(cb_this == cb_first){
-					hal_->sendItemViaSerial(*item_);
+//					hal_->sendItemViaSerial(*item_);
 				}
 			}
 		};
