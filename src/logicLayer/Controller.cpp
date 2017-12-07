@@ -71,6 +71,9 @@ void Controller::operator()() {
 				}
 				break;
 			case Signalname::RUN:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::RUN));
+				}
 				statePtr->run();
 				break;
 			case Signalname::CALIBRATION:
