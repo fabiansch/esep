@@ -133,10 +133,37 @@ private:
 			ArrivalAtHeight(){
 				cout<<"=======h hallo ====="<<endl;
 				//TODO	FUNKTIONIERT AB HIER NICHT. NOCHMAL DIE ZEITERFASSUNG CHECKEN
-				cout<<"TIME "<<duration_cast<milliseconds>(steady_clock::now()- timeFrameStart).count()<<endl;
-				time_input_to_height = duration_cast<microseconds>(steady_clock::now()- timeFrameStart).count();
+				cout<<"TIME "<<(unsigned int)duration_cast<milliseconds>(steady_clock::now()- timeFrameStart).count()<<endl;
+				time_input_to_height = duration_cast<milliseconds>(steady_clock::now()- timeFrameStart).count();
 				time_input_to_height.parameterList.showParameters();
 				hal->motorStop();
+			}
+		};
+
+		//============================ DEPARTURE HEIGHT =======================================
+		struct DepartureHeight: public State {
+			DepartureHeight(){
+			}
+			virtual void lb_switch_interrupted(){
+				new (this) ArrivalSwitch;
+			}
+		};
+
+		//============================ ARRIVAL SWITCH=======================================
+		struct ArrivalSwitch: public State {
+			ArrivalSwitch(){
+			}
+		};
+
+		//============================ DEPARTURE SWITCH TO OUTPUT=======================================
+		struct SwitchToOutput: public State {
+			SwitchToOutput(){
+			}
+		};
+
+		//============================ ARRIVAL AT OUTPUT =======================================
+		struct ArrivalOutput: public State {
+			ArrivalOutput(){
 			}
 		};
 
