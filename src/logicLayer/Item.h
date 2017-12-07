@@ -56,7 +56,8 @@ private:
 
 
 			void createItem(){
-				item_->previous_ = new Item(item_->hal_, item_->timerChannel_, this);
+				cout << "create item" << endl;
+				item_->previous_ = new Item(item_->hal_, item_->timerChannel_, item_);
 			}
 
 			void forwardSignal( Signal signal ){

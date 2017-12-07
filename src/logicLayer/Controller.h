@@ -126,6 +126,9 @@ private:
 	};
 
 	struct Run : public State{
+		Run(){
+			cout << "enter run"<<endl;
+		}
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
