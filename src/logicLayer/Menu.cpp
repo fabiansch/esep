@@ -87,6 +87,7 @@ void Menu::computeInput(){
 		} else if (!(textInput.compare("shutdown"))){
 			return;
 		} else if (!(textInput.compare("restart"))){
+			controller_ << Signalname::STOP;
 			restart = true;
 			return;
 		} else if (!(textInput.compare("help"))){
