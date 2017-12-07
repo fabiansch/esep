@@ -317,7 +317,7 @@ private:
 				thread.detach();
 			}
 			LOG_TEST<<name()<<" => ";
-			new (this) AFTER_OUTPUT_STATE;
+			new (this) LB_SLIDE_INT_Test;
 			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_switch_is_closed() {}
@@ -325,8 +325,9 @@ private:
 
 	};
 
-	//============================ AFTER_OUTPUT_STATE =======================================
-	struct AFTER_OUTPUT_STATE: public State {
+	//============================ LB_SLIDE_Test =======================================
+	struct LB_SLIDE_INT_Test : public State {
+		virtual void sensor_test_timeout() {}
 		virtual void lb_input_interrupted(){
 			hal->motorRotateClockwise();
 			hal->motorFast();
@@ -356,12 +357,6 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-	};
-
-	//============================ LB_SLIDE_Test =======================================
-	struct LB_SLIDE_INT_Test : public State {
-		virtual void sensor_metal_not_match(){}
-
 		virtual void lb_slide_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->motorStop();
@@ -385,7 +380,7 @@ private:
 	struct OTHER_CBs_Test : public State {
 		virtual void sensor_test_successful(uint8_t sender) {
 			LOG_TEST<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
-			cout<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Test was successful on conveyer belt: "<<(int)sender<<"Please, put Item on next CB."<<endl;
 			if(sender == cb_last) {
 				LOG_TEST<<"################ Automated Sensor Test finished ###################"<<endl;
 				cout<<    "################ Automated Sensor Test finished ###################"<<endl;
