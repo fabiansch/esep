@@ -52,9 +52,9 @@ private:
 
 			hardwareLayer::HardwareLayer* hal;
 			Item* testItem;
-			steady_clock::time_point timeFrameStart;
-			steady_clock::time_point timeFrameStop;
-			steady_clock::time_point totalTimeStart;
+			system_clock::time_point timeFrameStart;
+			system_clock::time_point timeFrameStop;
+			system_clock::time_point totalTimeStart;
 
 		} *statePtr;
 
@@ -133,9 +133,10 @@ private:
 			ArrivalAtHeight(){
 				cout<<"=======h hallo ====="<<endl;
 				//TODO	FUNKTIONIERT AB HIER NICHT. NOCHMAL DIE ZEITERFASSUNG CHECKEN
-				cout<<"TIME "<<duration_cast<microseconds>(steady_clock::now()- timeFrameStart).count()<<endl;
+				cout<<"TIME "<<duration_cast<milliseconds>(steady_clock::now()- timeFrameStart).count()<<endl;
 				time_input_to_height = duration_cast<microseconds>(steady_clock::now()- timeFrameStart).count();
 				time_input_to_height.parameterList.showParameters();
+				hal->motorStop();
 			}
 		};
 

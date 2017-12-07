@@ -58,6 +58,9 @@ public:
 
 	void showValue()
 	{
+
+
+
 		cout<<name<<": "<<(int)value<<endl;
 	}
 
