@@ -6,7 +6,6 @@
 #define CHANNEL_H_
 
 #include <iostream>
-#include <string>
 #include <queue>
 #include <thread>
 #include <mutex>
@@ -18,6 +17,8 @@
 using namespace std;
 
 namespace logicLayer {
+
+constexpr int DEADLOCK_TIMEOUT_250_ms = 250;
 
 // the semaphore class should be in its own .h file. See the semaphore post on this site
 class Semaphore {
@@ -44,10 +45,13 @@ public:
         count_--;
     }
 
-    inline int wait_for(void) {
+    inline bool wait_for(void) {
+    	bool no_timeout = true;
 		std::unique_lock<std::mutex> lock(mtx_);
-		condition_.wait_for(lock, chrono::seconds(1), [&]{ return get_condition();});
-		count_--;
+		no_timeout = condition_.wait_for(lock, chrono::milliseconds(DEADLOCK_TIMEOUT_250_ms), [&]{ return get_condition();});
+		if(no_timeout) {
+			count_--;
+		}
 		return count_;
 	}
 
@@ -76,7 +80,7 @@ template <typename Type_>
 class Channel {
   public:
       explicit Channel(const int max_size)
-          : sem_free_spaces_{max_size}
+          : sem_free_spaces_{max_size + 1}
           , sem_size_{}
           , queue_{}
           , mtx_{}
@@ -108,17 +112,16 @@ class Channel {
       }
 
       inline void enqueue(const Type_ element) {
-    	  int space_left;
-    	  space_left = sem_free_spaces_.wait_for();
-          mtx_.lock();
-          queue_.push(element);
-          mtx_.unlock();
-          sem_size_.post();
-          if(space_left < 0) {
-        	  throw std::range_error(string(
-        			  "Enqueuing cause of timeout on free space: "
-        			  + std::to_string(space_left) + "!"));
-          }
+    	  bool no_timeout;
+    	  no_timeout = sem_free_spaces_.wait_for();
+    	  if (no_timeout) {
+			  mtx_.lock();
+			  queue_.push(element);
+			  mtx_.unlock();
+			  sem_size_.post();
+    	  } else {
+    		  throw std::range_error("timeout happened during enqueing!");
+    	  }
       }
 
       void operator<<(const Type_ element) {

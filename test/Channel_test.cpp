@@ -40,7 +40,7 @@ public:
 	void operator()() {
 		Signal signal;
 		while(running){
-			std::this_thread::sleep_for(std::chrono::seconds(2));
+			std::this_thread::sleep_for(std::chrono::seconds(1));
 			signal<<ch1;//read values from channel
 			cout<<"\t\t\t\treceiver "<<id<<" read from channel = "<<(int)signal.name<<endl;
 		}
@@ -70,6 +70,8 @@ public:
 				cout<<"sender "<<id<<" sent to channel = "<<(int)signals[i % signalsSize].name<<endl;
 			} catch (const std::range_error& e) {
 				cout<<e.what()<<endl;
+				running = false;
+				continue;
 			}
 		}
 	}
@@ -127,7 +129,7 @@ void Test::channelTest() {
 	cout << "hit return to start."<<endl;
 	cin.get();
 
-	constexpr int SEC_10 = 20;
+	constexpr int SEC_10 = 10;
 	constexpr int BUFFER_SIZE = 3;
 
 	cout<<"## Start Channel Test with buffer size: "<<BUFFER_SIZE<<" ##"<<endl;
