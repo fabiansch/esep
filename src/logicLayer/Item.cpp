@@ -32,7 +32,19 @@ void Item::handle(Signal signal){
 	switch (signal.name) {
 		case Signalname::SIGNAL_DUMMY:
 			//silent is golden
-			break;
+		break;
+		case Signalname::LB_INPUT_INTERRUPTED:
+			statePtr->lbInputInt();
+		break;
+		case Signalname::ITEM_ARRIVED:
+			statePtr->itemArrived();
+		break;
+		case Signalname::LB_SWITCH_INTERRUPTED:
+			statePtr->lbSwitchInt();
+		break;
+		case Signalname::LB_OUTPUT_INTERRUPTED:
+			statePtr->lbOutputInt();
+		break;
 		default:
 			cout << "signal bubbles to item." << endl;
 		break;
@@ -40,10 +52,38 @@ void Item::handle(Signal signal){
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal_) {
-	if (hal != nullptr) {
+	if (hal_ != nullptr) {
 		hal_->motorFast();
 		hal_->motorRotateClockwise();
 		hal_->motorStart();
+	} else {
+		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+void Item::openSwitchPoint(hardwareLayer::HardwareLayer* hal_) {
+	if (hal_ != nullptr) {
+		hal_->switchPointOpen();
+	} else {
+		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
+		exit(EXIT_FAILURE);
+	}
+}
+
+void Item::onOutputAction(hardwareLayer::HardwareLayer* hal_, Item* item) {
+	if (hal_ != nullptr) {
+
+		hal_->switchPointClose();
+
+		if(cb_this == cb_last){
+			hal_->motorStop();
+		}
+
+		if(cb_this == cb_first){
+			hal_->sendItemViaSerial(item);
+		}
+
 	} else {
 		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
 		exit(EXIT_FAILURE);

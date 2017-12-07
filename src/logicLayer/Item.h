@@ -25,7 +25,9 @@ public:
 
 	void handle( Signal );
 
-	static void startMotor(hardwareLayer::HardwareLayer* hal_);
+	static void startMotor(hardwareLayer::HardwareLayer* );
+	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
+	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*);
 
 	int heightAbsolute;
 	int heightCenter;
@@ -101,7 +103,7 @@ private:
 
 			//entry actions
 			ArrivalSwitch(){
-//				hal_->switchPointOpen();
+				Item::openSwitchPoint(hal_);
 			}
 
 			virtual void lbOutputInt(){
@@ -140,16 +142,7 @@ private:
 
 		struct ArrivalOutput : public State{
 			ArrivalOutput(){
-
-//				hal_->switchPointClose();
-
-				if(cb_this == cb_last){
-//					hal_->motorStop();
-				}
-
-				if(cb_this == cb_first){
-//					hal_->sendItemViaSerial(*item_);
-				}
+				Item::onOutputAction(hal_, item_);
 			}
 		};
 
