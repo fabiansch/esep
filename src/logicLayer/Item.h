@@ -9,6 +9,7 @@
 #ifndef ITEM_H_
 #define ITEM_H_
 
+#include "Header.h"
 #include "Channel.h"
 #include "SignalReceiver.h"
 
@@ -29,6 +30,8 @@ public:
 	static void startMotor(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*);
+	static void DepatureAtOutputAction(hardwareLayer::HardwareLayer*);
+
 
 	void setNext(Item*);
 	void setPrevious(Item*);
@@ -49,6 +52,8 @@ private:
 			virtual void itemArrived( Signal signal ){ forwardSignal( signal ); }
 			virtual void lbSwitchInt( Signal signal ){ forwardSignal( signal ); }
 			virtual void lbOutputInt( Signal signal ){ forwardSignal( signal ); }
+			virtual void lbOutputFreed( Signal signal ){ forwardSignal( signal ); }
+
 
 			void createItem(){
 				item_->previous_ = new Item(item_->hal_, item_->timerChannel_, this);
@@ -80,6 +85,7 @@ private:
 
 			virtual void lbInputInt( Signal signal )override {
 				cout<<"InputInt"<<endl;
+				items_on_cb = items_on_cb + 1;
 				if( cb_this == cb_first ) {
 					Item::startMotor(hal_);
 				}
@@ -99,6 +105,8 @@ private:
 			virtual void lbSwitchInt( Signal signal )override {
 				new (this) ArrivalSwitch;
 			}
+			virtual void lbOutputFreed( Signal signal )override {}
+
 	};
 
 		struct TransportToHeight : public State{
@@ -165,12 +173,24 @@ private:
 		struct ArrivalOutput : public State{
 			ArrivalOutput(){
 				Item::onOutputAction(hal_, item_);
-				next_->setPrevious(previous_);
-				previous_->setNext(next_);
+			}
+
+			virtual void lbOutputFreed( Signal signal )override {
+				new (this) DepatureAtOutput;
 			}
 		};
 
 		struct DepatureAtOutput : public State{
+			DepatureAtOutput(){
+				item_->next_->setPrevious(item_->previous_);
+				item_->previous_->setNext(item_->next_);
+				if (items_on_cb > 0) {
+					items_on_cb = items_on_cb - 1;
+				} else {
+					LOG_WARNING<<"items_on_cb was zero or negative."<<endl;
+				}
+				Item::DepatureAtOutputAction(hal_);
+			}
 
 		};
 

@@ -50,7 +50,7 @@ struct Message {
 	Message(Signal signal, int checkNumber)
 	: checkNumber(checkNumber)
 	, signal(signal)
-	, item( nullptr, nullptr )
+	, item( nullptr, nullptr, nullptr )
 	{
 
 	}

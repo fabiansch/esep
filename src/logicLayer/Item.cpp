@@ -118,4 +118,10 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal_, Item* item) {
 	}
 }
 
+void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal_) {
+	if(items_on_cb > 0) {
+		hal_->motorStart();
+	}
+}
+
 } /* namespace logicLayer */

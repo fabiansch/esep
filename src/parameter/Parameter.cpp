@@ -17,3 +17,5 @@ Parameter<uint8_t> cb_last(		"last conveyer belt");
 Parameter<uint8_t> cb_all(		"all conveyer belts");
 Parameter<uint8_t> cb_available("available conveyer belts");
 
+Parameter<int> items_on_cb("amount of items that currently are on cb_this");
+

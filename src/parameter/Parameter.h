@@ -71,4 +71,6 @@ extern Parameter<uint8_t> cb_last;
 extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
 
+extern Parameter<int> items_on_cb;
+
 #endif /* PARAMETER_H_ */
