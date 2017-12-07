@@ -14,10 +14,10 @@ namespace serial {
 constexpr auto COM1 = "/dev/ser1";
 constexpr auto COM2 = "/dev/ser2";
 
-Serial::Serial(SignalGenerator& signalGenerator) :
-_serialClockwise(COM1, COM2),
-_watchDog(_serialClockwise, signalGenerator),
-_receiver(_serialClockwise, _watchDog, signalGenerator)
+Serial::Serial(SignalGenerator& signalGenerator)
+: _serialClockwise(COM1, COM2)
+, _receiver(_serialClockwise, _watchDog, signalGenerator)
+, _watchDog(_serialClockwise, signalGenerator)
 {
 
 }

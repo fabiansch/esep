@@ -37,6 +37,8 @@ private:
 			hal->redLightOff();
 			hal->yellowLightOff();
 			hal->greenLightOn();
+			hal->motorStop();
+			hal->switchPointClose();
 			new (this) Idle;
 		}
 		virtual void sensor_test(){}
