@@ -20,7 +20,7 @@ namespace logicLayer {
 
 class Item {
 public:
-	Item( hardwareLayer::HardwareLayer* , Channel<Signal>* );
+	Item( hardwareLayer::HardwareLayer* , Channel<Signal>*, Item* );
 	Item( hardwareLayer::HardwareLayer* , Channel<Signal>*, bool head );
 	virtual ~Item();
 
@@ -29,6 +29,9 @@ public:
 	static void startMotor(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*);
+
+	void setNext(Item*);
+	void setPrevious(Item*);
 
 	int heightAbsolute;
 	int heightCenter;
@@ -48,7 +51,7 @@ private:
 			virtual void lbOutputInt( Signal signal ){ forwardSignal( signal ); }
 
 			void createItem(){
-				item_->previous_ = new Item(item_->hal_, item_->timerChannel_);
+				item_->previous_ = new Item(item_->hal_, item_->timerChannel_, this);
 			}
 
 			void forwardSignal( Signal signal ){
@@ -162,6 +165,8 @@ private:
 		struct ArrivalOutput : public State{
 			ArrivalOutput(){
 				Item::onOutputAction(hal_, item_);
+				next_->setPrevious(previous_);
+				previous_->setNext(next_);
 			}
 		};
 

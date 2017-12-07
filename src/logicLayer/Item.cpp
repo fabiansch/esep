@@ -10,10 +10,11 @@
 
 namespace logicLayer {
 
-Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel)
+Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, Item* next)
 :	hal_(  hal )
 ,	timerChannel_(timerChannel)
 ,	statePtr(&stateMember)
+,	next_(next)
 {
 	next_ = nullptr;
 	previous_ = nullptr;
@@ -68,6 +69,14 @@ void Item::handle(Signal signal){
 			cout <<__FUNCTION__<< "default" << endl;
 		break;
 	}
+}
+
+void Item::setNext(Item* item) {
+	next_ = item;
+}
+
+void Item::setPrevious(Item* item) {
+	previous_ = item;
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal_) {
