@@ -78,6 +78,7 @@ private:
 		FAIL_STATE() {
 			cout<<"type 'stop' to go back to main menu."<<endl;
 		}
+		virtual void sensor_switch_is_closed() override {}
 		virtual void stop() override {
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
