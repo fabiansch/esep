@@ -28,16 +28,13 @@ void TypeIdentification::operator()(){
 		sig << channel_;
 		switch (sig.name) {
 			case Signalname::SIGNAL_DUMMY:
-				std::cout << "TypeIdentification receives signal." << endl;
+				LOG_WARNING<<__FUNCTION__<<": received SIGNAL_DUMMY"<<endl;
 				break;
 			default:
 				break;
 		}
-
-		std::cout << "TypeIdentification end of while" << endl;
 	}
 
-	std::cout << "after while" << endl;
 }
 
 } /* namespace logicLayer */
