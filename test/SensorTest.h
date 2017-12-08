@@ -630,7 +630,7 @@ public:
 				hal.switchPointClose();
 				break;
 			// item
-			case Signalname::ITEM_ARRIVED:
+			case Signalname::TRANSFER_ITEM:
 				statePtr->item_arrived();
 				break;
 			case Signalname::SENSOR_TEST_ENTER:

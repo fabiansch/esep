@@ -227,7 +227,7 @@ void Item::handle(Signal signal){
 			hal_->switchPointClose();
 			break;
 		// item
-		case Signalname::ITEM_ARRIVED:
+		case Signalname::TRANSFER_ITEM:
 			statePtr->item_arrived( signal );
 			break;
 		case Signalname::STOP:

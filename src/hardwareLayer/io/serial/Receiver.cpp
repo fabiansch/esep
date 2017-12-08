@@ -56,17 +56,11 @@ namespace serial {
 							dog_.feed();
 							forwardIfNotMaster(msg);
 						break;
-						case Signalname::SERIAL_TRANSFER_ITEM:
+						case Signalname::TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
 								itemBuffer_.pushItem(msg.item);
-								sgen_.pushBackOnSignalBuffer(
-										Signal(
-												msg.signal.sender,
-												msg.signal.receiver,
-												Signalname::ITEM_ARRIVED
-										)
-								);
+								sgen_.pushBackOnSignalBuffer(signal);
 							}
 						break;
 						default: // push signal to logic layer

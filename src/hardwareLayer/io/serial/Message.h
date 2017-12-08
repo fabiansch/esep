@@ -32,7 +32,7 @@ struct Message {
 
 	Message(logicLayer::Item item)
 	: checkNumber(CORRECT_CN)
-	, signal(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM))
+	, signal(Signal(cb_this, cb_next, Signalname::TRANSFER_ITEM))
 	, item(item)
 	{
 	}
