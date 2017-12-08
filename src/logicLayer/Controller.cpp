@@ -86,7 +86,6 @@ void Controller::operator()() {
 				statePtr->stop();
 				break;
 			default:
-				cout<<"FORWARD"<<endl<<endl;
 				statePtr->forward(signal);
 				break;
 		}
