@@ -120,12 +120,12 @@ private:
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
-			new (this) TransportToHeight;
+			new (this) DepartureInput;
 		}
 
 	};
 
-	struct TransportToHeight : public State {
+	struct DepartureInput : public State {
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;
@@ -136,11 +136,11 @@ private:
 
 	};
 
-	struct ArrivalAtHeight : public State{
+	struct ArrivalHeight : public State{
 
 	};
 
-	struct DepatureAtHeight : public State{
+	struct DepatureHeight : public State{
 
 	};
 
@@ -160,11 +160,11 @@ private:
 
 	};
 
-	struct DepatureAtSwitchToOutput : public State{
+	struct DepatureSwitchToOutput : public State{
 
 	};
 
-	struct DepatureAtSwitchToSlide : public State{
+	struct DepatureSwitchToSlide : public State{
 
 	};
 
@@ -172,11 +172,11 @@ private:
 
 	};
 
-	struct ArrivalAtSlide : public State{
+	struct ArrivalSlide : public State{
 
 	};
 
-	struct DepatureAtSlide : public State{
+	struct DepatureSlide : public State{
 
 	};
 
@@ -195,13 +195,13 @@ private:
 
 		virtual void lb_output_freed( Signal signal ) override {
 			cout<<"lb_output_freed"<<endl;
-			new (this) DepatureAtOutput;
+			new (this) DepatureOutput;
 		}
 
 	};
 
-	struct DepatureAtOutput : public State{
-		DepatureAtOutput(){
+	struct DepatureOutput : public State{
+		DepatureOutput(){
 			cout<<"setPrevious"<<endl;
 			item_->next_->setPrevious(item_->previous_);
 			cout<<"setNext"<<endl;
