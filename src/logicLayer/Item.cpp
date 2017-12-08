@@ -19,6 +19,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, It
 ,	timerChannel_(timerChannel)
 ,	statePtr(&stateMember)
 {
+	LOG_SCOPE
 	statePtr->item_ = this;
 	statePtr->hal_ = hal;
 }
@@ -32,6 +33,8 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bo
 ,	timerChannel_(timerChannel)
 ,	statePtr(&stateMember)
 {
+	LOG_SCOPE
+	LOG_DEBUG<<__FUNCTION__<<": creating HEAD Item."<<endl;
 	statePtr->item_ = this;
 	statePtr->hal_ = hal;
 	if (head) {
@@ -41,7 +44,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bo
 
 
 Item::~Item() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 
@@ -67,7 +70,8 @@ void Item::handle(Signal signal){
 			statePtr->lbOutputFreed( signal );
 		break;
 		default:
-			cout <<__FUNCTION__<< "default" << endl;
+			LOG_ERROR <<__FUNCTION__<< ": unknown signal in Item occurred." << endl;
+			exit(EXIT_FAILURE);
 		break;
 	}
 }
