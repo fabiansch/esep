@@ -8,8 +8,13 @@
 #include "HardwareLayer.h"
 #include "ErrorHandler.h"
 #include "Item.h"
+#include <thread>
+
 
 namespace logicLayer {
+
+std::thread output_timer;
+
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, Item* next, ErrorHandler* errorHandler)
 :	heightAbsolute(0)
@@ -244,38 +249,38 @@ void Item::setPrevious(Item* item) {
 	previous_ = item;
 }
 
-void Item::startMotor(hardwareLayer::HardwareLayer* hal_) {
-	if (hal_ != nullptr) {
-		hal_->motorFast();
-		hal_->motorRotateClockwise();
-		hal_->motorStart();
+void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
+	if (hal != nullptr) {
+		hal->motorFast();
+		hal->motorRotateClockwise();
+		hal->motorStart();
 	} else {
 		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
-void Item::openSwitchPoint(hardwareLayer::HardwareLayer* hal_) {
-	if (hal_ != nullptr) {
-		hal_->switchPointOpen();
+void Item::openSwitchPoint(hardwareLayer::HardwareLayer* hal) {
+	if (hal != nullptr) {
+		hal->switchPointOpen();
 	} else {
 		LOG_ERROR<<__FUNCTION__<<": called nullptr"<<endl;
 		exit(EXIT_FAILURE);
 	}
 }
 
-void Item::onOutputAction(hardwareLayer::HardwareLayer* hal_, Item* item, ErrorHandler* errorHandler) {
-	if (hal_ != nullptr) {
+void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHandler* errorHandler) {
+	if (hal != nullptr) {
 
-		hal_->switchPointClose();
+		hal->switchPointClose();
 
 		if(cb_this == cb_last){
-			hal_->motorStop();
+			hal->motorStop();
 			errorHandler->addPending(Signal(Signalname::LB_OUTPUT_FREED));
 		}
 
 		if(cb_this == cb_first){
-			hal_->sendItemViaSerial(item);
+			hal->sendItemViaSerial(item);
 		}
 
 	} else {
@@ -284,9 +289,20 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal_, Item* item, ErrorH
 	}
 }
 
-void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal_) {
+void stopMotorIfNoItemAfter(int milliseconds, hardwareLayer::HardwareLayer* hal) {
+	WAIT(milliseconds);
+	if (items_on_cb == 0) {
+		hal->motorStop();
+	}
+}
+
+void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
 	if(items_on_cb > 0) {
-		hal_->motorStart();
+		hal->motorStart();
+	}
+	if(cb_this != cb_last) {
+		output_timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
+		output_timer.detach();
 	}
 }
 
