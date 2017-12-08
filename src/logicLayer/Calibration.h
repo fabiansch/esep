@@ -32,15 +32,15 @@ private:
 			}
 			virtual void calibration_successful(uint8_t sender){	calibrationFailed(__FUNCTION__);}
 			virtual void lb_input_interrupted(){		calibrationFailed(__FUNCTION__);}
-			virtual void lb_input_freed(){				calibrationFailed(__FUNCTION__);}
+			virtual void lb_input_freed(){				}
 			virtual void lb_height_interrupted(){		calibrationFailed(__FUNCTION__);}
-			virtual void lb_height_freed(){				calibrationFailed(__FUNCTION__);}
+			virtual void lb_height_freed(){				}
 			virtual void lb_switch_interrupted(){		calibrationFailed(__FUNCTION__);}
-			virtual void lb_switch_freed(){				calibrationFailed(__FUNCTION__);}
+			virtual void lb_switch_freed(){				}
 			virtual void lb_slide_interrupted(){		calibrationFailed(__FUNCTION__);}
-			virtual void lb_slide_freed(){				calibrationFailed(__FUNCTION__);}
+			virtual void lb_slide_freed(){				}
 			virtual void lb_output_interrupted(){		calibrationFailed(__FUNCTION__);}
-			virtual void lb_output_freed(){				calibrationFailed(__FUNCTION__);}
+			virtual void lb_output_freed(){				}
 			virtual void item_arrived(){				calibrationFailed(__FUNCTION__);}
 
 			void calibrationFailed(string functionname) {
@@ -81,7 +81,8 @@ private:
 				hal->blinkGreen(Speed::slow);
 				hal->blinkYellow(Speed::slow);
 				hal->blinkRed(Speed::slow);
-			//	height_item = hal->getHeight();
+				height_conveyor_belt = hal->getHeight();
+				cout<<"height_conveyor_belt: "<<height_conveyor_belt<<endl;
 			}
 			virtual void lb_input_interrupted() override {
 				new (this) ArrivalAtInput;
@@ -100,8 +101,6 @@ private:
 				hal->motorStart();
 			}
 			virtual void lb_input_interrupted(){
-				//	set value in parameter pattern
-				//time_output_to_input = duration_cast<milliseconds>(steady_clock::now()-timeFrameStart).count(); //do this in next state
 				new (this) ArrivalAtInput;
 			}
 		};
@@ -111,7 +110,11 @@ private:
 		struct ArrivalAtInput: public State {
 			ArrivalAtInput(){
 				if (cb_this != cb_first){
-					//time_output_to_input = duration_cast<milliseconds>(steady_clock::now()-timeFrameStart).count();
+					std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
+					std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
+					unsigned int time = durationMS.count();
+					time_output_to_input = time;
+					cout<<"time_output_to_input: "<<time_output_to_input<<endl;
 				}
 				hal->motorRotateClockwise();
 				hal->motorFast();
@@ -136,66 +139,16 @@ private:
 		//============================ ARRIVAL AT HIGHT =======================================
 		struct ArrivalAtHeight: public State {
 			ArrivalAtHeight(){
-				cout<<"======ArrivalAtHeight ====="<<endl;
-				//TODO	FUNKTIONIERT AB HIER NICHT. NOCHMAL DIE ZEITERFASSUNG CHECKEN
 				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
 				unsigned int time = durationMS.count();
-				std::cout << time << "s\n"<<endl;
 				time_input_to_height = time;
-				std::cout << time_input_to_height << "s\n"<<endl;
+				cout<<"time_input_to_height: "<<time_output_to_input<<endl;
 
+				*timeFrameStart =  steady_clock::now();
 
-
-
-//				typedef std::chrono::high_resolution_clock Time;
-//				typedef std::chrono::milliseconds ms;
-//				typedef std::chrono::duration<float> fsec;
-//
-//				*timeFrameStop = steady_clock::now();
-//
-//
-//				fsec fs = *timeFrameStop - *timeFrameStart;
-//
-//
-//				ms d = std::chrono::duration_cast<ms>(fs);
-//
-//				std::cout << fs.count() << "s\n"<<endl;
-//				std::cout << d.count() << "ms\n"<<endl;
-
-
-
-//				timeFrameStop = steady_clock::now();
-//				std::chrono::duration<float> duration = timeFrameStop - timeFrameStart;
-//				std::chrono::milliseconds ms =  std::chrono::duration_cast<std::chrono::milliseconds>(duration);
-//				unsigned int count = ms.count();
-//				cout<<count<<"unsignedint"<<endl;
-//				cout << ms.count() << "ms\n"<<endl;
-
-
-//				auto time = duration_cast < std::chrono::milliseconds > (timeFrameStop - timeFrameStart);
-//
-//				auto timeAuto =  time.count();
-//				int timeInt = (int) time.count();
-//				unsigned int timeUnsignedInt = (unsigned int) time.count();
-//
-//				//cout<<"time"<<time<<endl;
-//				cout<<"TIME auto "<<timeAuto<<endl;
-//				cout<<"TIME unsigned int "<<timeInt<<endl;
-//				cout<<"TIME int"<<timeUnsignedInt<<endl;
-
-			//	time_input_to_height = duration_cast<milliseconds>(steady_clock::now()- timeFrameStart).count();
-				//time_input_to_height.parameterList.showParameters();
-				hal->motorStop();
-
-
-
-			}
-		};
-
-		//============================ DEPARTURE HEIGHT =======================================
-		struct DepartureHeight: public State {
-			DepartureHeight(){
+				height_item = hal->getHeight();
+				cout<<"height_item: "<<height_item<<endl;
 			}
 			virtual void lb_switch_interrupted(){
 				new (this) ArrivalSwitch;
@@ -205,18 +158,36 @@ private:
 		//============================ ARRIVAL SWITCH=======================================
 		struct ArrivalSwitch: public State {
 			ArrivalSwitch(){
-			}
-		};
+				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
+				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
+				unsigned int time = durationMS.count();
+				time_height_to_switch = time;
+				cout<<"time_height_to_switch: "<<time_height_to_switch<<endl;
 
-		//============================ DEPARTURE SWITCH TO OUTPUT=======================================
-		struct SwitchToOutput: public State {
-			SwitchToOutput(){
+				*timeFrameStart =  steady_clock::now();
+
+				hal->switchPointOpen();
+			}
+			virtual void lb_output_interrupted(){
+				new (this) ArrivalOutput;
 			}
 		};
 
 		//============================ ARRIVAL AT OUTPUT =======================================
 		struct ArrivalOutput: public State {
 			ArrivalOutput(){
+				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
+				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
+				unsigned int time = durationMS.count();
+				time_switch_to_output = time;
+				cout<<"time_switch_to_output: "<<time_switch_to_output<<endl;
+
+				if (cb_this == cb_last){
+					hal->motorStop();
+				}
+				if (cb_this != cb_last){
+					hal->sendSerial(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM));
+				}
 			}
 		};
 

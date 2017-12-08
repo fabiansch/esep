@@ -51,11 +51,6 @@ public:
 		return *this;
 	}
 
-//	const Parameter<T>& operator=(const uint8_t& other) {
-//		value = other;
-//		return *this;
-//	}
-
 	const Parameter<T>& operator=(const unsigned int& other) {
 		value = other;
 		return *this;
