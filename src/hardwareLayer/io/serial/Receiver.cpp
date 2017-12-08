@@ -60,7 +60,7 @@ namespace serial {
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
 								itemBuffer_.pushItem(msg.item);
-								sgen_.pushBackOnSignalBuffer(signal);
+								sgen_.pushBackOnSignalBuffer(msg.signal);
 							}
 						break;
 						default: // push signal to logic layer
