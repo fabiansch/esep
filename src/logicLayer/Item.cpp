@@ -11,34 +11,32 @@
 namespace logicLayer {
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, Item* next)
-:	hal_(  hal )
+:	heightAbsolute(0)
+,	heightCenter(0)
+,	next_(next)
+, 	previous_(nullptr)
+, 	hal_(  hal )
 ,	timerChannel_(timerChannel)
 ,	statePtr(&stateMember)
-,	next_(next)
 {
-	next_ = next;
-	previous_ = nullptr;
-
-	statePtr->hal_ = hal;
 	statePtr->item_ = this;
+	statePtr->hal_ = hal;
 }
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bool head )
-:	hal_(  hal )
+:	heightAbsolute(0)
+,	heightCenter(0)
+,	next_(nullptr)
+,	previous_(nullptr)
+,	hal_(  hal )
 ,	timerChannel_(timerChannel)
 ,	statePtr(&stateMember)
 {
-	next_ = nullptr;
-	previous_ = nullptr;
+	statePtr->item_ = this;
 	statePtr->hal_ = hal;
-
-	cout<<"hello"<<endl;
-
 	if (head) {
 		new (statePtr) Init;
-		cout<<typeid((*statePtr)).name()<<endl;
 	}
-	statePtr->item_ = this;
 }
 
 
