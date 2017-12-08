@@ -200,6 +200,10 @@ namespace logicLayer {
 			case Signalname::STOP:
 				statePtr->stop();
 				break;
+			case Signalname::SENSOR_SWITCH_IS_OPEN:
+				break;
+			case Signalname::SENSOR_SWITCH_IS_CLOSED:
+				break;
 			default:
 				LOG_ERROR<<"Calibration does not support following Signal: "<<(int)signal.name<<endl;
 				exit(EXIT_FAILURE);

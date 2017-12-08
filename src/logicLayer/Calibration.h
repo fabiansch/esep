@@ -78,13 +78,14 @@ private:
 		//============================ WAITING FOR ITEM =======================================
 		struct WaitingForItem: public State {
 			WaitingForItem() {
+				cout<<"=============== ARRIVAL AT INPUT =================="<<endl;
 				hal->blinkGreen(Speed::slow);
 				hal->blinkYellow(Speed::slow);
 				hal->blinkRed(Speed::slow);
 				height_conveyor_belt = hal->getHeight();
 				cout<<"height_conveyor_belt: "<<height_conveyor_belt<<endl;
 			}
-			virtual void lb_input_interrupted() override {
+			virtual void lb_input_interrupted(){
 				new (this) ArrivalAtInput;
 			}
 			virtual void item_arrived(){
@@ -95,6 +96,7 @@ private:
 		//============================ ITEM ARRIVED =======================================
 		struct ItemArrived: public State {
 			ItemArrived() {
+				cout<<"=============== ItemArrived =================="<<endl;
 				*timeFrameStart = steady_clock::now();
 				hal->motorFast();
 				hal->motorRotateClockwise();
@@ -109,6 +111,7 @@ private:
 		//============================ ARRIVAL AT INPUT =======================================
 		struct ArrivalAtInput: public State {
 			ArrivalAtInput(){
+				cout<<"=============== ArrivalAtInput =================="<<endl;
 				if (cb_this != cb_first){
 					std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 					std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
@@ -128,6 +131,7 @@ private:
 		//============================ DEPARTURE INPUT =======================================
 		struct DepartureInput: public State {
 			DepartureInput(){
+				cout<<"=============== DepartureInput =================="<<endl;
 				*timeFrameStart = steady_clock::now();
 				*totalTimeStart = *timeFrameStart;
 			}
@@ -139,11 +143,12 @@ private:
 		//============================ ARRIVAL AT HIGHT =======================================
 		struct ArrivalAtHeight: public State {
 			ArrivalAtHeight(){
+				cout<<"=============== ArrivalAtHeight =================="<<endl;
 				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
 				unsigned int time = durationMS.count();
 				time_input_to_height = time;
-				cout<<"time_input_to_height: "<<time_output_to_input<<endl;
+				cout<<"time_input_to_height: "<<time_input_to_height<<endl;
 
 				*timeFrameStart =  steady_clock::now();
 
@@ -158,6 +163,7 @@ private:
 		//============================ ARRIVAL SWITCH=======================================
 		struct ArrivalSwitch: public State {
 			ArrivalSwitch(){
+				cout<<"=============== ArrivalSwitch =================="<<endl;
 				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
 				unsigned int time = durationMS.count();
@@ -176,6 +182,7 @@ private:
 		//============================ ARRIVAL AT OUTPUT =======================================
 		struct ArrivalOutput: public State {
 			ArrivalOutput(){
+				cout<<"=============== ArrivalOutput =================="<<endl;
 				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
 				unsigned int time = durationMS.count();
