@@ -16,10 +16,10 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, It
 ,	statePtr(&stateMember)
 ,	next_(next)
 {
-	next_ = nullptr;
+	next_ = next;
 	previous_ = nullptr;
 
-	statePtr->hal_ = hal_;
+	statePtr->hal_ = hal;
 	statePtr->item_ = this;
 }
 
@@ -30,7 +30,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bo
 {
 	next_ = nullptr;
 	previous_ = nullptr;
-	statePtr->hal_ = hal_;
+	statePtr->hal_ = hal;
 
 	cout<<"hello"<<endl;
 
@@ -64,6 +64,9 @@ void Item::handle(Signal signal){
 		break;
 		case Signalname::LB_OUTPUT_INTERRUPTED:
 			statePtr->lbOutputInt( signal );
+		break;
+		case Signalname::LB_OUTPUT_FREED:
+			statePtr->lbOutputFreed( signal );
 		break;
 		default:
 			cout <<__FUNCTION__<< "default" << endl;

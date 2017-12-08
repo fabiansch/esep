@@ -176,21 +176,27 @@ private:
 				Item::onOutputAction(hal_, item_);
 			}
 
-			virtual void lbOutputFreed( Signal signal )override {
+			virtual void lbOutputFreed( Signal signal ) override {
 				new (this) DepatureAtOutput;
 			}
 		};
 
 		struct DepatureAtOutput : public State{
 			DepatureAtOutput(){
+				cout<<"setPrevious"<<endl;
 				item_->next_->setPrevious(item_->previous_);
-				item_->previous_->setNext(item_->next_);
+				cout<<"setNext"<<endl;
+				if(item_->previous_) {
+					item_->previous_->setNext(item_->next_);
+				}
+				cout<<"items on CB "<<items_on_cb<<endl;
 				if (items_on_cb > 0) {
 					items_on_cb = items_on_cb - 1;
 				} else {
 					LOG_WARNING<<"items_on_cb was zero or negative."<<endl;
 				}
 				Item::DepatureAtOutputAction(hal_);
+				delete item_;
 			}
 
 		};
