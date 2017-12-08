@@ -19,11 +19,11 @@ Serial::Serial(SignalGenerator& signalGenerator)
 , _receiver(_serialClockwise, _watchDog, signalGenerator)
 , _watchDog(_serialClockwise, signalGenerator)
 {
-
+	LOG_SCOPE
 }
 
 Serial::~Serial() {
-	// TODO Auto-generated destructor stub
+	LOG_SCOPE
 }
 
 void Serial::send(Signal& signal) {

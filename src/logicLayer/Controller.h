@@ -136,7 +136,7 @@ private:
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
-			cout << "forward in run";
+			cout << "forward in run"<<endl;
 			head_->handle( signal );
 		}
 	};

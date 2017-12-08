@@ -431,7 +431,7 @@ public:
 	SensorTest(hardwareLayer::HardwareLayer& hal)
 	: statePtr(&stateMember) // assigning start state
 	, hal(hal)
-	, testItem( &hal, nullptr, nullptr )
+	, testItem( &hal, nullptr, nullptr, nullptr )
 	, timeout_timer_th(std::thread(timeout_timer, &hal, 0))
 	{
 		statePtr->hal = &hal;

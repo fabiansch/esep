@@ -21,6 +21,8 @@ namespace serial {
 constexpr int CORRECT_CN = 654321;
 constexpr int WRONG_CN = 123456;
 
+static logicLayer::Item dummyItem(nullptr, nullptr, nullptr, nullptr);
+
 struct Message {
 	Message() :
 	Message(Signal(), CORRECT_CN)
@@ -50,11 +52,10 @@ struct Message {
 	Message(Signal signal, int checkNumber)
 	: checkNumber(checkNumber)
 	, signal(signal)
-	, item( nullptr, nullptr, nullptr )
+	, item(dummyItem)
 	{
 
 	}
-
 
 	int checkNumber;
 	Signal signal;

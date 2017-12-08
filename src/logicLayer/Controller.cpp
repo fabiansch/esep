@@ -13,7 +13,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timer
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
-, head_(&hal, &timerChannel, true)
+, head_(&hal, &timerChannel, true, &errorHandler)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE
@@ -86,6 +86,7 @@ void Controller::operator()() {
 				statePtr->stop();
 				break;
 			default:
+				cout<<"FORWARD"<<endl<<endl;
 				statePtr->forward(signal);
 				break;
 		}
