@@ -116,9 +116,7 @@ private:
 
 		virtual void item_arrived( Signal signal ) override {
 			cout<<"item_arrived"<<endl;
-			if( cb_this == cb_last ){
-				Item::startMotor(hal_);
-			}
+			Item::startMotor(hal_);
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
