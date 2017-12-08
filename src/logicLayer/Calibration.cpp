@@ -16,6 +16,9 @@ namespace logicLayer {
 	{
 		LOG_SCOPE
 		statePtr->hal = &hal;
+		statePtr->timeFrameStart = &timeFrameStart;
+		statePtr->timeFrameStop = &timeFrameStop;
+		statePtr ->totalTimeStart = &totalTimeStart;
 	}
 
 	Calibration::~Calibration() {

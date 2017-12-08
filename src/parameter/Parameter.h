@@ -51,10 +51,16 @@ public:
 		return *this;
 	}
 
-	const Parameter<T>& operator=(const uint8_t& other) {
+//	const Parameter<T>& operator=(const uint8_t& other) {
+//		value = other;
+//		return *this;
+//	}
+
+	const Parameter<T>& operator=(const unsigned int& other) {
 		value = other;
 		return *this;
 	}
+
 
 	void showValue()
 	{
@@ -73,13 +79,15 @@ extern Parameter<uint8_t> cb_first;
 extern Parameter<uint8_t> cb_last;
 extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
-extern Parameter<int> time_output_to_input;
-extern Parameter<int> time_input_to_height;
-extern Parameter<int> time_height_to_switch;
-extern Parameter<int> time_switch_to_output;
-extern Parameter<int> time_switch_to_slide;
-extern Parameter<int> time_lb_slide_freed;
-extern Parameter<int> time_cb_unit_total;
+extern Parameter<unsigned int> time_output_to_input;
+extern Parameter<unsigned int> time_input_to_height;
+extern Parameter<unsigned int> time_height_to_switch;
+extern Parameter<unsigned int> time_switch_to_output;
+extern Parameter<unsigned int> time_switch_to_slide;
+extern Parameter<unsigned int> time_lb_slide_freed;
+extern Parameter<unsigned int> time_cb_unit_total;
 extern Parameter<double> slow_factor;
+extern Parameter<double> height_conveyor_belt; //int or double?
+extern Parameter<double> height_item; //int or double?
 
 #endif /* PARAMETER_H_ */

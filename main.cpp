@@ -5,6 +5,8 @@
 #include "LogicLayer.h"
 #include "Test.h"
 
+
+
 using namespace std;
 
 void evaluateIfCb_1();
@@ -27,6 +29,7 @@ int main(int argc, char *argv[])
 	cout<<"RUN: "<<(int)Signalname::RUN<<endl;
 	cout<<"CALIBRATION: "<<(int)Signalname::CALIBRATION<<endl;
 	cout<<"STOP: "<<(int)Signalname::STOP<<endl;
+
 
 
 	bool restart = false;
