@@ -68,6 +68,7 @@ private:
 		virtual void lb_output_interrupted( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void lb_output_freed( 			Signal signal ){ forwardSignal( signal ); }
 		virtual void transfer_item( 			Signal signal ){ forwardSignal( signal ); }
+		virtual void conveyer_belt_ready(		Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -198,6 +199,10 @@ private:
 
 	struct ArrivalOutput : public State{
 		ArrivalOutput(){
+			Item::onOutputAction(hal_, item_, errorHandler_);
+		}
+
+		virtual void conveyer_belt_ready( Signal signal ) override {
 			Item::onOutputAction(hal_, item_, errorHandler_);
 		}
 

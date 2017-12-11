@@ -234,7 +234,12 @@ void Item::handle(Signal signal){
 		case Signalname::TRANSFER_ITEM:
 			statePtr->transfer_item( signal );
 			break;
+		// controller
 		case Signalname::STOP:
+			break;
+		// other conveyer belt
+		case Signalname::CONVEYOR_BELT_READY:
+			statePtr->conveyer_belt_ready( signal );
 			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
@@ -306,6 +311,7 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 			if (next_cb_busy == true) {
 				hal->motorStop();
 			} else {
+				hal->motorStart();
 				hal->sendItemViaSerial(item);
 			}
 		}
