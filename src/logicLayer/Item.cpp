@@ -313,7 +313,7 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 				hal->motorStop();
 			} else {
 				hal->motorStart();
-				hal->sendItemViaSerial(item);
+				hal->sendSerial(Signal(cb_this, cb_previous, Signalname::START_TIMERS_INPUT));
 			}
 		}
 
@@ -330,7 +330,7 @@ void stopMotorIfNoItemAfter(int milliseconds, hardwareLayer::HardwareLayer* hal)
 	}
 }
 
-void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
+void Item::lbOutputFreedAction(hardwareLayer::HardwareLayer* hal) {
 	if(items_on_cb > 0) {
 		hal->motorStart();
 	}
@@ -338,14 +338,35 @@ void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
 		timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
 		timer.detach();
 	}
-	if(cb_this == cb_sorting_2) {
-		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
-	}
 }
 
 void Item::addPendingError(ErrorHandler* errorHandler, Signal signal) {
 	errorHandler->addPending(signal);
 }
+
+void Item::dequeueItem(Item* item) {
+	item->next_->setPrevious(item->previous_);
+	if (item->previous_) {
+		item->previous_->setNext(item->next_);
+	}
+	if (items_on_cb > 0) {
+		items_on_cb = items_on_cb - 1;
+	} else {
+		LOG_WARNING << "items_on_cb was zero or negative." << endl;
+	}
+	cout << "items on CB " << items_on_cb << endl;
+	delete item;
+}
+
+void Item::sendItem(hardwareLayer::HardwareLayer* hal, Item* item) {
+	hal->sendItemViaSerial(item);
+}
+
+void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
+	hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
+}
+
+
 
 
 } /* namespace logicLayer */

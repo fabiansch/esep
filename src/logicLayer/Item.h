@@ -31,11 +31,14 @@ public:
 
 	static void startMotor(hardwareLayer::HardwareLayer* );
 	static void send_CB_busy(hardwareLayer::HardwareLayer* );
+	static void send_CB_ready(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
 	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
-	static void DepatureAtOutputAction(hardwareLayer::HardwareLayer*);
+	static void lbOutputFreedAction(hardwareLayer::HardwareLayer*);
 	static void addPendingError(ErrorHandler*, Signal);
+	static void dequeueItem(Item* item);
+	static void sendItem(hardwareLayer::HardwareLayer* hal, Item* item);
 
 
 	void setNext(Item*);
@@ -121,13 +124,13 @@ private:
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
 			if( cb_this != cb_first ) {
-				new (this) ArrivalOutputPreviousCB;
+				new (this) DepartureOutput;
 			}
 		}
 	};
 
-	struct ArrivalOutputPreviousCB : public State {
-		ArrivalOutputPreviousCB() {
+	struct DepartureOutput : public State {
+		DepartureOutput() {
 			Item::startMotor(hal_);
 			send_CB_busy(hal_);
 
@@ -241,32 +244,20 @@ private:
 
 		virtual void lb_output_freed( Signal signal ) override {
 			cout<<"lb_output_freed"<<endl;
-			new (this) DepatureOutput;
-		}
-
-	};
-
-	struct DepatureOutput : public State{
-		DepatureOutput(){
-			item_->next_->setPrevious(item_->previous_);
-			if(item_->previous_) {
-				item_->previous_->setNext(item_->next_);
+			if(cb_this != cb_last) {
+				if(next_cb_busy == false) {
+					new (this) IDLE;
+					Item::sendItem(hal_, item_);
+				} else {
+					// TODO error Item lost
+				}
 			}
-			if (items_on_cb > 0) {
-				items_on_cb = items_on_cb - 1;
-			} else {
-				LOG_WARNING<<"items_on_cb was zero or negative."<<endl;
+			if(cb_this == cb_sorting_2) {
+				send_CB_ready(hal_);
 			}
-			cout<<"items on CB "<<items_on_cb<<endl;
-
-			Item::DepatureAtOutputAction(hal_);
-			delete item_;
+			Item::dequeueItem(item_);
+			Item::lbOutputFreedAction(hal_);
 		}
-
-	};
-
-	struct WaitForArrivalInput : public State{
-
 	};
 
 	IDLE stateMember;
