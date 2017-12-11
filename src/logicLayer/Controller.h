@@ -139,6 +139,9 @@ private:
 	};
 
 	struct Calibrate : public State{
+		Calibrate() {
+			calibration->handle(Signal(Signalname::CALIBRATION_START));
+		}
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}

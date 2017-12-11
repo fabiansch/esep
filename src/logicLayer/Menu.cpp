@@ -72,8 +72,9 @@ void Menu::computeInput(){
 				controller_ << Signalname::SENSOR_TEST;
 			}
 		} else if(!textInput.compare("calibration")) {
+			cout << "Please make sure that slide has no items on it and hit enter." << endl;
+			cin.get();
 			controller_ << Signalname::CALIBRATION;
-			controller_ << Signal(Signalname::CALIBRATION_START);
 		} else if(!textInput.compare("run")) {
 			controller_ << Signalname::RUN;
 		} else if (!(textInput.compare("stop"))){

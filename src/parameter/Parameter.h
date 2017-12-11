@@ -51,11 +51,10 @@ public:
 		return *this;
 	}
 
-	const Parameter<T>& operator=(const unsigned int& other) {
+	const Parameter<T>& operator=(const T& other) {
 		value = other;
 		return *this;
 	}
-
 
 	void showValue()
 	{
@@ -81,8 +80,8 @@ extern Parameter<unsigned int> time_switch_to_output;
 extern Parameter<unsigned int> time_switch_to_slide;
 extern Parameter<unsigned int> time_lb_slide_freed;
 extern Parameter<unsigned int> time_cb_unit_total;
-extern Parameter<double> slow_factor;
-extern Parameter<double> height_conveyor_belt; //int or double?
-extern Parameter<double> height_item; //int or double?
+extern Parameter<float> slow_factor;
+extern Parameter<float> height_conveyor_belt; //int or double?
+extern Parameter<float> height_item; //int or double?
 
 #endif /* PARAMETER_H_ */

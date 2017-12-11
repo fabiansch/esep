@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
 	cout<<"CALIBRATION: "<<(int)Signalname::CALIBRATION<<endl;
 	cout<<"STOP: "<<(int)Signalname::STOP<<endl;
 
-
+	float bla = 2.567;
+	cout<<"TEST FLOAT: "<<bla<<endl;
 
 	bool restart = false;
 	do {

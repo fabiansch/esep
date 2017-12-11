@@ -77,7 +77,6 @@ void Controller::operator()() {
 				if(cb_this == cb_1) {
 					hal.sendSerial(Signal(cb_this, cb_available, Signalname::CALIBRATION));
 					cout << "################ Calibration Start ###############" << endl;
-					cout << "Please make sure that slide has no items on it." << endl;
 				}
 				statePtr->calibrate();
 				break;
