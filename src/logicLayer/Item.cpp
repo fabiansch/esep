@@ -239,7 +239,7 @@ void Item::handle(Signal signal){
 			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
-			next_cb_busy == false;
+			next_cb_busy = false;
 			statePtr->conveyer_belt_ready( signal );
 			break;
 		case Signalname::SIGNAL_DUMMY:

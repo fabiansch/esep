@@ -107,6 +107,7 @@ private:
 		virtual void lb_slide_freed( 			Signal signal ) override {}
 		virtual void lb_output_interrupted( 	Signal signal ) override {}
 		virtual void lb_output_freed( 			Signal signal ) override {}
+		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
 			cout<<"lb_input_interrupted"<<endl;
@@ -203,6 +204,7 @@ private:
 		}
 
 		virtual void conveyer_belt_ready( Signal signal ) override {
+			cout<<"conveyer_belt_ready"<<endl;
 			Item::onOutputAction(hal_, item_, errorHandler_);
 		}
 
@@ -215,9 +217,7 @@ private:
 
 	struct DepatureOutput : public State{
 		DepatureOutput(){
-			cout<<"setPrevious"<<endl;
 			item_->next_->setPrevious(item_->previous_);
-			cout<<"setNext"<<endl;
 			if(item_->previous_) {
 				item_->previous_->setNext(item_->next_);
 			}
