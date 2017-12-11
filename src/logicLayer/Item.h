@@ -30,7 +30,7 @@ public:
 	void handle( Signal );
 
 	static void startMotor(hardwareLayer::HardwareLayer* );
-	static void transferItemAction(hardwareLayer::HardwareLayer* );
+	static void send_CB_busy(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
 	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
@@ -101,11 +101,11 @@ private:
 		virtual void lb_input_freed(			Signal signal ) override {}
 		virtual void lb_height_interrupted( 	Signal signal ) override {}
 		virtual void lb_height_freed( 			Signal signal ) override {}
-		virtual void lb_switch_interrupted( 	Signal signal ) override {}
+		virtual void lb_switch_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SWITCH_FREED)); }
 		virtual void lb_switch_freed( 			Signal signal ) override {}
 		virtual void lb_slide_interrupted( 		Signal signal ) override {}
 		virtual void lb_slide_freed( 			Signal signal ) override {}
-		virtual void lb_output_interrupted( 	Signal signal ) override {}
+		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 
@@ -129,9 +129,9 @@ private:
 	struct ArrivalOutputPreviousCB : public State {
 		ArrivalOutputPreviousCB() {
 			Item::startMotor(hal_);
-			transferItemAction(hal_);
+			send_CB_busy(hal_);
 
-			// later the following should be done in timeframe_input_in
+			// later the following should be done when timeframe_input_in
 			new (this) WaitForArrivalAtInput;
 		}
 
@@ -236,7 +236,7 @@ private:
 
 		virtual void conveyer_belt_ready( Signal signal ) override {
 			cout<<"conveyer_belt_ready"<<endl;
-			Item::onOutputAction(hal_, item_, errorHandler_);
+			new (this) ArrivalOutput;
 		}
 
 		virtual void lb_output_freed( Signal signal ) override {

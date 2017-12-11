@@ -270,7 +270,7 @@ void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
 	}
 }
 
-void Item::transferItemAction(hardwareLayer::HardwareLayer* hal) {
+void Item::send_CB_busy(hardwareLayer::HardwareLayer* hal) {
 	if (cb_this == cb_sorting_2) {
 		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_BUSY));
 	}
