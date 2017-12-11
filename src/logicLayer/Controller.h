@@ -128,6 +128,10 @@ private:
 	struct Run : public State{
 		Run(){
 			cout << "enter run"<<endl;
+			hal->blinkGreen(Speed::slow);
+			items_on_cb = 0;
+			item_on_switch = false;
+			item_on_output = false;
 		}
 		virtual void run(){}
 		virtual void sensor_test(){}
