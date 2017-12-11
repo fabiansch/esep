@@ -120,7 +120,7 @@ private:
 
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
-			if( cb_this != cb_last ) {
+			if( cb_this != cb_first ) {
 				new (this) ArrivalOutputPreviousCB;
 			}
 		}
@@ -150,7 +150,9 @@ private:
 	struct ArrivalInput : public State {
 		ArrivalInput() {
 			items_on_cb = items_on_cb + 1;
-			Item::startMotor(hal_);
+			if (not item_on_output) {
+				Item::startMotor(hal_);
+			}
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
