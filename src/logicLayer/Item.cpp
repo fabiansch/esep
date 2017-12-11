@@ -13,7 +13,7 @@
 
 namespace logicLayer {
 
-std::thread output_timer;
+std::thread timer;
 
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, Item* next, ErrorHandler* errorHandler)
@@ -91,9 +91,11 @@ void Item::handle(Signal signal){
 			statePtr->lb_height_freed( signal );
 			break;
 		case Signalname::LB_SWITCH_INTERRUPTED:
+			item_on_switch = true;
 			statePtr->lb_switch_interrupted( signal );
 			break;
 		case Signalname::LB_SWITCH_FREED:
+			item_on_switch = false;
 			statePtr->lb_switch_freed( signal );
 			break;
 		case Signalname::LB_SLIDE_INTERRUPTED:
@@ -104,9 +106,11 @@ void Item::handle(Signal signal){
 			break;
 		case Signalname::LB_OUTPUT_INTERRUPTED:
 			statePtr->lb_output_interrupted( signal );
+			item_on_output = true;
 			break;
 		case Signalname::LB_OUTPUT_FREED:
 			statePtr->lb_output_freed( signal );
+			item_on_output = false;
 			break;
 		// mmi
 		// buttons
@@ -269,10 +273,24 @@ void Item::openSwitchPoint(hardwareLayer::HardwareLayer* hal) {
 	}
 }
 
+void closeSwitchIfNoItemOn(int milliseconds, hardwareLayer::HardwareLayer* hal) {
+	do {
+		WAIT(milliseconds);
+	} while (item_on_output == true);
+
+	if (item_on_switch == false) {
+		hal->switchPointClose();
+	}
+}
+
+void Item::closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer* hal) {
+	timer = std::thread(closeSwitchIfNoItemOn, milliseconds, hal);
+	timer.detach();
+}
+
+
 void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHandler* errorHandler) {
 	if (hal != nullptr) {
-
-		hal->switchPointClose();
 
 		if(cb_this == cb_last){
 			hal->motorStop();
@@ -301,8 +319,8 @@ void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
 		hal->motorStart();
 	}
 	if(cb_this != cb_last) {
-		output_timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
-		output_timer.detach();
+		timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
+		timer.detach();
 	}
 }
 

@@ -72,5 +72,8 @@ extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
 
 extern Parameter<int> items_on_cb;
+extern Parameter<bool> item_on_switch;
+extern Parameter<bool> item_on_output;
+
 
 #endif /* PARAMETER_H_ */

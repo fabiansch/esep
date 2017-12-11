@@ -32,6 +32,7 @@ public:
 
 	static void startMotor(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
+	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
 	static void DepatureAtOutputAction(hardwareLayer::HardwareLayer*);
 
@@ -153,6 +154,11 @@ private:
 			Item::openSwitchPoint(hal_);
 		}
 
+		virtual void lb_switch_freed( Signal signal ) override {
+			cout<<"lb_switch_freed"<<endl;
+			Item::closeSwitchPoint(500, hal_);
+		}
+
 		virtual void lb_output_interrupted( Signal signal ) override {
 			cout<<"lb_output_interrupted"<<endl;
 			new (this) ArrivalOutput;
@@ -160,7 +166,7 @@ private:
 
 	};
 
-	struct DepatureSwitchToOutput : public State{
+	struct DepatureSwitchToOutput : public State {
 
 	};
 
