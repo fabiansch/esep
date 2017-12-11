@@ -62,6 +62,12 @@ private:
 
 		// ============================= FAIL STATE =========================================
 		struct FAIL_STATE : public State {
+			FAIL_STATE() {
+				hal->motorStop();
+				hal->blinkRed(Speed::slow);
+				hal->greenLightOff();
+				hal->yellowLightOff();
+			}
 			virtual void calibration_start(){
 				new (this) WaitingForItem;
 			}
@@ -183,6 +189,7 @@ private:
 		struct ArrivalOutput: public State {
 			ArrivalOutput(){
 				cout<<"=============== ArrivalOutput =================="<<endl;
+				hal->switchPointClose();
 				std::chrono::duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 				std::chrono::milliseconds durationMS = std::chrono::duration_cast<std::chrono::milliseconds>(durationfs);
 				unsigned int time = durationMS.count();
@@ -191,10 +198,94 @@ private:
 
 				if (cb_this == cb_last){
 					hal->motorStop();
+					cout<<"Item arrived last CB's output.\nPlease put one Item on input of each conveyor belt. "<<endl;
 				}
 				if (cb_this != cb_last){
 					hal->sendSerial(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM));
+					cout<<"Calibration active on next conveyor belt. Please wait for instructions"<<endl;
 				}
+			}
+			virtual void lb_output_freed() {
+				new (this) WaitForItemSlow;
+			}
+		};
+
+		//============================ WAIT FOR ITEM SLOW =======================================
+		struct WaitForItemSlow: public State {
+			WaitForItemSlow(){
+			}
+			virtual void lb_input_interrupted(){
+				new (this) ArrivalAtInputSlow;
+			}
+		};
+
+		//============================ ARRIVAL AT INPUT SLOW =======================================
+		struct ArrivalAtInputSlow: public State {
+			ArrivalAtInputSlow(){
+				hal->motorSlow();
+				hal->motorStart();
+			}
+			virtual void lb_input_freed(){
+				new (this) DepartureInputSlow;
+			}
+		};
+
+
+		//============================ DEPARTURE INPUT SLOW =======================================
+		struct DepartureInputSlow: public State {
+			DepartureInputSlow(){
+				//TODO start slow timer
+			}
+			virtual void lb_switch_interrupted(){
+				new (this) ArrivalSwitchSlow;
+			}
+		};
+
+		//============================ ARRIVAL SWITCH SLOW =======================================
+		struct ArrivalSwitchSlow: public State {
+			ArrivalSwitchSlow(){
+				hal->switchPointOpen();
+			}
+			virtual void lb_output_interrupted(){
+				new (this) ArrivalOutputSlow;
+			}
+		};
+
+		//============================ ARRIVAL OUTPUT SLOW =======================================
+		struct ArrivalOutputSlow: public State {
+			ArrivalOutputSlow(){
+				// TODO calculate slow factor
+				hal->motorRotateCounterclockwise();
+				hal->motorFast();
+			}
+			virtual void lb_height_interrupted(){
+				new (this) ArrivalHeightFinish;
+			}
+		};
+
+		//============================ ARRIVAL HEIGHT FINISH =======================================
+		struct ArrivalHeightFinish: public State {
+			ArrivalHeightFinish(){
+			}
+			virtual void lb_height_interrupted(){
+				new (this) ArrivalSlide;
+			}
+		};
+
+		//============================ ARRIVAL SLIDE =======================================
+		struct ArrivalSlide: public State {
+			ArrivalSlide(){
+			}
+			virtual void lb_slide_freed(){
+				new (this) InSlide;
+			}
+		};
+
+		//============================ IN SLIDE =======================================
+		struct InSlide: public State {
+			InSlide(){
+				// TODO send 'success' to cb_first
+				new (this) IDLE;
 			}
 		};
 
