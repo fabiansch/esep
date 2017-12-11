@@ -81,7 +81,6 @@ private:
 			//============================ WAITING FOR ITEM =======================================
 			struct WaitingForItem: public State {
 				WaitingForItem() {
-					cout<< "=============== WAITING FOR ITEM =================="<< endl;
 					hal->blinkGreen(Speed::slow);
 					hal->blinkYellow(Speed::slow);
 					hal->blinkRed(Speed::slow);
@@ -99,7 +98,6 @@ private:
 			//============================ ITEM ARRIVED =======================================
 			struct ItemArrived: public State {
 				ItemArrived() {
-					cout << "=============== ItemArrived =================="<< endl;
 					*timeFrameStart = steady_clock::now();
 					hal->motorFast();
 					hal->motorRotateClockwise();
@@ -113,8 +111,6 @@ private:
 			//============================ ARRIVAL AT INPUT =======================================
 			struct ArrivalAtInput: public State {
 				ArrivalAtInput() {
-					cout << "=============== ArrivalAtInput =================="
-							<< endl;
 					if (cb_this != cb_first) {
 						duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 						milliseconds durationMS = duration_cast < milliseconds> (durationfs);
@@ -133,11 +129,8 @@ private:
 			//============================ DEPARTURE INPUT =======================================
 			struct DepartureInput: public State {
 				DepartureInput() {
-					cout << "=============== DepartureInput =================="<< endl;
 					*timeFrameStart = steady_clock::now();
-					cout<<timeFrameStart<<" timeFrameStart"<<endl;
 					*totalTimeStart = *timeFrameStart;
-					cout<<totalTimeStart<<" totalTimeStart"<<endl;
 				}
 				virtual void lb_height_interrupted() {
 					new (this) ArrivalAtHeight;
@@ -147,7 +140,6 @@ private:
 			//============================ ARRIVAL AT HIGHT =======================================
 			struct ArrivalAtHeight: public State {
 				ArrivalAtHeight() {
-					cout << "=============== ArrivalAtHeight =================="<< endl;
 					duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 					milliseconds durationMS = duration_cast < milliseconds> (durationfs);
 					unsigned int time = durationMS.count();
@@ -167,7 +159,6 @@ private:
 			//============================ ARRIVAL SWITCH=======================================
 			struct ArrivalSwitch: public State {
 				ArrivalSwitch() {
-					cout << "=============== ArrivalSwitch =================="<< endl;
 					duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 					milliseconds durationMS = duration_cast< milliseconds > (durationfs);
 					unsigned int time = durationMS.count();
@@ -186,7 +177,6 @@ private:
 			//============================ ARRIVAL AT OUTPUT =======================================
 			struct ArrivalOutput: public State {
 				ArrivalOutput() {
-					cout << "=============== ArrivalOutput =================="<< endl;
 					hal->switchPointClose();
 					steady_clock::time_point now = steady_clock::now();
 					duration<float> durationSmallFrame = now - *timeFrameStart;
@@ -198,15 +188,15 @@ private:
 
 					if (cb_this == cb_last) {
 						hal->motorStop();
-						cout<< "Item arrived last CB's output."<< endl;
 						cout<< "Please put one Item on input of each conveyor belt. "<< endl;
 
 					}
 					if (cb_this != cb_last) {
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM));
 						std::thread thread = std::thread(motor_stop_timer,hal,1000);
-
-						cout<< "Calibration active on next conveyor belt. Please wait for instructions"<< endl;
+						thread.detach();
+						cout<< "Calibration active on next conveyer belt."<< endl;
+						cout<< "Put Item on input again."<< endl;
 					}
 				}
 				virtual void lb_output_freed() {
@@ -263,14 +253,8 @@ private:
 				ArrivalOutputSlow() {
 					*timeFrameStop = steady_clock::now();
 					unsigned int slowTotalTime = duration_cast<milliseconds> (*timeFrameStop - *timeFrameStart).count();
-					cout<<"slowTotalTime: "<<slowTotalTime<<endl;
-					slow_factor.parameterList.showParameters();
-					cout<< (float)(((float) time_cb_unit_total)/  ((float)slowTotalTime)) <<endl;
-					cout<< (float) time_cb_unit_total <<endl;
-					cout<< (float)slowTotalTime <<endl;
-					cout<< ((float) time_cb_unit_total)/  ((float)slowTotalTime) <<endl;
-					slow_factor = (float)(((float) time_cb_unit_total)/  ((float)slowTotalTime));
-					cout<<"slow_factor: "<<(float)slow_factor<<endl;
+					slow_factor = (float)time_cb_unit_total / slowTotalTime;
+					cout<<"slow_factor: "<<slow_factor<<endl;
 					// TODO calculate slow factor
 
 					hal->motorRotateCounterclockwise();
@@ -315,6 +299,8 @@ private:
 					// TODO send 'success' to cb_first
 					//TODO store data in calibration file
 					cout << "Calibration completed." << endl;
+					cb_this.parameterList.showParameters();
+
 					new (this) IDLE;
 				}
 			};

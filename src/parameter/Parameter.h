@@ -59,9 +59,14 @@ public:
 	void showValue()
 	{
 
+		if(std::is_same<T, uint8_t>::value) {
+			cout<<name<<": "<<(int)value<<endl;
+		}
+		else {
+			cout<<name<<": "<<value<<endl;
+		}
 
 
-		cout<<name<<": "<<(int)value<<endl;
 	}
 
 	T value;
