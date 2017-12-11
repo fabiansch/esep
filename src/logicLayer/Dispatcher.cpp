@@ -37,6 +37,7 @@ void Dispatcher::notify() {
 		switch (signal.name) {
 		case Signalname::CONVEYOR_BELT_BUSY:
 			next_cb_busy = true;
+			break;
 		default:
 			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;
 			controller_ << signal;
