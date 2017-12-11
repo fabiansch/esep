@@ -49,7 +49,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bo
 	statePtr->errorHandler_ = errorHandler;
 
 	if (head) {
-		new (statePtr) Init;
+		new (statePtr) HEAD;
 	}
 }
 
@@ -342,5 +342,10 @@ void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
 		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
 	}
 }
+
+void Item::addPendingError(ErrorHandler* errorHandler, Signal signal) {
+	errorHandler->addPending(signal);
+}
+
 
 } /* namespace logicLayer */

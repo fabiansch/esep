@@ -12,7 +12,6 @@
 #include "Header.h"
 #include "Channel.h"
 #include "SignalReceiver.h"
-//#include "ErrorHandler.h"
 
 namespace hardwareLayer {
 	class HardwareLayer;
@@ -36,6 +35,7 @@ public:
 	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
 	static void DepatureAtOutputAction(hardwareLayer::HardwareLayer*);
+	static void addPendingError(ErrorHandler*, Signal);
 
 
 	void setNext(Item*);
@@ -91,14 +91,14 @@ private:
 
 	} *statePtr;
 
-	struct Init : public State{
+	struct HEAD : public State {
 
 	};
 
-
-	struct ArrivalInput : public State{
+	struct IDLE : public State{
 		virtual void sensor_switch_is_closed( 	Signal signal ) override {}
 		virtual void sensor_switch_is_open( 	Signal signal ) override {}
+		virtual void lb_input_freed(			Signal signal ) override {}
 		virtual void lb_height_interrupted( 	Signal signal ) override {}
 		virtual void lb_height_freed( 			Signal signal ) override {}
 		virtual void lb_switch_interrupted( 	Signal signal ) override {}
@@ -111,17 +111,46 @@ private:
 
 		virtual void lb_input_interrupted( Signal signal ) override {
 			cout<<"lb_input_interrupted"<<endl;
-			items_on_cb = items_on_cb + 1;
-			if( cb_this == cb_first ) {
-				Item::startMotor(hal_);
+			if( cb_this == cb_sorting_1 ) {
+				new (this) ArrivalInput;
+			} else {
+				addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
 			}
-
 		}
 
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
+			if( cb_this != cb_last ) {
+				new (this) ArrivalOutputPreviousCB;
+			}
+		}
+	};
+
+	struct ArrivalOutputPreviousCB : public State {
+		ArrivalOutputPreviousCB() {
 			Item::startMotor(hal_);
 			transferItemAction(hal_);
+
+			// later the following should be done in timeframe_input_in
+			new (this) WaitForArrivalAtInput;
+		}
+
+	};
+
+	struct WaitForArrivalAtInput : public State {
+		WaitForArrivalAtInput() {
+			// start timers height
+		}
+
+		virtual void lb_input_interrupted( Signal signal ) override {
+			new (this) ArrivalInput;
+		}
+	};
+
+	struct ArrivalInput : public State {
+		ArrivalInput() {
+			items_on_cb = items_on_cb + 1;
+			Item::startMotor(hal_);
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
@@ -238,7 +267,7 @@ private:
 
 	};
 
-	ArrivalInput stateMember;
+	IDLE stateMember;
 };
 
 } /* namespace logicLayer */
