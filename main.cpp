@@ -33,6 +33,8 @@ int main(int argc, char *argv[])
 	do {
 		evaluateIfCb_1();
 
+		cout<<"RL "<<(int)(cb_this>>1)<<endl;
+
 		hardwareLayer::HardwareLayer hal;
 		logicLayer::LogicLayer loLay(hal);
 

@@ -232,7 +232,7 @@ void Item::handle(Signal signal){
 			break;
 		// item
 		case Signalname::TRANSFER_ITEM:
-			statePtr->item_arrived( signal );
+			statePtr->transfer_item( signal );
 			break;
 		case Signalname::STOP:
 			break;
@@ -263,6 +263,13 @@ void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
 		exit(EXIT_FAILURE);
 	}
 }
+
+void Item::transferItemAction(hardwareLayer::HardwareLayer* hal) {
+	if (cb_this == cb_sorting_2) {
+		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_BUSY));
+	}
+}
+
 
 void Item::openSwitchPoint(hardwareLayer::HardwareLayer* hal) {
 	if (hal != nullptr) {
@@ -295,10 +302,12 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 		if(cb_this == cb_last){
 			hal->motorStop();
 			errorHandler->addPending(Signal(Signalname::LB_OUTPUT_FREED));
-		}
-
-		if(cb_this == cb_first){
-			hal->sendItemViaSerial(item);
+		} else {
+			if (next_cb_busy == true) {
+				hal->motorStop();
+			} else {
+				hal->sendItemViaSerial(item);
+			}
 		}
 
 	} else {
@@ -321,6 +330,9 @@ void Item::DepatureAtOutputAction(hardwareLayer::HardwareLayer* hal) {
 	if(cb_this != cb_last) {
 		timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
 		timer.detach();
+	}
+	if(cb_this == cb_sorting_2) {
+		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
 	}
 }
 

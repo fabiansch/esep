@@ -93,11 +93,6 @@ enum class Signalname : uint16_t {
 	RESET_LED_OFF,
 	START_LED_ON,
 	START_LED_OFF,
-	// serial
-	CONVEYOR_BELT_BUSY,
-	CONVEYOR_BELT_READY,
-	SLIDE_FULL,
-	SLIDE_EMPTY,
 	// timer
 	// -- in
 	START_TIMERS_INPUT,
@@ -134,6 +129,12 @@ enum class Signalname : uint16_t {
 
 	//ITEM
 	TRANSFER_ITEM,
+
+	// cb
+	CONVEYOR_BELT_BUSY,
+	CONVEYOR_BELT_READY,
+	SLIDE_FULL,
+	SLIDE_EMPTY,
 
 	// SensorTest
 	SENSOR_TEST_ENTER,

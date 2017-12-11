@@ -94,11 +94,13 @@ namespace serial {
 		if (cb_available == 0) {
 			cb_available = msg.signal.sender;
 			setNext_cb();
-		}
-		if (msg.signal.sender == cb_available) {
 			if (cb_last == 0) {
 				cb_last = (cb_available + 1) >> 1;
 			}
+			setPrevious_cb();
+			setSorting_cbs();
+		}
+		if (msg.signal.sender == cb_available) {
 			sendFeed();
 		}
 	}
@@ -125,6 +127,8 @@ namespace serial {
 			cb_available = msg.signal.receiver;
 			cb_last = (msg.signal.receiver + 1) >> 1;
 			setNext_cb();
+			setPrevious_cb();
+			setSorting_cbs();
 		}
 	}
 
@@ -138,6 +142,20 @@ namespace serial {
 		serial_.send(msg);
 	}
 
+	void Receiver::setPrevious_cb() {
+		LOG_SCOPE
+		if(cb_this == 0 or cb_available == 0 or cb_last == 0) {
+			LOG_ERROR<<"cb_this or cb_available or cb_last not yet set."<<endl;
+			exit(EXIT_FAILURE);
+		} else {
+			if((cb_this >> 1) == 0) {
+				cb_previous = cb_last;
+			} else {
+				cb_previous = cb_this >> 1;
+			}
+		}
+	}
+
 	void Receiver::setNext_cb() {
 		LOG_SCOPE
 		if(cb_this == 0 or cb_available == 0) {
@@ -149,6 +167,24 @@ namespace serial {
 			} else {
 				cb_next = cb_this << 1;
 			}
+		}
+	}
+
+	void Receiver::setSorting_cbs() {
+		LOG_SCOPE
+		switch (cb_available) {
+		case 0b00000001:
+			cb_sorting_1 = 0b00000001;
+			cb_sorting_2 = 0b00000001;
+			break;
+		case 0b00000011:
+			cb_sorting_1 = 0b00000001;
+			cb_sorting_2 = 0b00000010;
+			break;
+		default:
+			cb_sorting_1 = 0b00000010;
+			cb_sorting_2 = 0b00000100;
+			break;
 		}
 	}
 

@@ -132,6 +132,7 @@ private:
 			items_on_cb = 0;
 			item_on_switch = false;
 			item_on_output = false;
+			next_cb_busy = false;
 		}
 		virtual void run(){}
 		virtual void sensor_test(){}

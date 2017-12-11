@@ -31,6 +31,7 @@ public:
 	void handle( Signal );
 
 	static void startMotor(hardwareLayer::HardwareLayer* );
+	static void transferItemAction(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
 	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
@@ -66,7 +67,7 @@ private:
 		virtual void lb_slide_freed( 			Signal signal ){ forwardSignal( signal ); }
 		virtual void lb_output_interrupted( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void lb_output_freed( 			Signal signal ){ forwardSignal( signal ); }
-		virtual void item_arrived( 				Signal signal ){ forwardSignal( signal ); }
+		virtual void transfer_item( 			Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -115,9 +116,10 @@ private:
 
 		}
 
-		virtual void item_arrived( Signal signal ) override {
-			cout<<"item_arrived"<<endl;
+		virtual void transfer_item( Signal signal ) override {
+			cout<<"transfer_item"<<endl;
 			Item::startMotor(hal_);
+			transferItemAction(hal_);
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
