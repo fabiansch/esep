@@ -254,6 +254,7 @@ private:
 			cout<<"lb_output_freed"<<endl;
 			if(cb_this != cb_last) {
 				if(next_cb_busy == false) {
+					next_cb_busy.parameterList.showParameters();
 					Item::sendItem(hal_, item_);
 					new (this) DepartureOutput;
 				} else {

@@ -32,7 +32,7 @@ void Timer::operator()() {
 
 		switch (signal.name) {
 		case Signalname::START_TIMERS_INPUT:
-			WAIT(800);
+			WAIT(450);
 			*controller_ << Signal(Signalname::TIMEFRAME_INPUT_ENTER);
 			break;
 		default:
