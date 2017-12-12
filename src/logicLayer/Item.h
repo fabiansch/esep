@@ -202,7 +202,7 @@ private:
 
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
-			Item::closeSwitchPoint(500, hal_);
+			Item::closeSwitchPoint(700, hal_);
 		}
 
 		virtual void lb_output_interrupted( Signal signal ) override {
