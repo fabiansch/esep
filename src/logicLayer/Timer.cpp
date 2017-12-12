@@ -32,8 +32,10 @@ void Timer::operator()() {
 
 		switch (signal.name) {
 		case Signalname::START_TIMERS_INPUT:
+			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 			WAIT(450);
 			*controller_ << Signal(Signalname::TIMEFRAME_INPUT_ENTER);
+			cout<<"Timer sent TIMEFRAME_INPUT_ENTER"<<endl;
 			break;
 		default:
 			LOG_ERROR<<"Timer got unknown Signal"<<endl;
