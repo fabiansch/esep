@@ -226,9 +226,8 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout(){}
+		virtual void sensor_metal_match() {}
 	};
 
 	//============================ LB_SWITCH_FREE_Test =======================================
