@@ -32,9 +32,9 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	Timer timer_;
+	TypeIdentification typeIdent_;
 
 	Controller controller_;
-	TypeIdentification typeIdent_;
 	Calibration calibration_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;

@@ -8,16 +8,18 @@
 #ifndef TYPEIDENTIFICATION_H_
 #define TYPEIDENTIFICATION_H_
 
-
+#include "HardwareLayer.h"
 #include "SignalReceiver.h"
 
 namespace logicLayer {
 
 class TypeIdentification: public SignalReceiver {
 public:
-	TypeIdentification();
+	TypeIdentification(hardwareLayer::HardwareLayer&);
 	virtual ~TypeIdentification();
 	void operator()();
+private:
+	hardwareLayer::HardwareLayer& hal_;
 };
 
 } /* namespace logicLayer */

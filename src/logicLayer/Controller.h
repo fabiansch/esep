@@ -31,6 +31,11 @@ private:
 
 	Item head_;
 
+	/**
+	 *  @brief Type Identification
+	 */
+	Channel<Signal>& typeIdCh_;
+
 	struct State {//top-level state
 		virtual void run(){}
 		virtual void stop() {
@@ -54,6 +59,7 @@ private:
 		ErrorHandler* errorHandler;
 		hardwareLayer::HardwareLayer* hal;
 		Item* head_;
+		Channel<Signal>* typeIdCh_;
 	} *statePtr;
 
 	struct Start : public State{
@@ -143,6 +149,7 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
 			head_->handle( signal );
+			*typeIdCh_ << signal;
 		}
 	};
 
@@ -168,7 +175,7 @@ private:
 	Idle stateMember;
 
 public:
-	Controller(hardwareLayer::HardwareLayer&, Channel<Signal>& );
+	Controller(hardwareLayer::HardwareLayer&, Channel<Signal>&, Channel<Signal>& );
 	virtual ~Controller();
 
 	virtual void operator()();

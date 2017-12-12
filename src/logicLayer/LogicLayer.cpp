@@ -12,7 +12,8 @@ namespace logicLayer {
 
 LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
-, controller_(hal, timer_.getChannel())
+, typeIdent_(hal)
+, controller_(hal, timer_.getChannel(), typeIdent_.getChannel())
 , dispatcher_(
 		hal,
 		controller_.getChannel(),

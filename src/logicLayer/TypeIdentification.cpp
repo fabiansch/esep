@@ -10,7 +10,8 @@
 
 namespace logicLayer {
 
-TypeIdentification::TypeIdentification()
+TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer& hal) :
+		hal_(hal)
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
@@ -24,14 +25,14 @@ void TypeIdentification::operator()(){
 	LOG_SCOPE
 	Signal sig;
 	while(running){
-
 		sig << channel_;
 		switch (sig.name) {
-			case Signalname::SIGNAL_DUMMY:
-				LOG_WARNING<<__FUNCTION__<<": received SIGNAL_DUMMY"<<endl;
-				break;
+			case Signalname::LB_HEIGHT_INTERRUPTED:
+				cout << "Height: " << hal_->getHeight() << endl;
+			break;
 			default:
-				break;
+
+			break;
 		}
 	}
 

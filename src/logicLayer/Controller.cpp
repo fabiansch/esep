@@ -9,11 +9,12 @@
 
 namespace logicLayer {
 
-Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timerChannel )
+Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timerChannel, Channel<Signal>& typeIdentCh )
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
 , head_(&hal, &timerChannel, true, &errorHandler)
+, typeIdCh_(typeIdentCh)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE
@@ -22,6 +23,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timer
 	statePtr->errorHandler = &errorHandler;
 	statePtr->head_ = &head_;
 	statePtr->hal = &hal;
+	statePtr->typeIdCh_ = &typeIdCh_;
 }
 
 Controller::~Controller() {
