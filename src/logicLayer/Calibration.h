@@ -79,6 +79,7 @@ private:
 				virtual void calibration_start() {
 					new (this) WaitingForItem;
 				}
+				virtual void calibration_unsuccessful(uint8_t sender) {}
 			};
 
 			//============================ WAITING FOR ITEM =======================================
@@ -89,6 +90,7 @@ private:
 					hal->blinkRed(Speed::slow);
 					height_conveyor_belt = hal->getHeight();
 					cout << "height_conveyor_belt: " << height_conveyor_belt << endl;
+					cout << "Please put item on masters input" << endl;
 				}
 				virtual void lb_input_interrupted() {
 					new (this) ArrivalAtInput;
@@ -322,6 +324,12 @@ private:
 			};
 
 			struct WaitingForOthers: public State {
+				WaitingForOthers() {
+					if (cb_this == cb_next ) {
+						cout<<"========== Calibration completed ==========="<<endl;
+						new (this) IDLE;
+					}
+				}
 				virtual void calibration_successful(uint8_t sender){
 					cout << "========== Calibration completed on all CB's===========" << endl;
 					cb_this.parameterList.showParameters();
