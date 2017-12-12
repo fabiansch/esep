@@ -36,6 +36,9 @@ namespace logicLayer {
 			case Signalname::CALIBRATION_SUCCESSFUL:
 				statePtr->calibration_successful(signal.sender);
 				break;
+			case Signalname::CALIBRATION_UNSUCCESSFUL:
+				statePtr->calibration_unsuccessful(signal.sender);
+				break;
 			// light barriers
 			case Signalname::LB_INPUT_INTERRUPTED:
 				statePtr->lb_input_interrupted();

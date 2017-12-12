@@ -46,6 +46,7 @@ private:
 
 		void calibrationFailed(string functionname) {
 			cout << "Calibration failed: " << name() << ", caused of "<< functionname << endl;
+			hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_UNSUCCESSFUL));
 			new (this) FAIL_STATE;
 		}
 
@@ -285,6 +286,7 @@ private:
 			struct ArrivalSwitchFinish: public State {
 				ArrivalSwitchFinish() {
 					*timeFrameStart = steady_clock::now();
+					std::thread thread = std::thread(timeout_timer,hal,3000);
 				}
 				virtual void lb_slide_freed() {
 					new (this) InSlide;
@@ -301,31 +303,30 @@ private:
 					time_switch_to_slide = (unsigned int)duration_cast <milliseconds> (durationSlide).count();
 					cout << "time_switch_to_slide: "<<time_switch_to_slide<< endl;
 					if(cb_this == cb_first){
-						cout << "MASTER SENDING CAL SUCCESSFUL" << endl;
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 						new (this) WaitingForOthers;
 					}
 					if ( *successful == true ){
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
+						cout << "Finished calibration on this CB." << endl;
+						new (this) IDLE;
 					}
 				}
 				virtual void calibration_successful(uint8_t sender){
-					cout << "Calibration completed" << endl;
-					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 					cout << "Calibration completed on machine " << (int)cb_this<<endl;
+					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 					new (this) IDLE;
 				}
+				virtual void calibration_unsuccessful(uint8_t sender) {}
 			};
 
 			struct WaitingForOthers: public State {
-				WaitingForOthers() {
-					cout<<"MASTER ARRIVED WAITING FOR OTHERS"<<endl;
-				}
 				virtual void calibration_successful(uint8_t sender){
 					cout << "========== Calibration completed on all CB's===========" << endl;
 					cb_this.parameterList.showParameters();
 					new (this) IDLE;
 				}
+				virtual void calibration_unsuccessful(uint8_t sender) {}
 			};
 
 			IDLE stateMember;
@@ -340,7 +341,7 @@ private:
 			static void timeout_timer(hardwareLayer::HardwareLayer* hal, int milliseconds) {
 				if(milliseconds > 0) {
 					WAIT(milliseconds);
-					hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::SENSOR_TEST_TIMEOUT));
+					hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::CALIBRATION_UNSUCCESSFUL));
 				}
 			}
 
