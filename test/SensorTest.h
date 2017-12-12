@@ -243,9 +243,10 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
+		virtual void sensor_test_timeout(){}
+		virtual void sensor_metal_match() {}
+		virtual void sensor_metal_not_match() {}
 
-		}
 	};
 
 	//============================ SENSOR_METAL_NOT_MATCH_Test =======================================
