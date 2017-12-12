@@ -81,6 +81,8 @@ void Menu::computeInput(){
 		} else if(!textInput.compare("calibration")) {
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {
+			cout<<"Please assure that no Items are on the conveyer belts and hit enter."<<endl<<endl;
+			cin.get();
 			controller_ << Signalname::RUN;
 		} else if (!(textInput.compare("stop"))){
 			controller_ << Signalname::STOP;

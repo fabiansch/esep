@@ -9,16 +9,18 @@
 
 namespace logicLayer {
 
-Controller::Controller(hardwareLayer::HardwareLayer& hal)
+Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timerChannel )
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
+, head_(&hal, &timerChannel, true, &errorHandler)
 , statePtr(&stateMember)
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	statePtr->sensorTest = &sensorTest;
 	statePtr->errorHandler = &errorHandler;
+	statePtr->head_ = &head_;
 	statePtr->hal = &hal;
 }
 
@@ -69,7 +71,10 @@ void Controller::operator()() {
 				}
 				break;
 			case Signalname::RUN:
-				cout<<"Signal RUN arrived"<<endl;
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::RUN));
+				}
+				statePtr->run();
 				break;
 			case Signalname::CALIBRATION:
 				break;

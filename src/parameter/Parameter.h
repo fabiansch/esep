@@ -61,14 +61,28 @@ public:
 		cout<<name<<": "<<(int)value<<endl;
 	}
 
+	void initValue() {
+		value = 0;
+	}
+
 	T value;
 };
 
 extern Parameter<uint8_t> cb_this;
+extern Parameter<uint8_t> cb_previous;
 extern Parameter<uint8_t> cb_next;
 extern Parameter<uint8_t> cb_first;
 extern Parameter<uint8_t> cb_last;
 extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
+extern Parameter<uint8_t> cb_sorting_1;
+extern Parameter<uint8_t> cb_sorting_2;
+
+extern Parameter<int> items_on_cb;
+extern Parameter<bool> item_on_switch;
+extern Parameter<bool> item_on_output;
+extern Parameter<bool> next_cb_busy;
+
+
 
 #endif /* PARAMETER_H_ */

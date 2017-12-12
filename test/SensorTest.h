@@ -399,6 +399,7 @@ public:
 	SensorTest(hardwareLayer::HardwareLayer& hal)
 	: statePtr(&stateMember) // assigning start state
 	, hal(hal)
+	, testItem( &hal, nullptr, nullptr, nullptr )
 	, timeout_timer_th(std::thread(timeout_timer, &hal, 0))
 	{
 		statePtr->hal = &hal;
@@ -597,7 +598,7 @@ public:
 				hal.switchPointClose();
 				break;
 			// item
-			case Signalname::ITEM_ARRIVED:
+			case Signalname::TRANSFER_ITEM:
 				statePtr->item_arrived();
 				break;
 			case Signalname::SENSOR_TEST_ENTER:

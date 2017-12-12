@@ -19,6 +19,7 @@ public:
 	virtual ~ParameterList();
 
 	void showParameters();
+	void initParameters();
 
 	std::vector<ParameterBase*> parameters;
 

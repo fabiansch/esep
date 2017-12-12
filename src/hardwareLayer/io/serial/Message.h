@@ -21,6 +21,8 @@ namespace serial {
 constexpr int CORRECT_CN = 654321;
 constexpr int WRONG_CN = 123456;
 
+static logicLayer::Item dummyItem(nullptr, nullptr, nullptr, nullptr);
+
 struct Message {
 	Message() :
 	Message(Signal(), CORRECT_CN)
@@ -28,10 +30,11 @@ struct Message {
 
 	}
 
-	Message(Item item) :
-	Message(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM))
+	Message(logicLayer::Item item)
+	: checkNumber(CORRECT_CN)
+	, signal(Signal(cb_this, cb_next, Signalname::TRANSFER_ITEM))
+	, item(item)
 	{
-		this->item = item;
 	}
 
 	Message(Signal signal) :
@@ -46,17 +49,17 @@ struct Message {
 
 	}
 
-	Message(Signal signal, int checkNumber) :
-	checkNumber(checkNumber),
-	signal(signal)
+	Message(Signal signal, int checkNumber)
+	: checkNumber(checkNumber)
+	, signal(signal)
+	, item(dummyItem)
 	{
 
 	}
 
-
 	int checkNumber;
 	Signal signal;
-	Item item;
+	logicLayer::Item item;
 };
 
 } /* namespace serial */

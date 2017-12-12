@@ -12,7 +12,7 @@ namespace logicLayer {
 
 LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
-, controller_(hal)
+, controller_(hal, timer_.getChannel())
 , dispatcher_(
 		hal,
 		controller_.getChannel(),
@@ -21,7 +21,7 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 , menu_(hal, controller_.getChannel())
 {
 	LOG_SCOPE
-
+	timer_.setControllerChannel(&controller_.getChannel());
 	menu_.computeInput();
 }
 
