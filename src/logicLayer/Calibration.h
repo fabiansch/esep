@@ -304,6 +304,9 @@ private:
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 						new (this) WaitingForOthers;
 					}
+					if ( *successful == true ){
+						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
+					}
 				}
 				virtual void calibration_successful(uint8_t sender){
 					cout << "Calibration completed" << endl;
