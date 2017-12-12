@@ -46,7 +46,7 @@ private:
 
 		void calibrationFailed(string functionname) {
 			cout << "Calibration failed: " << name() << ", caused of "<< functionname << endl;
-			hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_UNSUCCESSFUL));
+			hal->sendSerial(Signal(cb_this, cb_available, Signalname::CALIBRATION_UNSUCCESSFUL));
 			new (this) FAIL_STATE;
 		}
 
@@ -287,6 +287,7 @@ private:
 				ArrivalSwitchFinish() {
 					*timeFrameStart = steady_clock::now();
 					std::thread thread = std::thread(timeout_timer,hal,3000);
+					thread.detach();
 				}
 				virtual void lb_slide_freed() {
 					new (this) InSlide;
