@@ -303,20 +303,21 @@ private:
 					if(cb_this == cb_first){
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 						new (this) WaitingForOthers;
-					}
-					while(successful == false){
+					} else {
+						while(successful == false){
 
-					}
+						}
 					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
-					cout << "Calibration completed." << endl;
+					cout << "Calibration completed on machine " << (int)cb_this<<endl;
 					cb_this.parameterList.showParameters();
 					new (this) IDLE;
+					}
 				}
 			};
 
 			struct WaitingForOthers: public State {
 				virtual void calibration_successful(uint8_t sender){
-					cout << "Calibration completed." << endl;
+					cout << "========== Calibration completed ===========" << endl;
 					cb_this.parameterList.showParameters();
 					new (this) IDLE;
 				}
