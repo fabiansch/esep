@@ -128,13 +128,13 @@ private:
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
 			if( cb_this != cb_first ) {
-				new (this) DepartureOutput;
+				new (this) DepartureOutputPreviousCB;
 			}
 		}
 	};
 
-	struct DepartureOutput : public State {
-		DepartureOutput() {
+	struct DepartureOutputPreviousCB : public State {
+		DepartureOutputPreviousCB() {
 			Item::startMotor(hal_);
 			send_CB_busy(hal_);
 		}
@@ -254,8 +254,8 @@ private:
 			cout<<"lb_output_freed"<<endl;
 			if(cb_this != cb_last) {
 				if(next_cb_busy == false) {
-					new (this) IDLE;
 					Item::sendItem(hal_, item_);
+					new (this) DepartureOutput;
 				} else {
 					// TODO error Item lost
 				}
@@ -265,6 +265,12 @@ private:
 			}
 			Item::dequeueItem(item_);
 			Item::lbOutputFreedAction(hal_);
+		}
+	};
+
+	struct DepartureOutput : public State{
+		DepartureOutput(){
+
 		}
 	};
 
