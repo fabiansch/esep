@@ -8,10 +8,12 @@
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
 
+#include "Channel.h"
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
 #include "Calibration.h"
+#include "Item.h"
 #include "Menu.h"
 #include "Test.h"
 #include "Channel.h"
@@ -25,6 +27,12 @@ private:
 	SensorTest sensorTest;
 	ErrorHandler errorHandler;
 	Calibration calibration;
+
+	/**
+	 *  @brief Head element in item queue
+	 */
+
+	Item head_;
 
 	struct State {//top-level state
 		virtual void run(){}
@@ -49,6 +57,7 @@ private:
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
 		hardwareLayer::HardwareLayer* hal;
+		Item* head_;
 	} *statePtr;
 
 	struct Start : public State{
@@ -64,7 +73,10 @@ private:
 		Idle(){
 			Menu::printInfo();
 		}
-		virtual void run(){}
+		virtual void run(){
+			Item::idCounter_ = 0; // reset ids
+			new (this) Run;
+		}
 		virtual void sensor_test(){
 			new (this) Sensor_Test;
 		}
@@ -121,13 +133,23 @@ private:
 	};
 
 	struct Run : public State{
+		Run(){
+			cout << "enter run"<<endl;
+			hal->blinkGreen(Speed::slow);
+			items_on_cb = 0;
+			item_on_switch = false;
+			item_on_output = false;
+			next_cb_busy = false;
+		}
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
-		virtual void forward(Signal signal) {}
+		virtual void forward(Signal signal) {
+			head_->handle( signal );
+		}
 	};
 
 	struct Safe : public State{
@@ -158,7 +180,7 @@ private:
 	Idle stateMember;
 
 public:
-	Controller(hardwareLayer::HardwareLayer&);
+	Controller(hardwareLayer::HardwareLayer&, Channel<Signal>& );
 	virtual ~Controller();
 
 	virtual void operator()();

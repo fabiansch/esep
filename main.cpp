@@ -18,23 +18,9 @@ int main(int argc, char *argv[])
 	LOG_SCOPE;
 	printStartMessage();
 
-	cout<<"CONNECTION_LOST: "<<(int)Signalname::CONNECTION_LOST<<endl;
-	cout<<"CONNECTION_CONNECTED: "<<(int)Signalname::CONNECTION_CONNECTED<<endl;
-	cout<<"SIGNAL_BUFFER_EMPTY: "<<(int)Signalname::SIGNAL_BUFFER_EMPTY<<endl;
-	cout<<"ITEM_ARRIVED: "<<(int)Signalname::ITEM_ARRIVED<<endl;
-	cout<<"SIGNAL_DUMMY: "<<(int)Signalname::SIGNAL_DUMMY<<endl;
-	cout<<"SENSOR_TEST: "<<(int)Signalname::SENSOR_TEST<<endl;
-	cout<<"BUTTON_TEST: "<<(int)Signalname::BUTTON_TEST<<endl;
-	cout<<"ACTUATOR_TEST: "<<(int)Signalname::ACTUATOR_TEST<<endl;
-	cout<<"RUN: "<<(int)Signalname::RUN<<endl;
-	cout<<"CALIBRATION: "<<(int)Signalname::CALIBRATION<<endl;
-	cout<<"STOP: "<<(int)Signalname::STOP<<endl;
-
-	float bla = 2.567;
-	cout<<"TEST FLOAT: "<<bla<<endl;
-
 	bool restart = false;
 	do {
+		cb_this.parameterList.initParameters();
 		evaluateIfCb_1();
 
 		hardwareLayer::HardwareLayer hal;

@@ -27,3 +27,9 @@ void ParameterList::showParameters() {
 	}
 	std::cout<<std::endl;
 }
+
+void ParameterList::initParameters() {
+	for(auto parameter : parameters) {
+		parameter->initValue();
+	}
+}

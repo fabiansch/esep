@@ -20,7 +20,9 @@ public:
 	Timer();
 	virtual ~Timer();
 	void operator()();
+	void setControllerChannel(Channel<Signal>*);
 private:
+	Channel<Signal>* controller_;
 };
 
 } // end namespace

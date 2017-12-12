@@ -19,12 +19,12 @@ public:
 	ItemBuffer();
 	virtual ~ItemBuffer();
 
-	void pushItem(Item);
-	Item pullItem();
+	void pushItem(logicLayer::Item);
+	logicLayer::Item pullItem();
 	int size();
 
 private :
-	vector<Item> items;
+	vector<logicLayer::Item> items;
 };
 
 } /* namespace itembuffer */

@@ -198,7 +198,7 @@ namespace logicLayer {
 				hal.switchPointClose();
 				break;
 			// item
-			case Signalname::ITEM_ARRIVED:
+			case Signalname::TRANSFER_ITEM:
 				statePtr->item_arrived();
 				break;
 			case Signalname::STOP:

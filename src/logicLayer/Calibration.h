@@ -196,7 +196,7 @@ private:
 
 					}
 					if (cb_this != cb_last) {
-						hal->sendSerial(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM));
+						hal->sendSerial(Signal(cb_this, cb_next, Signalname::TRANSFER_ITEM));
 						cout<< "Calibration active on next conveyer belt."<< endl;
 						cout<< "Put Item on input again."<< endl;
 					}

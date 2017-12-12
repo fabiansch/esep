@@ -153,11 +153,11 @@ void HardwareLayer::sendSerial(Signal signal) {
 	serial.send(signal);
 }
 
-void HardwareLayer::sendItemViaSerial(Item* item) {
+void HardwareLayer::sendItemViaSerial(logicLayer::Item* item) {
 	serial.send(item);
 }
 
-Item HardwareLayer::getPassedItem() {
+logicLayer::Item HardwareLayer::getPassedItem() {
 	return serial.getReceiver().getItemBuffer().pullItem();
 }
 
