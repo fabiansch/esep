@@ -108,6 +108,7 @@ public:
 	void pollOnSensors();
 
 	// sensor events for higher byte of PORT C
+	static SensorEvent METAL_MATCH;
 	static SensorEvent BUTTON_START;
 	static SensorEvent BUTTON_STOP;
 	static SensorEvent BUTTON_RESET;

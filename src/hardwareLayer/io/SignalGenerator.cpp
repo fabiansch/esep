@@ -20,12 +20,13 @@ constexpr int MAGIC_NUMBER = 15;
 namespace hardwareLayer {
 namespace io {
 
-
 const int NO_CHATTER_TIME = 0;
 const int CHATTER_TIME = 40;
 const int CHATTER_TIME_ESTOP = 750;
 const int CHATTER_TIME_SWITCH = 100;
-
+const int CHATTER_TIME_METAL_MATCH = 40;
+SensorEvent SignalGenerator::METAL_MATCH(		0b00010000<<8, "METAL_MATCH", CHATTER_TIME_METAL_MATCH , SPair(				Signalname::SENSOR_METAL_MATCH,
+																															Signalname::SENSOR_METAL_NOT_MATCH));
 SensorEvent SignalGenerator::BUTTON_START(		0b00010000<<8, "BUTTON_START", CHATTER_TIME , SPair(				Signalname::BUTTON_START_PUSHED,
 																													Signalname::BUTTON_START_PULLED));
 SensorEvent SignalGenerator::BUTTON_STOP( 		0b00100000<<8, "BUTTON_STOP", CHATTER_TIME , SPair(					Signalname::BUTTON_STOP_PULLED,
