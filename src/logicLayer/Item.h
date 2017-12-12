@@ -141,6 +141,7 @@ private:
 		}
 
 		virtual void timeframe_input_enter( Signal signal ) override {
+			cout<<"timeframe_input_enter"<<endl;
 			new (this) WaitForArrivalAtInput;
 		}
 
