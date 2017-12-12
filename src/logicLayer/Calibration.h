@@ -301,6 +301,7 @@ private:
 					time_switch_to_slide = (unsigned int)duration_cast <milliseconds> (durationSlide).count();
 					cout << "time_switch_to_slide: "<<time_switch_to_slide<< endl;
 					if(cb_this == cb_first){
+						cout << "MASTER SENDING CAL SUCCESSFUL" << endl;
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 						new (this) WaitingForOthers;
 					}
@@ -310,15 +311,16 @@ private:
 				}
 				virtual void calibration_successful(uint8_t sender){
 					cout << "Calibration completed" << endl;
-					cb_this.parameterList.showParameters();
 					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 					cout << "Calibration completed on machine " << (int)cb_this<<endl;
-					cb_this.parameterList.showParameters();
 					new (this) IDLE;
 				}
 			};
 
 			struct WaitingForOthers: public State {
+				WaitingForOthers() {
+					cout<<"MASTER ARRIVED WAITING FOR OTHERS"<<endl;
+				}
 				virtual void calibration_successful(uint8_t sender){
 					cout << "========== Calibration completed on all CB's===========" << endl;
 					cb_this.parameterList.showParameters();
