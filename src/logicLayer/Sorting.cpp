@@ -7,6 +7,7 @@
 
 #include "Signals.h"
 #include "Sorting.h"
+#include "Item.h"
 
 namespace logicLayer {
 

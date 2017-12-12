@@ -12,6 +12,7 @@
 #include "Header.h"
 #include "Channel.h"
 #include "SignalReceiver.h"
+#include "Sorting.h"
 
 namespace hardwareLayer {
 	class HardwareLayer;
@@ -227,8 +228,9 @@ private:
 
 	struct ArrivalSwitch : public State{
 		ArrivalSwitch() {
-
-			Item::openSwitchPoint(hal_);
+			if(Sorting::amIWanted(item_)) {
+				Item::openSwitchPoint(hal_);
+			}
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
@@ -238,7 +240,13 @@ private:
 
 		virtual void lb_output_interrupted( Signal signal ) override {
 			cout<<"lb_output_interrupted"<<endl;
-			new (this) ArrivalOutput;
+			if(Sorting::amIWanted(item_)) {
+				new (this) ArrivalOutput;
+			} else {
+				cout<<"blubb10"<<endl;
+				new (this) ArrivalSlide;
+			}
+
 		}
 
 	};
@@ -255,7 +263,11 @@ private:
 
 	};
 
-	struct ArrivalSlide : public State{
+	struct ArrivalSlide : public State {
+		ArrivalSlide() {
+			cout<<"blubb11"<<endl;
+			Item::dequeueAndDeleteItem(item_);
+		}
 
 	};
 
