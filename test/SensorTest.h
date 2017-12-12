@@ -228,6 +228,8 @@ private:
 
 		virtual void sensor_test_timeout(){}
 		virtual void sensor_metal_match() {}
+		virtual void sensor_switch_is_open() {}
+		virtual void sensor_switch_is_closed() {}
 	};
 
 	//============================ LB_SWITCH_FREE_Test =======================================
