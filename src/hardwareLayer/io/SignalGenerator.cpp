@@ -20,11 +20,11 @@ constexpr int MAGIC_NUMBER = 15;
 namespace hardwareLayer {
 namespace io {
 
-
 const int NO_CHATTER_TIME = 0;
 const int CHATTER_TIME = 40;
 const int CHATTER_TIME_ESTOP = 750;
 const int CHATTER_TIME_SWITCH = 100;
+
 
 SensorEvent SignalGenerator::BUTTON_START(		0b00010000<<8, "BUTTON_START", CHATTER_TIME , SPair(				Signalname::BUTTON_START_PUSHED,
 																													Signalname::BUTTON_START_PULLED));

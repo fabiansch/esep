@@ -138,39 +138,14 @@ private:
 			LOG_TEST<<"ABSOLUTE HOEHE: "<<testItem->heightAbsolute<<endl;
 
 			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_NOT_MATCH_Test;
-			LOG_TEST<<name()<<endl;
-		}
-
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-	//============================ SENSOR_HEIGHT_NOT_MATCH_Test =======================================
-	struct SENSOR_HEIGHT_NOT_MATCH_Test : public State {
-
-		virtual void sensor_height_not_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
 			new (this) LB_HEIGHT_INTERRUPT_Test;
 			LOG_TEST<<name()<<endl;
 		}
-
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_height_not_match() {}
+		virtual void sensor_test_timeout(){}
 	};
-
 	//============================ LB_HEIGHT_INTERRUPT_Test =======================================
 	struct LB_HEIGHT_INTERRUPT_Test : public State {
-		virtual void sensor_height_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_NOT_MATCH_Test;
-			LOG_TEST<<name()<<endl;
-		}
 		virtual void lb_height_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
@@ -187,7 +162,6 @@ private:
 				}
 			}
 		}
-
 		virtual void lb_height_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
@@ -195,10 +169,9 @@ private:
 			new (this) SENSOR_METAL_MATCH_Test;
 			LOG_TEST<<name()<<endl;
 		}
-
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout(){}
+		virtual void sensor_height_match() {}
+		virtual void sensor_height_not_match() {}
 	};
 
 	//============================ SENSOR_METAL_MATCH_Test =======================================
@@ -212,10 +185,7 @@ private:
 			new (this) LB_SWITCH_INTERRUPT_Test;
 			LOG_TEST<<name()<<endl;
 		}
-
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout(){}
 	};
 
 	//============================ LB_SWITCH_INTERRUPT_Test =======================================
@@ -227,10 +197,7 @@ private:
 			LOG_TEST<<name()<<endl;
 			hal->switchPointOpen();
 		}
-
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout(){}
 	};
 
 	//============================ SENSOR_SWITCH_IS_OPEN_test =======================================
@@ -242,10 +209,10 @@ private:
 			new (this) SENSOR_METAL_NOT_MATCH_Test;
 			LOG_TEST<<name()<<endl;
 		}
+		virtual void sensor_test_timeout(){}
+		virtual void sensor_metal_match() {}
+		virtual void sensor_metal_not_match() {}
 
-		virtual void sensor_test_timeout(){
-
-		}
 	};
 
 	//============================ SENSOR_METAL_NOT_MATCH_Test =======================================
@@ -259,9 +226,10 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout(){}
+		virtual void sensor_metal_match() {}
+		virtual void sensor_switch_is_open() {}
+		virtual void sensor_switch_is_closed() {}
 	};
 
 	//============================ LB_SWITCH_FREE_Test =======================================
