@@ -237,6 +237,10 @@ void Item::handle(Signal signal){
 		// controller
 		case Signalname::STOP:
 			break;
+		// timer
+		case Signalname::TIMEFRAME_INPUT_ENTER:
+			statePtr->timeframe_input_enter( signal );
+			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
 			next_cb_busy = false;
