@@ -10,21 +10,8 @@
 
 namespace logicLayer {
 
-Sorting::Sorting()
-{
-	LOG_SCOPE
-	SignalReceiver::receiver_ = std::thread(std::ref(*this));
-}
-
-Sorting::~Sorting() {
-	LOG_SCOPE
-}
-
-/**
- * @override
- */
-void Sorting::operator ()(){
-
+bool Sorting::amIWanted(Item* item) {
+	return item->getId() % 2;
 }
 
 } /* namespace logicLayer */

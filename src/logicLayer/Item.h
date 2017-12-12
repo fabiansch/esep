@@ -41,17 +41,19 @@ public:
 	static void sendItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void printItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
+	static void setID(int* id);
+
 
 
 	void setNext(Item*);
 	void setPrevious(Item*);
 	void copyData( Item );
 
+	static void resetId();
+	int getId(){ return id; }
+
 	int heightAbsolute;
 	int heightCenter;
-
-
-	static int idCounter_;
 
 private:
 
@@ -184,6 +186,7 @@ private:
 	struct ArrivalInput : public State {
 		ArrivalInput() {
 			cout<<"ArrivalInput"<<endl;
+			Item::setID(&item_->id);
 			items_on_cb = items_on_cb + 1;
 			if (not item_on_output) {
 				Item::startMotor(hal_);
@@ -223,7 +226,8 @@ private:
 	};
 
 	struct ArrivalSwitch : public State{
-		ArrivalSwitch(){
+		ArrivalSwitch() {
+
 			Item::openSwitchPoint(hal_);
 		}
 

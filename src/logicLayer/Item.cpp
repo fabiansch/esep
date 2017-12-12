@@ -15,7 +15,7 @@ namespace logicLayer {
 
 std::thread timer;
 
-int Item::idCounter_ = 0;
+int idCounter_ = 0;
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, Item* next, ErrorHandler* errorHandler)
 :	heightAbsolute(0)
@@ -32,7 +32,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, It
 	statePtr->hal_ = hal;
 	statePtr->errorHandler_ = errorHandler;
 
-	id = ++idCounter_;
+	id = 0;
 }
 
 Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, bool head, ErrorHandler* errorHandler )
@@ -388,6 +388,16 @@ void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){
 	item->copyData( hal->getPassedItem() );
 }
+
+void Item::setID(int* id) {
+	*id = ++idCounter_;
+}
+
+
+void Item::resetId() {
+	idCounter_ = 0;
+}
+
 
 
 
