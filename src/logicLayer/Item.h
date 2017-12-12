@@ -235,28 +235,28 @@ private:
 
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
-			Item::closeSwitchPoint(700, hal_);
-		}
-
-		virtual void lb_output_interrupted( Signal signal ) override {
-			cout<<"lb_output_interrupted"<<endl;
+			Item::closeSwitchPoint(800, hal_);
 			if(Sorting::amIWanted(item_)) {
-				new (this) ArrivalOutput;
+				new (this) DepatureSwitchToOutput;
 			} else {
-				cout<<"blubb10"<<endl;
-				new (this) ArrivalSlide;
+				new (this) DepatureSwitchToSlide;
 			}
-
 		}
 
 	};
 
 	struct DepatureSwitchToOutput : public State {
-
+		virtual void lb_output_interrupted( Signal signal ) override {
+			cout<<"lb_output_interrupted"<<endl;
+			new (this) ArrivalOutput;
+		}
 	};
 
 	struct DepatureSwitchToSlide : public State{
-
+		virtual void lb_switch_interrupted( Signal signal ) override {
+			cout<<"lb_switch_interrupted"<<endl;
+			new (this) ArrivalSlide;
+		}
 	};
 
 	struct WaitForArrivalAtSlide : public State{
@@ -265,7 +265,6 @@ private:
 
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
-			cout<<"blubb11"<<endl;
 			Item::dequeueAndDeleteItem(item_);
 		}
 

@@ -359,11 +359,8 @@ void Item::addPendingError(ErrorHandler* errorHandler, Signal signal) {
 
 void Item::dequeueAndDeleteItem(Item* item) {
 	item->next_->setPrevious(item->previous_);
-	cout<<"blubb1"<<endl;
 	if (item->previous_) {
-		cout<<"blubb2"<<endl;
 		item->previous_->setNext(item->next_);
-		cout<<"blubb3"<<endl;
 	}
 	if (items_on_cb > 0) {
 		items_on_cb = items_on_cb - 1;
@@ -372,7 +369,6 @@ void Item::dequeueAndDeleteItem(Item* item) {
 	}
 	cout << "items on CB " << items_on_cb << endl;
 	delete item;
-	cout<<"blubb4"<<endl;
 }
 
 void Item::sendItem(hardwareLayer::HardwareLayer* hal, Item* item) {
