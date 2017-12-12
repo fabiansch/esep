@@ -135,6 +135,7 @@ private:
 
 	struct DepartureOutputPreviousCB : public State {
 		DepartureOutputPreviousCB() {
+			cout<<"DepartureOutputPreviousCB"<<endl;
 			Item::startMotor(hal_);
 			send_CB_busy(hal_);
 		}
@@ -148,6 +149,7 @@ private:
 
 	struct WaitForArrivalAtInput : public State {
 		WaitForArrivalAtInput() {
+			cout<<"WaitForArrivalAtInput"<<endl;
 			// start timers height
 		}
 
@@ -160,6 +162,7 @@ private:
 
 	struct ArrivalInput : public State {
 		ArrivalInput() {
+			cout<<"ArrivalInput"<<endl;
 			items_on_cb = items_on_cb + 1;
 			if (not item_on_output) {
 				Item::startMotor(hal_);
@@ -173,6 +176,9 @@ private:
 	};
 
 	struct DepartureInput : public State {
+		DepartureInput() {
+			cout<<"DepartureInput"<<endl;
+		}
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;
@@ -242,6 +248,7 @@ private:
 
 	struct ArrivalOutput : public State{
 		ArrivalOutput(){
+			cout<<"ArrivalOutput"<<endl;
 			Item::onOutputAction(hal_, item_, errorHandler_);
 		}
 
@@ -271,7 +278,7 @@ private:
 
 	struct DepartureOutput : public State{
 		DepartureOutput(){
-
+			cout<<"DepartureOutput"<<endl;
 		}
 	};
 
