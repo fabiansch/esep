@@ -19,6 +19,7 @@ namespace logicLayer {
 		statePtr->timeFrameStart = &timeFrameStart;
 		statePtr->timeFrameStop = &timeFrameStop;
 		statePtr ->totalTimeStart = &totalTimeStart;
+		statePtr->successful = &successful;
 	}
 
 	Calibration::~Calibration() {

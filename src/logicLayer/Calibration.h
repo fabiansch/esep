@@ -30,7 +30,7 @@ private:
 			cout << "CALIBRATION ABORTED BY MAIN MENU." << endl;
 			calibrationFailed(__FUNCTION__);
 		}
-		virtual void calibration_successful(uint8_t sender) {		successful = true ;}
+		virtual void calibration_successful(uint8_t sender) {		*successful = true ;}
 		virtual void calibration_unsuccessful(uint8_t sender) {		calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_freed() {}
@@ -56,7 +56,7 @@ private:
 				steady_clock::time_point* timeFrameStart;
 				steady_clock::time_point* timeFrameStop;
 				steady_clock::time_point* totalTimeStart;
-				bool successful = false;
+				bool* successful;
 
 			}*statePtr;
 
@@ -304,7 +304,7 @@ private:
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 						new (this) WaitingForOthers;
 					} else {
-						while(successful == false){
+						while(*successful == false){
 
 						}
 					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
@@ -327,6 +327,7 @@ private:
 			steady_clock::time_point timeFrameStart = steady_clock::now();
 			steady_clock::time_point timeFrameStop = steady_clock::now();
 			steady_clock::time_point totalTimeStart = steady_clock::now();
+			bool successful = false;
 
 			hardwareLayer::HardwareLayer& hal;
 			milliseconds timeStart;
