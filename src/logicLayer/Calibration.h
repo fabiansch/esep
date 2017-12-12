@@ -30,7 +30,8 @@ private:
 			cout << "CALIBRATION ABORTED BY MAIN MENU." << endl;
 			calibrationFailed(__FUNCTION__);
 		}
-		virtual void calibration_successful(uint8_t sender) {		calibrationFailed(__FUNCTION__);}
+		virtual void calibration_successful(uint8_t sender) {		successful = true ;}
+		virtual void calibration_unsuccessful(uint8_t sender) {		calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_freed() {}
 		virtual void lb_height_interrupted() {	calibrationFailed(__FUNCTION__);}
@@ -55,6 +56,7 @@ private:
 				steady_clock::time_point* timeFrameStart;
 				steady_clock::time_point* timeFrameStop;
 				steady_clock::time_point* totalTimeStart;
+				bool successful = false;
 
 			}*statePtr;
 
@@ -142,8 +144,7 @@ private:
 				ArrivalAtHeight() {
 					duration<float> durationfs = steady_clock::now() - *timeFrameStart;
 					milliseconds durationMS = duration_cast < milliseconds> (durationfs);
-					unsigned int time = durationMS.count();
-					time_input_to_height = time;
+					time_input_to_height = (unsigned int)durationMS.count();
 					cout << "time_input_to_height: " << time_input_to_height<< endl;
 
 					*timeFrameStart = steady_clock::now();
@@ -193,8 +194,6 @@ private:
 					}
 					if (cb_this != cb_last) {
 						hal->sendSerial(Signal(cb_this, cb_next, Signalname::SERIAL_TRANSFER_ITEM));
-						std::thread thread = std::thread(motor_stop_timer,hal,1000);
-						thread.detach();
 						cout<< "Calibration active on next conveyer belt."<< endl;
 						cout<< "Put Item on input again."<< endl;
 					}
@@ -207,6 +206,10 @@ private:
 			//============================ WAIT FOR ITEM SLOW =======================================
 			struct WaitForItemSlow: public State {
 				WaitForItemSlow() {
+					if (cb_this != cb_last) {
+						std::thread thread = std::thread(motor_stop_timer,hal,1000);
+						thread.detach();
+					}
 				}
 				virtual void lb_input_interrupted() {
 					new (this) ArrivalAtInputSlow;
@@ -281,8 +284,7 @@ private:
 			//============================ ARRIVAL SWITCH FINISH =======================================
 			struct ArrivalSwitchFinish: public State {
 				ArrivalSwitchFinish() {
-					//TODO start slide timer
-					//TODO start timeout timer
+					*timeFrameStart = steady_clock::now();
 				}
 				virtual void lb_slide_freed() {
 					new (this) InSlide;
@@ -295,12 +297,27 @@ private:
 			struct InSlide: public State {
 				InSlide() {
 					hal->motorStop();
-					//TODO calculate slide arrival time
-					// TODO send 'success' to cb_first
-					//TODO store data in calibration file
+					duration<float> durationSlide = steady_clock::now() - *timeFrameStart;
+					time_switch_to_slide = (unsigned int)duration_cast <milliseconds> (durationSlide).count();
+					cout << "time_switch_to_slide: "<<time_switch_to_slide<< endl;
+					if(cb_this == cb_first){
+						hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
+						new (this) WaitingForOthers;
+					}
+					while(successful == false){
+
+					}
+					hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 					cout << "Calibration completed." << endl;
 					cb_this.parameterList.showParameters();
+					new (this) IDLE;
+				}
+			};
 
+			struct WaitingForOthers: public State {
+				virtual void calibration_successful(uint8_t sender){
+					cout << "Calibration completed." << endl;
+					cb_this.parameterList.showParameters();
 					new (this) IDLE;
 				}
 			};
