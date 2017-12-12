@@ -85,7 +85,6 @@ void Test::actuatorsTest(hardwareLayer::HardwareLayer& hal){
 
 
 	cout << __FUNCTION__ <<  "  successful." << endl<<endl;
-	cout << "type 'stop' to return to main menu"<<endl<<endl;
 
 }
 
@@ -312,7 +311,6 @@ void Test::mmiTest(hardwareLayer::HardwareLayer& hal){
 	if( !nextTest(__FUNCTION__) ) return;
 
 	cout  << __FUNCTION__ << " successful. " << endl<<endl;
-	cout << "type 'stop' to return to main menu"<<endl<<endl;
 
 }
 
@@ -350,7 +348,6 @@ void Test::buttonsTest(){
 
 
 	cout  << __FUNCTION__ << " successful. " <<endl<<endl;
-	cout << "type 'stop' to return to main menu"<<endl<<endl;
 
 }
 

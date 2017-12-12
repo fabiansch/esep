@@ -28,8 +28,8 @@ public:
 
 private:
 	Interface _serialClockwise;
-	WatchDog _watchDog;
 	Receiver _receiver;
+	WatchDog _watchDog; // needs to be below Receiver
 };
 
 } /* namespace serial */

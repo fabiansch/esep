@@ -44,21 +44,26 @@ void Menu::computeInput(){
 				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::actuatorsTest(hal);
+				controller_ << Signalname::STOP;
 			} else if(!textInput.compare("mmi")) {
 				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				controller_ << Signalname::ACTUATOR_TEST;
 				test::Test::mmiTest(hal);
+				controller_ << Signalname::STOP;
 			} else if(!textInput.compare("threadSafeness")) {
 				test::Test::singletonThreadSafeTest();
 				test::Test::threadSafenessInGpioTest();
+				controller_ << Signalname::STOP;
 			} else if(!textInput.compare("channel")) {
 				test::Test::channelTest();
+				controller_ << Signalname::STOP;
 			} else if(!textInput.compare("sensors")) {
 				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 				initSensorTest();
 			} else if(!textInput.compare("buttons")) {
 				controller_ << Signalname::BUTTON_TEST;
 				test::Test::buttonsTest();
+				controller_ << Signalname::STOP;
 			} else if(!textInput.compare("all")) {
 				if(cb_this != cb_1) {cout<<"please start test on master."<<endl; continue;}
 
@@ -70,6 +75,8 @@ void Menu::computeInput(){
 				test::Test::channelTest();
 				initSensorTest();
 				controller_ << Signalname::SENSOR_TEST;
+			} else {
+				printInfo();
 			}
 		} else if(!textInput.compare("calibration")) {
 			cout << "Please make sure that slide has no items on it and hit enter." << endl;
@@ -82,6 +89,7 @@ void Menu::computeInput(){
 		} else if (!(textInput.compare("shutdown"))){
 			return;
 		} else if (!(textInput.compare("restart"))){
+			controller_ << Signalname::STOP;
 			restart = true;
 			return;
 		} else if (!(textInput.compare("help"))){

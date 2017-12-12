@@ -27,8 +27,12 @@ private:
 			LOG_TEST<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
 			cout<<"SENSOR TEST ABORTED BY MAIN MENU."<<endl;
 			testFailed(__FUNCTION__);
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_test_successful(uint8_t sender){	testFailed(__FUNCTION__);}
+		virtual void sensor_test_unsuccessful(uint8_t sender){	testFailed(__FUNCTION__);}
 		virtual void sensor_test_timeout(){			testFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted(){		testFailed(__FUNCTION__);}
 		virtual void lb_input_freed(){				testFailed(__FUNCTION__);}
@@ -71,6 +75,15 @@ private:
 
 	// ============================= FAIL STATE =========================================
 	struct FAIL_STATE : public State {
+		FAIL_STATE() {
+			cout<<"type 'stop' to go back to main menu."<<endl;
+		}
+		virtual void sensor_switch_is_closed() override {}
+		virtual void stop() override {
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
+		}
 		virtual void sensor_test_start() {
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
@@ -173,44 +186,9 @@ private:
 					testFailed(__FUNCTION__);
 				}
 			}
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_MATCH_2_Test;
-			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-	//============================ SENSOR_HEIGHT_MATCH_2_Test =======================================
-	struct SENSOR_HEIGHT_MATCH_2_Test : public State {
-		virtual void sensor_height_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-		}
-		virtual void sensor_height_not_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
-			new (this) LB_HEIGHT_FREE_Test;
-			LOG_TEST<<name()<<endl;
-		}
-
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-	//============================ LB_HEIGHT_FREE_Test =======================================
-	struct LB_HEIGHT_FREE_Test : public State {
-		virtual void sensor_height_match() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_HEIGHT_MATCH_2_Test;
-			LOG_TEST<<name()<<endl;
-		}
-		virtual void lb_height_freed() {
+		virtual void lb_height_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
@@ -225,6 +203,8 @@ private:
 
 	//============================ SENSOR_METAL_MATCH_Test =======================================
 	struct SENSOR_METAL_MATCH_Test : public State {
+		virtual void sensor_height_match() override {}
+		virtual void sensor_height_not_match() override {}
 		virtual void sensor_metal_match() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
@@ -290,7 +270,7 @@ private:
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			timeout_timer_th->detach();
-			*timeout_timer_th = std::thread(timeout_timer, hal, 2150);
+			*timeout_timer_th = std::thread(timeout_timer, hal, 2100);
 
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_OUTPUT_INTERRUPTED_Test;
@@ -323,9 +303,6 @@ private:
 		}
 		virtual void sensor_switch_is_closed(){}
 
-		virtual void sensor_test_timeout(){
-
-		}
 	};
 
 	//============================ LB_OUTPUT_FREED_Test =======================================
@@ -338,36 +315,20 @@ private:
 				cout<<"Test continues on next conveyer belt. When item reaches last conveyer belt's output, please put it on input of master again."<<endl;
 				std::thread thread = std::thread(motor_stop_timer,hal,1000);
 				thread.detach();
-				LOG_TEST<<name()<<" => ";
-				new (this) LB_OUTPUT_TIMEOUT_State;
-				LOG_TEST<<name()<<endl;
-			} else {
-				LOG_TEST<<name()<<" => ";
-				new (this) LB_SLIDE_Test;
-				LOG_TEST<<name()<<endl;
 			}
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_SLIDE_INT_Test;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_switch_is_closed() {}
 
 
 	};
 
-	//============================ LB_OUTPUT_TIMEOUT_State =======================================
-	struct LB_OUTPUT_TIMEOUT_State: public State {
-		virtual void sensor_test_timeout() {
-			LOG_TEST<<__FUNCTION__<<endl;
-
-			LOG_TEST<<name()<<" => ";
-			new (this) LB_SLIDE_Test;
-			LOG_TEST<<name()<<endl;
-		}
-
-
-	};
-
 	//============================ LB_SLIDE_Test =======================================
-	struct LB_SLIDE_Test : public State {
-		virtual void lb_input_interrupted() {
+	struct LB_SLIDE_INT_Test : public State {
+		virtual void sensor_test_timeout() {}
+		virtual void lb_input_interrupted(){
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
@@ -378,51 +339,48 @@ private:
 		virtual void lb_switch_interrupted() {}
 		virtual void lb_switch_freed() {
 			timeout_timer_th->detach();
-			*timeout_timer_th = std::thread(timeout_timer, hal, 2000);
+			*timeout_timer_th = std::thread(timeout_timer, hal, 5000);
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_SLIDE_INT_Test;
+			LOG_TEST<<name()<<endl;
 		}
 		virtual void sensor_height_match(){	}
 		virtual void sensor_height_not_match(){}
 		virtual void sensor_metal_match(){}
 		virtual void sensor_metal_not_match(){}
+		virtual void sensor_test_unsuccessful(uint8_t sender) {
+			LOG_TEST<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Please restart test. Type 'stop' to go back to main menu."<<endl;
+			LOG_TEST<<name()<<" => ";
+			new (this) LB_INPUT_Test;
+			LOG_TEST<<name()<<endl;
+		}
+
 		virtual void lb_slide_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->motorStop();
 		}
 		virtual void lb_slide_freed() {
 			LOG_TEST<<__FUNCTION__<<endl;
-			LOG_TEST<<name()<<" => ";
-			new (this) LB_SLIDE_TIMEOUT_State;
-			LOG_TEST<<name()<<endl;
 
-		}
-
-		virtual void sensor_test_timeout(){
-
-		}
-	};
-
-
-	//============================ LB_SLIDE_TIMEOUT_State =======================================
-	struct LB_SLIDE_TIMEOUT_State: public State {
-		virtual void sensor_test_timeout() {
 			LOG_TEST << name() << " => ";
 			new (this) OTHER_CBs_Test;
 			LOG_TEST << name() << endl;
+
 			if(cb_this == cb_1) {
 				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 			} else {
 				hal->sendSerial(Signal(cb_this, cb_1, Signalname::SENSOR_TEST_SUCCESSFUL));
 			}
 		}
-
-
 	};
 
 	//============================ OTHER_CBs_Test =======================================
 	struct OTHER_CBs_Test : public State {
 		virtual void sensor_test_successful(uint8_t sender) {
 			LOG_TEST<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
-			cout<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
+			cout<<"Test was successful on conveyer belt: "<<(int)sender<<"Please, put Item on next CB."<<endl;
 			if(sender == cb_last) {
 				LOG_TEST<<"################ Automated Sensor Test finished ###################"<<endl;
 				cout<<    "################ Automated Sensor Test finished ###################"<<endl;
@@ -436,7 +394,7 @@ private:
 		virtual void sensor_test_unsuccessful(uint8_t sender) {
 			LOG_TEST<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
-			cout<<"Please restart test."<<endl;
+			cout<<"Please restart test. Type 'stop' to go back to main menu."<<endl;
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT_Test;
 			LOG_TEST<<name()<<endl;
@@ -496,6 +454,9 @@ public:
 				break;
 			case Signalname::SENSOR_TEST_SUCCESSFUL:
 				statePtr->sensor_test_successful(signal.sender);
+				break;
+			case Signalname::SENSOR_TEST_UNSUCCESSFUL:
+				statePtr->sensor_test_unsuccessful(signal.sender);
 				break;
 			case Signalname::SENSOR_TEST_TIMEOUT:
 				statePtr->sensor_test_timeout();
