@@ -50,6 +50,7 @@ void fire_timer(TimerEvent& timerEvent)
 			//error nullptr
 		}
 	}
+	cout<<"FIRE"<<endl;
 	timerEvent.finished = true;
 	return;
 }
@@ -83,10 +84,29 @@ void Timer::operator()() {
 
 			break;
 		case Signalname::MOTOR_STOP:
+		{
+			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 			for(auto& event : timer_events) {
 				event.active = false;
+				if(event.finished == false) {
+					event.begin = now;
+					event.duration = event.duration - (now - event.begin);
+					event.started = false;
+				}
 			}
 			break;
+		}
+		case Signalname::MOTOR_START:
+		{
+			for(auto& event : timer_events) {
+				if(event.started == false) {
+					event.started = true;
+					event.active = true;
+					later(&fire_timer, event);
+				}
+			}
+			break;
+		}
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:

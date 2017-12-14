@@ -34,7 +34,7 @@ public:
 	, receiverChannel(nullptr)
 	, started(true)
 	, active(false)
-	, finished(false)
+	, finished(true)
 	{
 	}
 

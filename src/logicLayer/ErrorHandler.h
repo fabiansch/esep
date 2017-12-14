@@ -40,6 +40,7 @@ private:
 			hal->motorLock(false);
 			hal->redLightOff();
 			hal->blinkGreen(Speed::slow);
+			hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::MOTOR_START));
 		}
 		virtual void errorOccurred() {
 			new (this) ERROR;
