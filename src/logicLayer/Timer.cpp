@@ -28,6 +28,19 @@ public:
 
 };
 
+void task(TimerEvent& timerEvent)
+{
+	if(timerEvent.active) {
+		if(timerEvent.receiverChannel) {
+			*(timerEvent.receiverChannel) << timerEvent.signal;
+		} else {
+			//error nullptr
+		}
+	}
+	timerEvent.finished = true;
+	return;
+}
+
 namespace logicLayer {
 
 Timer::Timer()
@@ -39,19 +52,6 @@ Timer::Timer()
 
 Timer::~Timer() {
 	LOG_SCOPE
-}
-
-void timer(TimerEvent& timerEvent)
-{
-	if(timerEvent.active) {
-		if(timerEvent.receiverChannel) {
-			*(timerEvent.receiverChannel) << timerEvent.signal;
-		} else {
-			//error nullptr
-		}
-	}
-	timerEvent.finished = true;
-	return;
 }
 
 void Timer::operator()() {
@@ -71,14 +71,14 @@ void Timer::operator()() {
 										std::chrono::milliseconds(2154-500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_ENTER),
 										controller_channel);
-				later(&timer, std::ref(timer_events[i]));
+				later(&task, std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
 										std::chrono::milliseconds(2154+500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
 										controller_channel);
-				later(&timer, std::ref(timer_events[i]));
+				later(&task, std::ref(timer_events[i]));
 				i++;
 
 			break;
