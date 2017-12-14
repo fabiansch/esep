@@ -28,19 +28,6 @@ public:
 
 };
 
-void task(TimerEvent& timerEvent)
-{
-	if(timerEvent.active) {
-		if(timerEvent.receiverChannel) {
-			*(timerEvent.receiverChannel) << timerEvent.signal;
-		} else {
-			//error nullptr
-		}
-	}
-	timerEvent.finished = true;
-	return;
-}
-
 namespace logicLayer {
 
 Timer::Timer()
@@ -52,6 +39,19 @@ Timer::Timer()
 
 Timer::~Timer() {
 	LOG_SCOPE
+}
+
+void fire_timer(TimerEvent& timerEvent)
+{
+	if(timerEvent.active) {
+		if(timerEvent.receiverChannel) {
+			*(timerEvent.receiverChannel) << timerEvent.signal;
+		} else {
+			//error nullptr
+		}
+	}
+	timerEvent.finished = true;
+	return;
 }
 
 void Timer::operator()() {
@@ -71,16 +71,21 @@ void Timer::operator()() {
 										std::chrono::milliseconds(2154-500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_ENTER),
 										controller_channel);
-				later(&task, std::ref(timer_events[i]));
+				later(&fire_timer, std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
 										std::chrono::milliseconds(2154+500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
 										controller_channel);
-				later(&task, std::ref(timer_events[i]));
+				later(&fire_timer, std::ref(timer_events[i]));
 				i++;
 
+			break;
+		case Signalname::MOTOR_STOP:
+			for(auto& event : timer_events) {
+				event.active = false;
+			}
 			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
