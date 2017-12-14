@@ -7,12 +7,13 @@
 
 #include "Header.h"
 #include "TypeIdentification.h"
+#include "HardwareLayer.h"
 
 namespace logicLayer {
 
-static vector<ItemType> typeScans;
+vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 
-TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer& hal) :
+TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
 		hal_(hal)
 		, deltaHeight(200)
 		, validHeightReference(3600) //<-- !need to be parameter from calibration
@@ -37,28 +38,31 @@ void TypeIdentification::operator()(){
 			break;
 			case Signalname::LB_HEIGHT_INTERRUPTED:
 				 //stop mesurement
-				currentScan_->profile = heightMapping(hal_.getHeight());
+				typeScans.front().profile = heightMapping(hal_->getHeight());
 			break;
 			case Signalname::SENSOR_METAL_MATCH:
 
-				currentScan_->metal = true;
+				typeScans.front().metal = true;
 			break;
 			case Signalname::LB_SWITCH_INTERRUPTED:
 				//build type and write to static memory
 				cout << "metal: " << currentScan_->metal << endl;
-				if(  currentScan_->profile  == Profile::HOLED){
+				if(  typeScans.front().profile  == Profile::HOLED){
 					cout << "profile: HOLED" << endl;
 				}
-				else if(  currentScan_->profile  == Profile::NORMAL){
+				else if( typeScans.front().profile  == Profile::NORMAL){
 					cout << "profile: NORMAL" << endl;
 				}
-				else if(  currentScan_->profile  == Profile::FLAT){
+				else if(  typeScans.front().profile  == Profile::FLAT){
 					cout << "profile: FLAT" << endl;
 				}
 
 			break;
 			case Signalname::SENSOR_HEIGHT_MATCH:
-				currentScan_->profile = Profile::NORMAL;
+				if(typeScans.front().profile!=Profile::HOLED){
+					typeScans.front().profile = Profile::NORMAL;
+				}
+
 				//start mesurement
 				//start thread - periodically read height -> e.g. 20 ms
 			break;
@@ -78,7 +82,7 @@ Profile TypeIdentification::heightMapping(int height){
 		return Profile::HOLED;
 	}
 
-	return currentScan_->profile;
+	return typeScans.front().profile;
 }
 
 

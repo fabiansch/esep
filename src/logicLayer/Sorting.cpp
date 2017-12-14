@@ -12,7 +12,8 @@
 namespace logicLayer {
 
 bool Sorting::amIWanted(Item* item) {
-	return item->getId() % 2;
+
+	return item->getType().profile == Profile::HOLED;
 }
 
 } /* namespace logicLayer */

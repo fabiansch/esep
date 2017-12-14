@@ -8,8 +8,12 @@
 #ifndef TYPEIDENTIFICATION_H_
 #define TYPEIDENTIFICATION_H_
 
-#include "HardwareLayer.h"
 #include "SignalReceiver.h"
+
+
+namespace hardwareLayer{
+	class HardwareLayer;
+}
 
 enum class Profile {HOLED, FLAT, NORMAL};
 
@@ -20,17 +24,19 @@ struct ItemType{
 
 namespace logicLayer {
 
+
 class TypeIdentification: public SignalReceiver {
 public:
-	TypeIdentification(hardwareLayer::HardwareLayer&);
+	TypeIdentification(hardwareLayer::HardwareLayer*);
 	virtual ~TypeIdentification();
 	void operator()();
 	Profile heightMapping( int );
 
 	static ItemType* createScan();
+	static vector<ItemType> typeScans;
 
 private:
-	hardwareLayer::HardwareLayer& hal_;
+	hardwareLayer::HardwareLayer* hal_;
 
 
 

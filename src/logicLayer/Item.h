@@ -13,6 +13,7 @@
 #include "Channel.h"
 #include "SignalReceiver.h"
 #include "Sorting.h"
+#include "TypeIdentification.h"
 
 namespace hardwareLayer {
 	class HardwareLayer;
@@ -54,6 +55,8 @@ public:
 	static void resetId();
 	int getId(){ return id; }
 
+	const ItemType& getType() const { return type; }
+
 	int heightAbsolute;
 	int heightCenter;
 
@@ -68,7 +71,7 @@ private:
 	/**
 	 *  Type of passed item
 	 */
-	int type = 0;
+	ItemType type;
 
 	Item* next_;
 	Item* previous_;
@@ -229,6 +232,10 @@ private:
 
 	struct ArrivalSwitch : public State{
 		ArrivalSwitch() {
+			//get values from type identification
+			item_->type = TypeIdentification::typeScans.front();
+			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
+			cout << "GROESSE:" << TypeIdentification::typeScans.size() << endl;
 			if(Sorting::amIWanted(item_)) {
 				Item::openSwitchPoint(hal_);
 			}
