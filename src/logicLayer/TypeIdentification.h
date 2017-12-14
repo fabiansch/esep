@@ -11,7 +11,7 @@
 #include "HardwareLayer.h"
 #include "SignalReceiver.h"
 
-enum class Profile {HOLED, FLAT};
+enum class Profile {HOLED, FLAT, NORMAL};
 
 struct ItemType{
 	Profile profile = Profile::FLAT;
