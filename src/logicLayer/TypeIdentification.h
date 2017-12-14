@@ -13,7 +13,7 @@
 
 enum class Profile {HOLED, FLAT};
 
-struct itemType{
+struct ItemType{
 	Profile profile = Profile::FLAT;
 	bool metal = false;
 };
@@ -26,8 +26,14 @@ public:
 	virtual ~TypeIdentification();
 	void operator()();
 	Profile heightMapping( int );
+
+	static ItemType* createScan();
+
 private:
 	hardwareLayer::HardwareLayer& hal_;
+
+
+
 
 	/**
 	 *  @brief allowed tolerance
@@ -40,8 +46,10 @@ private:
 	int validHeightReference;
 
 	/**
-	 *
+	 *  current scan - pointer to current ItemType object
 	 */
+	ItemType* currentScan_;
+
 };
 
 } /* namespace logicLayer */
