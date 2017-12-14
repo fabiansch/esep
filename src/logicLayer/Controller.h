@@ -74,7 +74,6 @@ private:
 			Menu::printInfo();
 		}
 		virtual void run(){
-			Item::idCounter_ = 0; // reset ids
 			new (this) Run;
 		}
 		virtual void sensor_test(){
@@ -140,6 +139,7 @@ private:
 			item_on_switch = false;
 			item_on_output = false;
 			next_cb_busy = false;
+			Item::resetId();
 		}
 		virtual void run(){}
 		virtual void sensor_test(){}
