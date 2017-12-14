@@ -18,9 +18,9 @@ namespace logicLayer {
 
 class TimerEvent {
 public:
-	TimerEvent(int end, Signal signal, logicLayer::Channel<Signal>* receiverChannel)
-	: begin(0)
-	, end(end)
+	TimerEvent(std::chrono::steady_clock::duration duration, Signal signal, logicLayer::Channel<Signal>* receiverChannel)
+	: begin(std::chrono::steady_clock::now())
+	, duration(duration)
 	, signal(signal)
 	, receiverChannel(receiverChannel)
 	, started(true)
@@ -29,8 +29,8 @@ public:
 	{}
 
 	TimerEvent()
-	: begin(0)
-	, end(0)
+	: begin(std::chrono::steady_clock::now())
+	, duration(std::chrono::steady_clock::duration())
 	, receiverChannel(nullptr)
 	, started(true)
 	, active(false)
@@ -38,8 +38,8 @@ public:
 	{
 	}
 
-	int begin;
-	int end;
+	std::chrono::steady_clock::time_point begin;
+	std::chrono::steady_clock::duration duration;
 
 	Signal signal;
 	logicLayer::Channel<Signal>* receiverChannel;

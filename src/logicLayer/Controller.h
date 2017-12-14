@@ -153,6 +153,9 @@ private:
 	};
 
 	struct Safe : public State{
+		Safe() {
+			cout<<"In SAFE State"<<endl;
+		}
 		virtual void run(){}
 		virtual void stop(){/* do nothing */ }
 		virtual void sensor_test(){}

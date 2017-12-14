@@ -5,6 +5,8 @@
 #include "LogicLayer.h"
 #include "Test.h"
 
+#include <chrono>
+
 
 
 using namespace std;
@@ -17,6 +19,24 @@ int main(int argc, char *argv[])
 	LOG_SET_LEVEL(DEBUG);
 	LOG_SCOPE;
 	printStartMessage();
+
+	std::chrono::steady_clock::time_point tp1;
+	std::chrono::steady_clock::time_point tp2;
+	std::chrono::steady_clock::time_point tp3;
+
+	std::chrono::steady_clock::duration d1;
+
+
+	tp1 = std::chrono::steady_clock::now();
+	WAIT(200);
+	tp2 = std::chrono::steady_clock::now();
+
+	tp3 = std::chrono::steady_clock::time_point(tp2-tp1);
+
+	d1 = tp2-tp1;
+
+	cout<<"time: "<<std::chrono::duration_cast<std::chrono::milliseconds>(d1).count()<<endl;
+
 
 	bool restart = false;
 	do {

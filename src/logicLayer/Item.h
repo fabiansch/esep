@@ -43,7 +43,7 @@ public:
 	static void printItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void setID(int* id);
-	static void ArrivalSlideAction(hardwareLayer::HardwareLayer* hal);
+	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
 
 
 
@@ -94,6 +94,8 @@ private:
 		virtual void transfer_item( 			Signal signal ){ forwardSignal( signal ); }
 		virtual void conveyer_belt_ready(		Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_input_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_height_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -113,6 +115,7 @@ private:
 
 		Item* item_;
 		hardwareLayer::HardwareLayer* hal_;
+		Channel<Signal>* timerChannel_;
 		ErrorHandler* errorHandler_;
 
 	} *statePtr;
@@ -125,7 +128,7 @@ private:
 		virtual void sensor_switch_is_closed( 	Signal signal ) override {}
 		virtual void sensor_switch_is_open( 	Signal signal ) override {}
 		virtual void lb_input_freed(			Signal signal ) override {}
-		virtual void lb_height_interrupted( 	Signal signal ) override {}
+		virtual void lb_height_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED)); }
 		virtual void lb_height_freed( 			Signal signal ) override {}
 		virtual void lb_switch_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SWITCH_FREED)); }
 		virtual void lb_switch_freed( 			Signal signal ) override {}
@@ -135,6 +138,8 @@ private:
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 		virtual void timeframe_input_enter( 	Signal signal ) override {}
+		virtual void timeframe_height_enter( 	Signal signal ) override {}
+		virtual void timeframe_height_leave( 	Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -204,23 +209,45 @@ private:
 	struct DepartureInput : public State {
 		DepartureInput() {
 			cout<<"DepartureInput"<<endl;
+			*timerChannel_ << Signal(Signalname::START_TIMERS_HEIGHT);
 		}
+		void timeframe_height_enter( Signal signal ) override {
+			cout<<"timeframe_height_enter"<<endl;
+			new (this) WaitForArrivalAtHeight;
+		}
+	};
+
+	struct WaitForArrivalAtHeight : public State {
+		WaitForArrivalAtHeight() {
+			cout<<"WaitForArrivalAtHeight"<<endl;
+		}
+		void timeframe_height_leave( Signal signal ) override {
+			cout<<"timeframe_height_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+		}
+		virtual void lb_height_interrupted( Signal signal ) override {
+			cout<<"lb_height_interrupted"<<endl;
+			new (this) ArrivalHeight;
+		}
+	};
+
+	struct ArrivalHeight : public State {
+		ArrivalHeight() {
+			cout<<"ArrivalHeight"<<endl;
+		}
+		virtual void lb_height_freed( Signal signal ) override {
+			cout<<"lb_height_freed"<<endl;
+			new (this) DepatureHeight;
+		}
+	};
+
+	struct DepatureHeight : public State {
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;
 		}
-	};
-
-	struct WaitForArrivalAtHeight : public State{
-
-	};
-
-	struct ArrivalHeight : public State{
-
-	};
-
-	struct DepatureHeight : public State{
-
 	};
 
 	struct WaitForArrivalAtSwitch : public State{
@@ -275,7 +302,7 @@ private:
 		ArrivalSlide() {
 			cout<<"ArrivalSlide"<<endl;
 			Item::dequeueAndDeleteItem(item_);
-			Item::ArrivalSlideAction(hal_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
 		}
 	};
 

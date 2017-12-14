@@ -30,6 +30,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, It
 	LOG_SCOPE
 	statePtr->item_ = this;
 	statePtr->hal_ = hal;
+	statePtr->timerChannel_ = timerChannel;
 	statePtr->errorHandler_ = errorHandler;
 
 	id = 0;
@@ -245,6 +246,12 @@ void Item::handle(Signal signal){
 		case Signalname::TIMEFRAME_INPUT_ENTER:
 			statePtr->timeframe_input_enter( signal );
 			break;
+		case Signalname::TIMEFRAME_HEIGHT_ENTER:
+			statePtr->timeframe_height_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_HEIGHT_LEAVE:
+			statePtr->timeframe_height_leave( signal );
+			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
 			next_cb_busy = false;
@@ -398,7 +405,7 @@ void Item::resetId() {
 	idCounter_ = 0;
 }
 
-void Item::ArrivalSlideAction(hardwareLayer::HardwareLayer* hal) {
+void Item::stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal) {
 	if(items_on_cb <= 0) {
 		hal->motorStop();
 	}

@@ -69,22 +69,22 @@ void Timer::operator()() {
 		signal << channel_;
 
 		switch (signal.name) {
-		case Signalname::START_TIMERS_INPUT:
+		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 
 				timer_events[i] = TimerEvent(
-										1000,
-										Signal(Signalname::TIMEFRAME_INPUT_ENTER),
+										std::chrono::milliseconds(2154-500),
+										Signal(Signalname::TIMEFRAME_HEIGHT_ENTER),
 										controller_channel);
 				startTimer(std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
-										2000,
-										Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
+										std::chrono::milliseconds(2154+500),
+										Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
 										controller_channel);
 				startTimer(std::ref(timer_events[i]));
-				timer_events[i].active = false;
+//				timer_events[i].active = false;
 				i++;
 
 			break;
@@ -100,7 +100,7 @@ void Timer::operator()() {
 
 void Timer::startTimer(TimerEvent& timerEvent) {
 	later(
-		1000
+		std::chrono::duration_cast<std::chrono::milliseconds>(timerEvent.duration).count()
 		, true
 		, &timer
 		, timerEvent
