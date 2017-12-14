@@ -13,6 +13,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timer
 : hal(hal)
 , sensorTest(hal)
 , errorHandler(hal)
+, calibration(hal)
 , head_(&hal, &timerChannel, true, &errorHandler)
 , statePtr(&stateMember)
 {
@@ -20,6 +21,7 @@ Controller::Controller(hardwareLayer::HardwareLayer& hal, Channel<Signal>& timer
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 	statePtr->sensorTest = &sensorTest;
 	statePtr->errorHandler = &errorHandler;
+	statePtr->calibration = &calibration;
 	statePtr->head_ = &head_;
 	statePtr->hal = &hal;
 }
@@ -77,6 +79,11 @@ void Controller::operator()() {
 				statePtr->run();
 				break;
 			case Signalname::CALIBRATION:
+				if(cb_this == cb_1) {
+					hal.sendSerial(Signal(cb_this, cb_available, Signalname::CALIBRATION));
+					cout << "################ Calibration Start ###############" << endl;
+				}
+				statePtr->calibrate();
 				break;
 			case Signalname::STOP:
 				if(cb_this == cb_1) {

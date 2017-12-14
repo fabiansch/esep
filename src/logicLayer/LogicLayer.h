@@ -32,7 +32,6 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	Timer timer_;
-
 	Controller controller_;
 	TypeIdentification typeIdent_;
 	Calibration calibration_;

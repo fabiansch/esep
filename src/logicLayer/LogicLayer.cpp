@@ -13,6 +13,7 @@ namespace logicLayer {
 LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , controller_(hal, timer_.getChannel())
+,calibration_(hal)
 , dispatcher_(
 		hal,
 		controller_.getChannel(),

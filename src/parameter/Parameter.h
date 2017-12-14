@@ -51,14 +51,22 @@ public:
 		return *this;
 	}
 
-	const Parameter<T>& operator=(const uint8_t& other) {
+	const Parameter<T>& operator=(const T& other) {
 		value = other;
 		return *this;
 	}
 
 	void showValue()
 	{
-		cout<<name<<": "<<(int)value<<endl;
+
+		if(std::is_same<T, uint8_t>::value) {
+			cout<<name<<": "<<(int)value<<endl;
+		}
+		else {
+			cout<<name<<": "<<value<<endl;
+		}
+
+
 	}
 
 	void initValue() {
@@ -75,6 +83,19 @@ extern Parameter<uint8_t> cb_first;
 extern Parameter<uint8_t> cb_last;
 extern Parameter<uint8_t> cb_all;
 extern Parameter<uint8_t> cb_available;
+
+extern Parameter<unsigned int> time_output_to_input;
+extern Parameter<unsigned int> time_input_to_height;
+extern Parameter<unsigned int> time_height_to_switch;
+extern Parameter<unsigned int> time_switch_to_output;
+extern Parameter<unsigned int> time_switch_to_slide;
+extern Parameter<unsigned int> time_lb_slide_freed;
+extern Parameter<unsigned int> time_cb_unit_total;
+
+extern Parameter<float> slow_factor;
+extern Parameter<float> height_conveyor_belt; //int or double?
+extern Parameter<float> height_item; //int or double?
+
 extern Parameter<uint8_t> cb_sorting_1;
 extern Parameter<uint8_t> cb_sorting_2;
 

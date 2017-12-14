@@ -8,11 +8,12 @@
 #ifndef SORTING_H_
 #define SORTING_H_
 
-#include "Item.h"
-
 namespace logicLayer {
 
+class Item;
+
 class Sorting {
+public:
 	static bool amIWanted(Item*);
 };
 
