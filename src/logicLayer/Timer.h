@@ -22,7 +22,7 @@ public:
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
 private:
-	Channel<Signal>* controller_;
+	Channel<Signal>* controller_channel;
 };
 
 } // end namespace
