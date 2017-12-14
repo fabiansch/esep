@@ -55,7 +55,7 @@ void timer(TimerEvent& timerEvent)
 			//error nullptr
 		}
 	}
-	timerEvent.dead = true;
+	timerEvent.finished = true;
 	return;
 }
 
@@ -72,21 +72,21 @@ void Timer::operator()() {
 		case Signalname::START_TIMERS_INPUT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 
-			{
 				timer_events[i] = TimerEvent(
+										1000,
 										Signal(Signalname::TIMEFRAME_INPUT_ENTER),
 										controller_channel);
 				startTimer(std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
+										2000,
 										Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
 										controller_channel);
 				startTimer(std::ref(timer_events[i]));
 				timer_events[i].active = false;
 				i++;
 
-			}
 			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;

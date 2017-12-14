@@ -9,6 +9,7 @@
 #define TIMER_H_
 
 #include <thread>
+#include <chrono>
 
 #include "Channel.h"
 #include "SignalReceiver.h"
@@ -17,23 +18,35 @@ namespace logicLayer {
 
 class TimerEvent {
 public:
-	TimerEvent(Signal signal, logicLayer::Channel<Signal>* receiverChannel)
-	: signal(signal)
+	TimerEvent(int end, Signal signal, logicLayer::Channel<Signal>* receiverChannel)
+	: begin(0)
+	, end(end)
+	, signal(signal)
 	, receiverChannel(receiverChannel)
+	, started(true)
 	, active(true)
-	, dead(false)
+	, finished(false)
 	{}
 
 	TimerEvent()
-	: receiverChannel(nullptr)
+	: begin(0)
+	, end(0)
+	, receiverChannel(nullptr)
+	, started(true)
 	, active(false)
-	, dead(false)
-	{}
+	, finished(false)
+	{
+	}
+
+	int begin;
+	int end;
 
 	Signal signal;
 	logicLayer::Channel<Signal>* receiverChannel;
+
+	bool started;
 	bool active;
-	bool dead;
+	bool finished;
 };
 
 class Timer : public SignalReceiver {
