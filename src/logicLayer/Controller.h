@@ -12,9 +12,11 @@
 #include "SignalReceiver.h"
 #include "SensorTest.h"
 #include "ErrorHandler.h"
+#include "Calibration.h"
 #include "Item.h"
 #include "Menu.h"
 #include "Test.h"
+#include "Channel.h"
 
 namespace logicLayer {
 
@@ -24,6 +26,7 @@ private:
 	hardwareLayer::HardwareLayer& hal;
 	SensorTest sensorTest;
 	ErrorHandler errorHandler;
+	Calibration calibration;
 
 	/**
 	 *  @brief Head element in item queue
@@ -50,6 +53,7 @@ private:
 		virtual void calibrate(){}
 		virtual void forward(Signal signal){}
 
+		Calibration* calibration;
 		SensorTest* sensorTest;
 		ErrorHandler* errorHandler;
 		hardwareLayer::HardwareLayer* hal;
@@ -84,7 +88,9 @@ private:
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
-		virtual void calibrate(){}
+		virtual void calibrate(){
+			new (this) Calibrate;
+		}
 	};
 
 	struct Sensor_Test : public State{
@@ -157,12 +163,18 @@ private:
 	};
 
 	struct Calibrate : public State{
+		Calibrate() {
+			calibration->handle(Signal(Signalname::CALIBRATION_START));
+		}
 		virtual void run(){}
 		virtual void sensor_test(){}
 		virtual void alert(){}
 		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
+		virtual void forward(Signal signal) {
+			calibration->handle(signal);
+		}
 	};
 
 	Idle stateMember;

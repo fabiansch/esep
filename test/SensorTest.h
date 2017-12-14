@@ -245,6 +245,9 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
+		virtual void sensor_switch_is_open() {}
+		virtual void sensor_switch_is_closed() {}
+
 		virtual void sensor_test_timeout(){
 
 		}
