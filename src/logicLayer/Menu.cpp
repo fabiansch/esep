@@ -79,6 +79,8 @@ void Menu::computeInput(){
 				printInfo();
 			}
 		} else if(!textInput.compare("calibration")) {
+			cout << "Please make sure that slide has no items on it and hit enter." << endl;
+			cin.get();
 			controller_ << Signalname::CALIBRATION;
 		} else if(!textInput.compare("run")) {
 			cout<<"Please assure that no Items are on the conveyer belts and hit enter."<<endl<<endl;

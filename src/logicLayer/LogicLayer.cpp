@@ -14,6 +14,7 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
 , typeIdent_(hal)
 , controller_(hal, timer_.getChannel(), typeIdent_.getChannel())
+, calibration_(hal)
 , dispatcher_(
 		hal,
 		controller_.getChannel(),

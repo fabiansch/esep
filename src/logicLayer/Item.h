@@ -12,6 +12,7 @@
 #include "Header.h"
 #include "Channel.h"
 #include "SignalReceiver.h"
+#include "Sorting.h"
 
 namespace hardwareLayer {
 	class HardwareLayer;
@@ -41,17 +42,20 @@ public:
 	static void sendItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void printItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
+	static void setID(int* id);
+	static void ArrivalSlideAction(hardwareLayer::HardwareLayer* hal);
+
 
 
 	void setNext(Item*);
 	void setPrevious(Item*);
 	void copyData( Item );
 
+	static void resetId();
+	int getId(){ return id; }
+
 	int heightAbsolute;
 	int heightCenter;
-
-
-	static int idCounter_;
 
 private:
 
@@ -184,6 +188,7 @@ private:
 	struct ArrivalInput : public State {
 		ArrivalInput() {
 			cout<<"ArrivalInput"<<endl;
+			Item::setID(&item_->id);
 			items_on_cb = items_on_cb + 1;
 			if (not item_on_output) {
 				Item::startMotor(hal_);
@@ -223,36 +228,55 @@ private:
 	};
 
 	struct ArrivalSwitch : public State{
-		ArrivalSwitch(){
-			Item::openSwitchPoint(hal_);
+		ArrivalSwitch() {
+			if(Sorting::amIWanted(item_)) {
+				Item::openSwitchPoint(hal_);
+			}
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
-			Item::closeSwitchPoint(700, hal_);
+			Item::closeSwitchPoint(800, hal_);
+			if(Sorting::amIWanted(item_)) {
+				new (this) DepatureSwitchToOutput;
+			} else {
+				new (this) DepatureSwitchToSlide;
+			}
+		}
+
+	};
+
+	struct DepatureSwitchToOutput : public State {
+		DepatureSwitchToOutput() {
+			cout<<"DepatureSwitchToOutput"<<endl;
 		}
 
 		virtual void lb_output_interrupted( Signal signal ) override {
 			cout<<"lb_output_interrupted"<<endl;
 			new (this) ArrivalOutput;
 		}
-
 	};
 
-	struct DepatureSwitchToOutput : public State {
-
-	};
-
-	struct DepatureSwitchToSlide : public State{
-
+	struct DepatureSwitchToSlide : public State {
+		DepatureSwitchToSlide() {
+			cout<<"DepatureSwitchToSlide"<<endl;
+		}
+		virtual void lb_slide_interrupted( Signal signal ) override {
+			cout<<"lb_slide_interrupted"<<endl;
+			new (this) ArrivalSlide;
+		}
 	};
 
 	struct WaitForArrivalAtSlide : public State{
 
 	};
 
-	struct ArrivalSlide : public State{
-
+	struct ArrivalSlide : public State {
+		ArrivalSlide() {
+			cout<<"ArrivalSlide"<<endl;
+			Item::dequeueAndDeleteItem(item_);
+			Item::ArrivalSlideAction(hal_);
+		}
 	};
 
 	struct DepatureSlide : public State{

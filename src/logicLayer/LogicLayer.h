@@ -32,6 +32,7 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	Timer timer_;
+
 	TypeIdentification typeIdent_;
 
 	Controller controller_;

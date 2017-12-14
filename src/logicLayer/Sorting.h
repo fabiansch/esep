@@ -8,15 +8,13 @@
 #ifndef SORTING_H_
 #define SORTING_H_
 
-#include "SignalReceiver.h"
-
 namespace logicLayer {
 
-class Sorting : public SignalReceiver {
+class Item;
+
+class Sorting {
 public:
-	Sorting();
-	virtual ~Sorting();
-	void operator()();
+	static bool amIWanted(Item*);
 };
 
 } /* namespace logicLayer */
