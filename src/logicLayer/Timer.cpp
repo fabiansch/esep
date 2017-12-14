@@ -13,22 +13,14 @@ class later
 {
 public:
     template <class callable, class... arguments>
-    later(int after, bool async, callable&& f, arguments&&... args)
+    later(logicLayer::TimerEvent& timerEvent, callable&& f, arguments&&... args)
     {
         std::function<typename std::result_of<callable(arguments...)>::type()> task(std::bind(std::forward<callable>(f), std::forward<arguments>(args)...));
 
-        if (async)
-        {
-            std::thread([after, task]() {
-                std::this_thread::sleep_for(std::chrono::milliseconds(after));
-                task();
-            }).detach();
-        }
-        else
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(after));
-            task();
-        }
+		std::thread([timerEvent, task]() {
+			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(timerEvent.duration).count());
+			task();
+		}).detach();
     }
 
 };
@@ -100,10 +92,9 @@ void Timer::operator()() {
 
 void Timer::startTimer(TimerEvent& timerEvent) {
 	later(
-		std::chrono::duration_cast<std::chrono::milliseconds>(timerEvent.duration).count()
-		, true
-		, &timer
-		, timerEvent
+		timerEvent,
+		&timer,
+		timerEvent
 	);
 	// timerEvent.started = true;
 }
