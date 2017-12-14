@@ -13,12 +13,15 @@ class later
 {
 public:
     template <class callable, class... arguments>
-    later(logicLayer::TimerEvent& timerEvent, callable&& f, arguments&&... args)
+    later(callable&& f, arguments&&... args)
     {
         std::function<typename std::result_of<callable(arguments...)>::type()> task(std::bind(std::forward<callable>(f), std::forward<arguments>(args)...));
 
-		std::thread([timerEvent, task]() {
-			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(timerEvent.duration).count());
+        std::tuple<arguments...> tuples{args...};
+        logicLayer::TimerEvent& event = std::get<0>(tuples);
+
+        std::thread([event, task]() {
+			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count());
 			task();
 		}).detach();
     }
@@ -68,15 +71,14 @@ void Timer::operator()() {
 										std::chrono::milliseconds(2154-500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_ENTER),
 										controller_channel);
-				startTimer(std::ref(timer_events[i]));
+				later(&timer, std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
 										std::chrono::milliseconds(2154+500),
 										Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
 										controller_channel);
-				startTimer(std::ref(timer_events[i]));
-//				timer_events[i].active = false;
+				later(&timer, std::ref(timer_events[i]));
 				i++;
 
 			break;
@@ -88,15 +90,6 @@ void Timer::operator()() {
 		}
 	}
 
-}
-
-void Timer::startTimer(TimerEvent& timerEvent) {
-	later(
-		timerEvent,
-		&timer,
-		timerEvent
-	);
-	// timerEvent.started = true;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
