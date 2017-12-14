@@ -9,52 +9,6 @@
 #include "Timer.h"
 #include "Signals.h"
 
-namespace logicLayer {
-
-Timer::Timer()
-: SignalReceiver::SignalReceiver()
-{
-	LOG_SCOPE
-	SignalReceiver::receiver_ = std::thread(std::ref(*this));
-}
-
-Timer::~Timer() {
-	LOG_SCOPE
-}
-
-
-void Timer::operator()() {
-	LOG_SCOPE
-	Signal signal;
-	while(running) {
-		signal << channel_;
-		LOG_DEBUG<<"Timer got signal"<<endl;
-
-		switch (signal.name) {
-		case Signalname::START_TIMERS_INPUT:
-			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-			WAIT(550);
-			*controller_channel << Signal(Signalname::TIMEFRAME_INPUT_ENTER);
-			cout<<"Timer sent TIMEFRAME_INPUT_ENTER"<<endl;
-			break;
-		case Signalname::SIGNAL_DUMMY:
-			break;
-		default:
-			LOG_ERROR<<"Timer got unknown Signal"<<endl;
-			exit(EXIT_FAILURE);
-			break;
-		}
-	}
-
-}
-
-void Timer::setControllerChannel(Channel<Signal>* controller) {
-	controller_channel = controller;
-}
-
-
-////////
-
 class later
 {
 public:
@@ -79,26 +33,18 @@ public:
 
 };
 
-class TimerEvent {
-public:
-	TimerEvent(Signal signal, logicLayer::Channel<Signal>* receiverChannel)
-	: signal(signal)
-	, receiverChannel(receiverChannel)
-	, active(true)
-	, dead(false)
-	{}
+namespace logicLayer {
 
-	TimerEvent()
-	: receiverChannel(nullptr)
-	, active(false)
-	, dead(false)
-	{}
+Timer::Timer()
+: SignalReceiver::SignalReceiver()
+, controller_channel(nullptr)
+{
+	SignalReceiver::receiver_ = std::thread(std::ref(*this));
+}
 
-	Signal signal;
-	logicLayer::Channel<Signal>* receiverChannel;
-	bool active;
-	bool dead;
-};
+Timer::~Timer() {
+	LOG_SCOPE
+}
 
 void timer(TimerEvent& timerEvent)
 {
@@ -112,19 +58,6 @@ void timer(TimerEvent& timerEvent)
 	timerEvent.dead = true;
 	return;
 }
-
-namespace logicLayer {
-
-Timer::Timer()
-: SignalReceiver::SignalReceiver()
-, controller_channel(nullptr)
-{
-	SignalReceiver::receiver_ = std::thread(std::ref(*this));
-}
-
-Timer::~Timer() {
-}
-
 
 void Timer::operator()() {
 	Signal signal;
@@ -143,27 +76,15 @@ void Timer::operator()() {
 				timer_events[i] = TimerEvent(
 										Signal(Signalname::TIMEFRAME_INPUT_ENTER),
 										controller_channel);
-				later(
-					1000
-					, true
-					, &timer
-					, std::ref(timer_events[i])
-				);
+				startTimer(std::ref(timer_events[i]));
 				i++;
 
 				timer_events[i] = TimerEvent(
 										Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
 										controller_channel);
-				later(
-					2000
-					, true
-					, &timer
-					, std::ref(timer_events[i])
-				);
+				startTimer(std::ref(timer_events[i]));
 				timer_events[i].active = false;
 				i++;
-
-
 
 			}
 			break;
@@ -176,7 +97,20 @@ void Timer::operator()() {
 	}
 
 }
-//////////////
+
+void Timer::startTimer(TimerEvent& timerEvent) {
+	later(
+		1000
+		, true
+		, &timer
+		, timerEvent
+	);
+	// timerEvent.started = true;
+}
+
+void Timer::setControllerChannel(Channel<Signal>* controller) {
+	controller_channel = controller;
+}
 
 
 } /* namespace logicLayer */

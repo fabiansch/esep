@@ -15,6 +15,27 @@
 
 namespace logicLayer {
 
+class TimerEvent {
+public:
+	TimerEvent(Signal signal, logicLayer::Channel<Signal>* receiverChannel)
+	: signal(signal)
+	, receiverChannel(receiverChannel)
+	, active(true)
+	, dead(false)
+	{}
+
+	TimerEvent()
+	: receiverChannel(nullptr)
+	, active(false)
+	, dead(false)
+	{}
+
+	Signal signal;
+	logicLayer::Channel<Signal>* receiverChannel;
+	bool active;
+	bool dead;
+};
+
 class Timer : public SignalReceiver {
 public:
 	Timer();
@@ -22,6 +43,8 @@ public:
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
 private:
+	void startTimer(TimerEvent&);
+
 	Channel<Signal>* controller_channel;
 };
 
