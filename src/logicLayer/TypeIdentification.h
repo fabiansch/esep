@@ -20,6 +20,7 @@ enum class Profile {HOLED, FLAT, NORMAL};
 struct ItemType{
 	Profile profile = Profile::FLAT;
 	bool metal = false;
+	bool inDetection = true;
 };
 
 namespace logicLayer {
@@ -34,9 +35,21 @@ public:
 
 	static ItemType* createScan();
 	static vector<ItemType> typeScans;
+	/**
+	 * @brief measure cycle
+	 */
+	static void measureProfil(bool&, hardwareLayer::HardwareLayer*);
+
+	/**
+	 *
+	 */
+	static int mapToBinary(int);
 
 private:
 	hardwareLayer::HardwareLayer* hal_;
+
+
+
 
 
 
@@ -52,9 +65,9 @@ private:
 	int validHeightReference;
 
 	/**
-	 *  current scan - pointer to current ItemType object
+	 *	@brief
 	 */
-	ItemType* currentScan_;
+	bool ignoreInterrupt;
 
 };
 
