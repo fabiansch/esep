@@ -43,6 +43,7 @@ public:
 	static void printItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void setID(int* id);
+	static void ArrivalSlideAction(hardwareLayer::HardwareLayer* hal);
 
 
 
@@ -246,15 +247,22 @@ private:
 	};
 
 	struct DepatureSwitchToOutput : public State {
+		DepatureSwitchToOutput() {
+			cout<<"DepatureSwitchToOutput"<<endl;
+		}
+
 		virtual void lb_output_interrupted( Signal signal ) override {
 			cout<<"lb_output_interrupted"<<endl;
 			new (this) ArrivalOutput;
 		}
 	};
 
-	struct DepatureSwitchToSlide : public State{
-		virtual void lb_switch_interrupted( Signal signal ) override {
-			cout<<"lb_switch_interrupted"<<endl;
+	struct DepatureSwitchToSlide : public State {
+		DepatureSwitchToSlide() {
+			cout<<"DepatureSwitchToSlide"<<endl;
+		}
+		virtual void lb_slide_interrupted( Signal signal ) override {
+			cout<<"lb_slide_interrupted"<<endl;
 			new (this) ArrivalSlide;
 		}
 	};
@@ -265,9 +273,10 @@ private:
 
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
+			cout<<"ArrivalSlide"<<endl;
 			Item::dequeueAndDeleteItem(item_);
+			Item::ArrivalSlideAction(hal_);
 		}
-
 	};
 
 	struct DepatureSlide : public State{

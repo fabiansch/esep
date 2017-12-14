@@ -398,6 +398,13 @@ void Item::resetId() {
 	idCounter_ = 0;
 }
 
+void Item::ArrivalSlideAction(hardwareLayer::HardwareLayer* hal) {
+	if(items_on_cb <= 0) {
+		hal->motorStop();
+	}
+}
+
+
 
 
 
