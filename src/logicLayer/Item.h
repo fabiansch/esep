@@ -244,6 +244,9 @@ private:
 	};
 
 	struct DepatureHeight : public State {
+		DepatureHeight() {
+			cout<<"DepatureHeight"<<endl;
+		}
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;

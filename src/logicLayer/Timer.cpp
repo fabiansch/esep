@@ -49,12 +49,14 @@ void fire_timer(TimerEvent& timerEvent)
 {
 	if(timerEvent.active) {
 		if(timerEvent.receiverChannel) {
+			cout<<"FIRE"<<endl;
 			*(timerEvent.receiverChannel) << timerEvent.signal;
 		} else {
 			//error nullptr
 		}
+	} else {
+		cout<<"NOT FIRED"<<endl;
 	}
-	cout<<"FIRE"<<endl;
 	timerEvent.finished = true;
 	return;
 }
@@ -110,14 +112,13 @@ void Timer::operator()() {
 		case Signalname::MOTOR_START:
 		{
 			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(auto& event : timer_events) {
-				if(event.started == false) {
-					event.begin = now;
-					event.finished = false;
-					event.started = true;
-					event.active = true;
-					later(&fire_timer, event);
-					event.finished = false;
+			for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
+				if(timer_events[j].started == false) {
+					timer_events[j].begin = now;
+					timer_events[j].finished = false;
+					timer_events[j].started = true;
+					timer_events[j].active = true;
+					later(&fire_timer, std::ref(timer_events[j]));
 				}
 			}
 			break;
@@ -129,6 +130,7 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_HEIGHT_ENTER);
 			break;
 		case Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL:
+			cout<<"TIMEFRAME_HEIGHT_LEAVE_KILL SIGNAL"<<endl;
 			killTimer(Signalname::TIMEFRAME_HEIGHT_LEAVE);
 			break;
 		case Signalname::TIMEFRAME_SWITCH_ENTER_KILL:
@@ -164,6 +166,7 @@ void Timer::operator()() {
 					timer_events[j].duration = timer_events[j].duration / slow_factor;
 				}
 			}
+			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
@@ -176,9 +179,10 @@ void Timer::operator()() {
 }
 
 bool Timer::killTimer(Signalname signalname){
-	for(int j = 0;j< sizeof(timer_events)/sizeof(TimerEvent); j++){
-		if ((timer_events[j].signal.name == signalname) && (timer_events[j].active == true)){
-			timer_events[j].active = false;
+	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head
+		if (event.signal.name == signalname){
+			event.active = false;
+			cout<<"TIMER KILLED"<<endl;
 			return true;
 		}
 	}
@@ -186,7 +190,7 @@ bool Timer::killTimer(Signalname signalname){
 }
 
 void Timer::checkIfAvailableSpace(){
-	if (i == sizeof(timer_events)/sizeof(TimerEvent)){
+	if (i == sizeof(timer_events)/sizeof(TimerEvent)-1){
 		i = 0;
 	}
 	if (timer_events[i].active == true){
@@ -215,11 +219,13 @@ void Timer::setTimer(Signalname entry, Signalname exit, unsigned int param){
 								std::chrono::milliseconds(time),
 								Signal(entry),
 								controller_channel);
-}
+	}
 
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
+
 	checkIfAvailableSpace();
+	// TODO if else
 	timer_events[i] = TimerEvent(
 							std::chrono::milliseconds(param+500),
 							Signal(exit),
