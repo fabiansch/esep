@@ -357,6 +357,7 @@ private:
 			}
 			Item::dequeueAndDeleteItem(item_);
 			Item::lbOutputFreedAction(hal_);
+			cout<<"DEPATURE OUTPUT DONE"<<endl;
 		}
 	};
 
