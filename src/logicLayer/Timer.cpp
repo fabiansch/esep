@@ -66,6 +66,8 @@ void Timer::operator()() {
 		signal << channel_;
 
 		switch (signal.name) {
+		case Signalname::START_TIMERS_INPUT:
+			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 
