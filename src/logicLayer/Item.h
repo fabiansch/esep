@@ -226,7 +226,6 @@ private:
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
-			*timerChannel_<<Signal(Signalname::MOTOR_STOP);
 		}
 		virtual void lb_height_interrupted( Signal signal ) override {
 			cout<<"lb_height_interrupted"<<endl;
@@ -304,7 +303,6 @@ private:
 			cout<<"ArrivalSlide"<<endl;
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
-			*timerChannel_<<Signal(Signalname::MOTOR_STOP);
 		}
 	};
 

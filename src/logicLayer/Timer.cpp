@@ -109,9 +109,14 @@ void Timer::operator()() {
 			}
 			break;
 		}
+		case Signalname::MOTOR_SLOW:
+			break;
+		case Signalname::MOTOR_FAST:
+			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
+			LOG_ERROR << __FUNCTION__ <<": Timer doen not handle signal: " << (int)signal.name <<endl;
 			exit(EXIT_FAILURE);
 			break;
 		}
