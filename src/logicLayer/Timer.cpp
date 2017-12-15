@@ -157,6 +157,7 @@ void Timer::operator()() {
 		}
 		case Signalname::MOTOR_START:
 		{
+			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 			for(auto& event : timer_events) {
 				if(event.started == false) {
 					event.begin = now;
