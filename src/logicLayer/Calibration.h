@@ -316,7 +316,7 @@ private:
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 				new (this) IDLE;
 			}
-			virtual void calibration_unsuccessful(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) {}
 		};
 
 		struct WaitingForOthers: public State {
@@ -331,7 +331,7 @@ private:
 				cb_this.parameterList.showParameters();
 				new (this) IDLE;
 			}
-			virtual void calibration_unsuccessful(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) {}
 		};
 
 		IDLE stateMember;
