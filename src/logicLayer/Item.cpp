@@ -198,26 +198,6 @@ void Item::handle(Signal signal){
 			hal_->StartLEDOff();
 			break;
 		// motor
-		case Signalname::MOTOR_START:
-			LOG_DEBUG << "call MOTOR start ";
-			hal_->motorStart();
-			LOG_DEBUG << "MOTOR started ";
-			break;
-		case Signalname::MOTOR_STOP:
-			LOG_DEBUG << "call MOTOR stop ";
-			hal_->motorStop();
-			LOG_DEBUG << "call MOTOR stopped ";
-			break;
-		case Signalname::MOTOR_FAST:
-			LOG_DEBUG << "call MOTOR fast ";
-			hal_->motorFast();
-			LOG_DEBUG << "end MOTOR  fast";
-			break;
-		case Signalname::MOTOR_SLOW:
-			LOG_DEBUG << "call MOTOR slow ";
-			hal_->motorSlow();
-			LOG_DEBUG << "end MOTOR  slow";
-			break;
 		case Signalname::MOTOR_ROTATE_CLOCKWISE:
 			LOG_DEBUG << "call MOTOR clockwise ";
 			hal_->motorRotateClockwise();

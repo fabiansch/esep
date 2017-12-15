@@ -47,6 +47,12 @@ void Dispatcher::notify() {
 		case Signalname::MOTOR_START:
 			timer_ << signal;
 			break;
+		case Signalname::MOTOR_SLOW:
+			timer_ << signal;
+			break;
+		case Signalname::MOTOR_FAST:
+			timer_ << signal;
+			break;
 		default:
 			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;
 			controller_ << signal;

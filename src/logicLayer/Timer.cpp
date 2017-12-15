@@ -21,6 +21,7 @@ public:
         logicLayer::TimerEvent& event = std::get<0>(tuples);
 
         std::thread([event, task]() {
+			cout << std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count() << endl;
 			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count());
 			task();
 		}).detach();
@@ -98,6 +99,7 @@ void Timer::operator()() {
 				event.active = false;
 				if(event.finished == false) {
 					event.duration = event.duration - (now - event.begin);
+					cout<<"TIMER STOPPED"<<endl;
 					event.started = false;
 					event.finished = true;
 				}
@@ -115,6 +117,7 @@ void Timer::operator()() {
 					event.started = true;
 					event.active = true;
 					later(&fire_timer, event);
+					event.finished = false;
 				}
 			}
 			break;
@@ -161,8 +164,10 @@ void Timer::operator()() {
 					timer_events[j].duration = timer_events[j].duration / slow_factor;
 				}
 			}
+		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
+			LOG_ERROR << __FUNCTION__ <<": Timer doen not handle signal: " << (int)signal.name <<endl;
 			exit(EXIT_FAILURE);
 			break;
 		}

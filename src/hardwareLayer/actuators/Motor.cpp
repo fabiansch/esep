@@ -18,13 +18,14 @@ namespace hardwareLayer {
 namespace actuators {
 
 
-Motor& Motor::instance() {
-	static Motor instance;
+Motor& Motor::instance(io::SignalGenerator& signalGenerator) {
+	static Motor instance(signalGenerator);
 	return instance;
 }
 
-Motor::Motor()
-: locked(false)
+Motor::Motor(io::SignalGenerator& signalGenerator)
+: signalGenerator(signalGenerator)
+, locked(false)
 , running(false)
 {
 	LOG_SCOPE;
@@ -35,23 +36,31 @@ Motor::~Motor() {
 }
 
 void Motor::start() {
+	cout<<"start"<<endl;
 	running = true;
 	if(not locked) {
 		io::GPIO::instance().clearBits(PORT::A, MOTOR_STOP);
+		signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_START));
 	}
 }
 
 void Motor::stop() {
+	cout<<"stop"<<endl;
 	running = false;
 	io::GPIO::instance().setBits(PORT::A, MOTOR_STOP);
+	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_STOP));
 }
 
 void Motor::setSlow() {
+	cout<<"setSlow"<<endl;
 	io::GPIO::instance().setBits(PORT::A, MOTOR_SLOW);
+	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_SLOW));
 }
 
 void Motor::clearSlow() {
+	cout<<"clearSlow"<<endl;
 	io::GPIO::instance().clearBits(PORT::A, MOTOR_SLOW);
+	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_FAST));
 }
 
 void Motor::setClockwiseRotation() {
