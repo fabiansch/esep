@@ -35,7 +35,7 @@ private:
 			cout << "Got Signal: CALIBRATION_UNSUCCESSFUL"<< endl;
 			new (this) FAIL_STATE;
 		}
-		virtual void calibration_timeout() {	calibrationFailed(__FUNCTION__);}
+		virtual void calibration_timeout(uint8_t sender) {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_freed() {}
 		virtual void lb_height_interrupted() {	calibrationFailed(__FUNCTION__);}
@@ -331,7 +331,7 @@ private:
 				cb_this.parameterList.showParameters();
 				new (this) IDLE;
 			}
-			virtual void calibration_timeout(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) override {}
 		};
 
 		IDLE stateMember;
