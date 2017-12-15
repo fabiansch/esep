@@ -158,7 +158,7 @@ private:
 		}
 
 		virtual void timeframe_height_leave( Signal signal ) override {
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+//			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 
 		}
 	};
