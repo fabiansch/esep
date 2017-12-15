@@ -28,7 +28,7 @@ private:
 			LOG_TEST << __FUNCTION__ << endl;
 			LOG_TEST << "CALIBRATION ABORTED BY MAIN MENU." << endl;
 			cout << "CALIBRATION ABORTED BY MAIN MENU." << endl;
-			calibrationFailed(__FUNCTION__);
+			new (this) IDLE;
 		}
 		virtual void calibration_successful(uint8_t sender) {		*successful = true ;}
 		virtual void calibration_unsuccessful(uint8_t sender) {		calibrationFailed(__FUNCTION__);}
@@ -69,17 +69,15 @@ private:
 					hal->greenLightOff();
 					hal->yellowLightOff();
 				}
-				virtual void calibration_start() {
-					new (this) WaitingForItem;
-				}
+				virtual void calibration_start() 	{ new (this) WaitingForItem; }
+
 			};
 
 			// ============================= IDLE =========================================
 			struct IDLE: public State {
-				virtual void calibration_start() {
-					new (this) WaitingForItem;
-				}
+				virtual void calibration_start() { new (this) WaitingForItem; }
 				virtual void calibration_unsuccessful(uint8_t sender) {}
+				virtual void stop() {}
 			};
 
 			//============================ WAITING FOR ITEM =======================================
@@ -92,12 +90,8 @@ private:
 					cout << "height_conveyor_belt: " << height_conveyor_belt << endl;
 					cout << "Please put item on masters input" << endl;
 				}
-				virtual void lb_input_interrupted() {
-					new (this) ArrivalAtInput;
-				}
-				virtual void item_arrived() {
-					new (this) ItemArrived;
-				}
+				virtual void lb_input_interrupted() { new (this) ArrivalAtInput; }
+				virtual void item_arrived() 		{ new (this) ItemArrived; }
 			};
 
 			//============================ ITEM ARRIVED =======================================
