@@ -197,10 +197,21 @@ void Timer::initialize(){
 
 void Timer::setTimer(Signalname entry, Signalname exit, unsigned int param){
 	checkIfAvailableSpace();
-	timer_events[i] = TimerEvent(
-							std::chrono::milliseconds(param-500),
-							Signal(entry),
-							controller_channel);
+	if (speed == Speed::FAST){
+		timer_events[i] = TimerEvent(
+								std::chrono::milliseconds(param-500),
+								Signal(entry),
+								controller_channel);
+	}
+	else{
+		auto time = std::chrono::milliseconds(param -500);
+		time = time / slow_factor;
+		timer_events[i] = TimerEvent(
+								std::chrono::milliseconds(time),
+								Signal(entry),
+								controller_channel);
+}
+
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
 	checkIfAvailableSpace();
