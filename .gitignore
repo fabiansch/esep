@@ -3,11 +3,10 @@
 .qnx_internal.mk
 .settings
 common.mk
-x86/**/*
-!x86/o/esep_sortingmachine
-!x86/o/esep_haw
-!x86/o/CASS
-!x89/o/laufbandmaschine
+x86/o/*.*
+x86/Makefile
+x86/o-g/Makefile
+x86/o/Makefile
 .metadata
 **/*/Thumbs.db
 *.vux
