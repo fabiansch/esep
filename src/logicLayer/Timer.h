@@ -49,18 +49,25 @@ public:
 	bool finished;
 };
 
+enum class Speed {FAST, SLOW};
+
 class Timer : public SignalReceiver {
+
 public:
 	Timer();
 	virtual ~Timer();
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
+
+
 private:
+	Speed speed;
 	bool killTimer(Signalname);
 	void setTimer(Signalname,Signalname,unsigned int);
+	void initialize();
 	TimerEvent timer_events[100];
 	void checkIfAvailableSpace();
-	int i = 0;
+	int i;
 
 	Channel<Signal>* controller_channel;
 };

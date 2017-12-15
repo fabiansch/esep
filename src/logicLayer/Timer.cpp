@@ -34,6 +34,9 @@ Timer::Timer()
 : SignalReceiver::SignalReceiver()
 , controller_channel(nullptr)
 {
+	i = 0;
+	initialize();
+	speed = Speed::FAST;
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
@@ -96,8 +99,10 @@ void Timer::operator()() {
 				if(event.finished == false) {
 					event.duration = event.duration - (now - event.begin);
 					event.started = false;
+					event.finished = true;
 				}
 			}
+
 			break;
 		}
 		case Signalname::MOTOR_START:
@@ -106,6 +111,7 @@ void Timer::operator()() {
 			for(auto& event : timer_events) {
 				if(event.started == false) {
 					event.begin = now;
+					event.finished = false;
 					event.started = true;
 					event.active = true;
 					later(&fire_timer, event);
@@ -140,7 +146,21 @@ void Timer::operator()() {
 		case Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL:
 			killTimer(Signalname::TIMEFRAME_OUTPUT_LEAVE);
 			break;
-		case Signalname::SIGNAL_DUMMY:
+		case Signalname::MOTOR_FAST:
+			speed = Speed::FAST;
+			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+				if(timer_events[j].active == true){
+					timer_events[j].duration = timer_events[j].duration * slow_factor;
+				}
+			}
+			break;
+		case Signalname::MOTOR_SLOW:
+			speed = Speed::SLOW;
+			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+				if(timer_events[j].active == true){
+					timer_events[j].duration = timer_events[j].duration / slow_factor;
+				}
+			}
 			break;
 		default:
 			exit(EXIT_FAILURE);
@@ -167,6 +187,11 @@ void Timer::checkIfAvailableSpace(){
 	if (timer_events[i].active == true){
 		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite active timer which was expected to be inactive";
 		//TODO FAIL
+	}
+}
+void Timer::initialize(){
+	for (int j =0;j< sizeof(timer_events)/sizeof(TimerEvent);j++ ){
+		timer_events[j] = TimerEvent();
 	}
 }
 
