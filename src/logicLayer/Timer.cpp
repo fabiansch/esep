@@ -21,6 +21,7 @@ public:
         logicLayer::TimerEvent& event = std::get<0>(tuples);
 
         std::thread([event, task]() {
+			cout << std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count() << endl;
 			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count());
 			task();
 		}).detach();
@@ -91,6 +92,7 @@ void Timer::operator()() {
 				event.active = false;
 				if(event.finished == false) {
 					event.duration = event.duration - (now - event.begin);
+					cout<<"TIMER STOPPED"<<endl;
 					event.started = false;
 				}
 			}
