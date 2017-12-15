@@ -139,7 +139,6 @@ private:
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 		virtual void timeframe_input_enter( 	Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
-		virtual void timeframe_height_leave( 	Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -156,6 +155,11 @@ private:
 			if( cb_this != cb_first ) {
 				new (this) DepartureOutputPreviousCB;
 			}
+		}
+
+		virtual void timeframe_height_leave( Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+
 		}
 	};
 
@@ -231,6 +235,7 @@ private:
 	struct ArrivalHeight : public State {
 		ArrivalHeight() {
 			cout<<"ArrivalHeight"<<endl;
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
 		}
 		virtual void lb_height_freed( Signal signal ) override {
 			cout<<"lb_height_freed"<<endl;
