@@ -144,8 +144,11 @@ private:
 		virtual void sensor_height_not_match() {}
 		virtual void sensor_test_timeout(){}
 	};
-	//============================ LB_HEIGHT_INTERRUPT_Test =======================================
-	struct LB_HEIGHT_INTERRUPT_Test : public State {
+
+
+
+	//============================ LB_HEIGHT_INTERRUPT =======================================
+	struct LB_HEIGHT_INTERRUPT : public State {
 		virtual void lb_height_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
