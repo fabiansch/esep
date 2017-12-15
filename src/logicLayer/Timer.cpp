@@ -57,7 +57,6 @@ void fire_timer(TimerEvent& timerEvent)
 
 void Timer::operator()() {
 	Signal signal;
-	TimerEvent timer_events[100];
 	int i = 0;
 
 	while(running) {
@@ -168,6 +167,33 @@ void Timer::operator()() {
 			}
 			break;
 		}
+		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
+			killTimer(Signalname::TIMEFRAME_INPUT_LEAVE);
+			break;
+		case Signalname::TIMEFRAME_HEIGHT_ENTER_KILL:
+			killTimer(Signalname::TIMEFRAME_HEIGHT_ENTER);
+			break;
+		case Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL:
+			killTimer(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+			break;
+		case Signalname::TIMEFRAME_SWITCH_ENTER_KILL:
+			killTimer(Signalname::TIMEFRAME_SWITCH_ENTER);
+			break;
+		case Signalname::TIMEFRAME_SWITCH_LEAVE_KILL:
+			killTimer(Signalname::TIMEFRAME_SWITCH_LEAVE);
+			break;
+		case Signalname::TIMEFRAME_SLIDE_ENTER_KILL:
+			killTimer(Signalname::TIMEFRAME_SLIDE_ENTER);
+			break;
+		case Signalname::TIMEFRAME_SLIDE_LEAVE_KILL:
+			killTimer(Signalname::TIMEFRAME_SLIDE_LEAVE);
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_ENTER_KILL:
+			killTimer(Signalname::TIMEFRAME_OUTPUT_ENTER);
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL:
+			killTimer(Signalname::TIMEFRAME_OUTPUT_LEAVE);
+			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
@@ -176,6 +202,16 @@ void Timer::operator()() {
 		}
 	}
 
+}
+
+bool Timer::killTimer(Signalname signalname){
+	for(int j = 0;j< sizeof(timer_events)/sizeof(TimerEvent); j++){
+		if ((timer_events[j].signal.name == signalname) && (timer_events[j].active == true)){
+			timer_events[j].active = false;
+			return true;
+		}
+	}
+	return false;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {

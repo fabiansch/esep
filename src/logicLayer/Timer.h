@@ -56,6 +56,8 @@ public:
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
 private:
+	bool killTimer(Signalname);
+	TimerEvent timer_events[100];
 
 	Channel<Signal>* controller_channel;
 };
