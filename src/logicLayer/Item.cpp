@@ -222,6 +222,9 @@ void Item::handle(Signal signal){
 		// controller
 		case Signalname::STOP:
 			break;
+		case Signalname::TIMEFRAME_INPUT_LEAVE:
+			statePtr->timeframe_input_leave( signal );
+			break;
 		case Signalname::TIMEFRAME_HEIGHT_ENTER:
 			statePtr->timeframe_height_enter( signal );
 			break;
