@@ -40,7 +40,7 @@ namespace logicLayer {
 				statePtr->calibration_unsuccessful(signal.sender);
 				break;
 			case Signalname::CALIBRATION_TIMEOUT:
-				statePtr->calibration_timeout();
+				statePtr->calibration_timeout(signal.sender);
 				break;
 			// light barriers
 			case Signalname::LB_INPUT_INTERRUPTED:
