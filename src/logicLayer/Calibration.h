@@ -33,8 +33,9 @@ private:
 		virtual void calibration_successful(uint8_t sender) {		*successful = true ;}
 		virtual void calibration_unsuccessful(uint8_t sender) {
 			cout << "Got Signal: CALIBRATION_UNSUCCESSFUL"<< endl;
-			new (this) IDLE;
+			new (this) FAIL_STATE;
 		}
+		virtual void calibration_timeout() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_interrupted() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_freed() {}
 		virtual void lb_height_interrupted() {	calibrationFailed(__FUNCTION__);}
@@ -345,7 +346,7 @@ private:
 		static void timeout_timer(hardwareLayer::HardwareLayer* hal, int milliseconds) {
 			if(milliseconds > 0) {
 				WAIT(milliseconds);
-				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::CALIBRATION_UNSUCCESSFUL));
+				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::CALIBRATION_TIMEOUT));
 			}
 		}
 
