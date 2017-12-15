@@ -80,6 +80,7 @@ void Timer::operator()() {
 										Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
 										controller_channel);
 				later(&fire_timer, std::ref(timer_events[i]));
+//				timer_events[i].active = false;
 				i++;
 
 			break;
@@ -89,7 +90,6 @@ void Timer::operator()() {
 			for(auto& event : timer_events) {
 				event.active = false;
 				if(event.finished == false) {
-					event.begin = now;
 					event.duration = event.duration - (now - event.begin);
 					event.started = false;
 				}
@@ -100,6 +100,7 @@ void Timer::operator()() {
 		{
 			for(auto& event : timer_events) {
 				if(event.started == false) {
+					event.begin = now;
 					event.started = true;
 					event.active = true;
 					later(&fire_timer, event);
