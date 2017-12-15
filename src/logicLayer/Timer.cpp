@@ -57,7 +57,6 @@ void fire_timer(TimerEvent& timerEvent)
 
 void Timer::operator()() {
 	Signal signal;
-	int i = 0;
 
 	while(running) {
 
@@ -71,76 +70,23 @@ void Timer::operator()() {
 									Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
 									controller_channel);
 			later(&fire_timer, std::ref(timer_events[i]));
-//				timer_events[i].active = false;
 			i++;
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_input_to_height-500),
-									Signal(Signalname::TIMEFRAME_HEIGHT_ENTER),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
-
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_input_to_height+500),
-									Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-//				timer_events[i].active = false;
-			i++;
+			setTimer(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,time_input_to_height);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_height_to_switch-500),
-									Signal(Signalname::TIMEFRAME_SWITCH_ENTER),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
-
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_height_to_switch+500),
-									Signal(Signalname::TIMEFRAME_SWITCH_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-//				timer_events[i].active = false;
-			i++;
+			setTimer(Signalname::TIMEFRAME_SWITCH_ENTER,Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch);
 			break;
 		case Signalname::START_TIMERS_SLIDE:
 			cout<<"Timer got START_TIMERS_SLIDE"<<endl;
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_switch_to_slide-500),
-									Signal(Signalname::TIMEFRAME_SLIDE_ENTER),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_switch_to_slide-500),
-									Signal(Signalname::TIMEFRAME_SLIDE_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
+			setTimer(Signalname::TIMEFRAME_SLIDE_ENTER,Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide);
 			break;
 		case Signalname::START_TIMERS_OUTPUT:
 			cout<<"Timer got START_TIMERS_OUTPUT"<<endl;
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_switch_to_output-500),
-									Signal(Signalname::TIMEFRAME_OUTPUT_ENTER),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
-
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_switch_to_output+500),
-									Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-//				timer_events[i].active = false;
-			i++;
+			setTimer(Signalname::TIMEFRAME_OUTPUT_ENTER,Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output);
 			break;
 		case Signalname::MOTOR_STOP:
 		{
@@ -212,6 +158,33 @@ bool Timer::killTimer(Signalname signalname){
 		}
 	}
 	return false;
+}
+
+void Timer::checkIfAvailableSpace(){
+	if (i == sizeof(timer_events)/sizeof(TimerEvent)){
+		i = 0;
+	}
+	if (timer_events[i].active == true){
+		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite active timer which was expected to be inactive";
+		//TODO FAIL
+	}
+}
+
+void Timer::setTimer(Signalname entry, Signalname exit, unsigned int param){
+	checkIfAvailableSpace();
+	timer_events[i] = TimerEvent(
+							std::chrono::milliseconds(param-500),
+							Signal(entry),
+							controller_channel);
+	later(&fire_timer, std::ref(timer_events[i]));
+	i++;
+	checkIfAvailableSpace();
+	timer_events[i] = TimerEvent(
+							std::chrono::milliseconds(param+500),
+							Signal(exit),
+							controller_channel);
+	later(&fire_timer, std::ref(timer_events[i]));
+	i++;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {

@@ -57,7 +57,10 @@ public:
 	void setControllerChannel(Channel<Signal>*);
 private:
 	bool killTimer(Signalname);
+	void setTimer(Signalname,Signalname,unsigned int);
 	TimerEvent timer_events[100];
+	void checkIfAvailableSpace();
+	int i = 0;
 
 	Channel<Signal>* controller_channel;
 };
