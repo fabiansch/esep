@@ -28,7 +28,6 @@ ErrorHandler::~ErrorHandler() {
 void ErrorHandler::addPending(Signal signal) {
 	pendingSignals.insert(signal);
 	statePtr->errorOccurred();
-	hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::MOTOR_STOP));
 }
 
 void ErrorHandler::handle(Signal signal) {

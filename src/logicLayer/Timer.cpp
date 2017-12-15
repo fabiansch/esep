@@ -94,6 +94,7 @@ void Timer::operator()() {
 					event.duration = event.duration - (now - event.begin);
 					cout<<"TIMER STOPPED"<<endl;
 					event.started = false;
+					event.finished = true;
 				}
 			}
 			break;
@@ -107,6 +108,7 @@ void Timer::operator()() {
 					event.started = true;
 					event.active = true;
 					later(&fire_timer, event);
+					event.finished = false;
 				}
 			}
 			break;
