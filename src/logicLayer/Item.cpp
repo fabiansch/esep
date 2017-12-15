@@ -382,7 +382,10 @@ void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
 void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 	cout << "### Item ###" << endl;
 	cout << "ID: "<< item->id << endl;
-	//cout << "Type: " << (int) item->type << endl;
+	cout << "Type: "  << (int) item->type.profile << endl;
+	cout << "Metal: " << (int) item->type.metal << endl;
+	cout << "Code: " << (int) item->type.code << endl;
+	cout << "Height: " << item->type.height << "mm" << endl;
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){

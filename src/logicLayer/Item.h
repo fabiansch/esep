@@ -102,12 +102,12 @@ private:
 
 
 		void createItem(){
-			cout << "create item" << endl;
+			//cout << "create item" << endl;
 			item_->previous_ = new Item(item_->hal_, item_->timerChannel_, item_, errorHandler_);
 		}
 
 		void forwardSignal( Signal signal ){
-			cout<<"forwardSignal"<<endl;
+			//cout<<"forwardSignal"<<endl;
 			if(item_->previous_ == nullptr ){
 				createItem();
 			}
@@ -235,7 +235,7 @@ private:
 			//get values from type identification
 			item_->type = TypeIdentification::typeScans.front();
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
-			cout << "GROESSE:" << TypeIdentification::typeScans.size() << endl;
+
 			if(Sorting::amIWanted(item_)) {
 				Item::openSwitchPoint(hal_);
 			}
@@ -283,6 +283,7 @@ private:
 			cout<<"ArrivalSlide"<<endl;
 			Item::dequeueAndDeleteItem(item_);
 			Item::ArrivalSlideAction(hal_);
+			Item::printItem(hal_, item_);
 		}
 	};
 
