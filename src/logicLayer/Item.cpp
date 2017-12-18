@@ -368,6 +368,7 @@ void Item::sendItem(hardwareLayer::HardwareLayer* hal, Item* item) {
 }
 
 void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
+	cout<<"send CONVEYOR_BELT_READY"<<endl;
 	this_cb_busy = false;
 	hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
 }
