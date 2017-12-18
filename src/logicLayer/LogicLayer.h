@@ -37,7 +37,7 @@ private:
 
 	Controller controller_;
 	Calibration calibration_;
-	Sorting sorting_;
+	//Sorting sorting_; <-- no need because its static
 	Dispatcher dispatcher_;
 	Menu menu_;  // have to be last one
 };

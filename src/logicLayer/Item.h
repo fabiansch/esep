@@ -57,6 +57,14 @@ public:
 
 	const ItemType& getType() const { return type; }
 
+	bool isPendingSortout() const {
+		return pendingSortout;
+	}
+
+	void setPendingSortout(bool pendingSortout = false) {
+		this->pendingSortout = pendingSortout;
+	}
+
 	int heightAbsolute;
 	int heightCenter;
 
@@ -75,6 +83,11 @@ private:
 
 	Item* next_;
 	Item* previous_;
+
+	/**
+	 * Flag which marks if item has to be sorted out on next cb
+	 */
+	bool pendingSortout = false;
 
 	hardwareLayer::HardwareLayer* hal_;
 	Channel<Signal>* timerChannel_;
