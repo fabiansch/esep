@@ -167,6 +167,9 @@ private:
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
 			}
@@ -225,12 +228,6 @@ private:
 	struct WaitForArrivalAtHeight : public State {
 		WaitForArrivalAtHeight() {
 			cout<<"WaitForArrivalAtHeight"<<endl;
-		}
-		void timeframe_height_leave( Signal signal ) override {
-			cout<<"timeframe_height_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
 		}
 		virtual void lb_height_interrupted( Signal signal ) override {
 			cout<<"lb_height_interrupted"<<endl;
