@@ -137,7 +137,6 @@ private:
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
-		virtual void timeframe_input_leave( 	Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
 
 
@@ -157,7 +156,13 @@ private:
 			}
 		}
 
+		virtual void timeframe_input_leave( Signal signal ) override {
+			cout<<"timeframe_input_leave"<<endl;
+		}
+
+
 		virtual void timeframe_height_leave( Signal signal ) override {
+			cout<<"timeframe_height_leave"<<endl;
 //			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 
 		}
@@ -170,7 +175,7 @@ private:
 			send_CB_busy(hal_);
 
 			//copy item from hal
-			copyItemFromHAL(hal_, item_);
+//			copyItemFromHAL(hal_, item_);
 			new (this) WaitForArrivalAtInput;
 		}
 
@@ -347,8 +352,8 @@ private:
 			if(cb_this != cb_last) {
 				if(next_cb_busy == false) {
 //					next_cb_busy.parameterList.showParameters();
-					cout<<"send item"<<endl;
-					Item::sendItem(hal_, item_);
+					cout<<"NOT send item"<<endl;
+//					Item::sendItem(hal_, item_);
 				} else {
 					// TODO error Item lost
 				}
