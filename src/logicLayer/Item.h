@@ -160,6 +160,7 @@ private:
 			cout<<"timeframe_input_leave"<<endl;
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
 			this_cb_busy = false;
 		}
 
@@ -167,6 +168,7 @@ private:
 			cout<<"timeframe_height_leave"<<endl;
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
 			this_cb_busy = false;
 		}
 	};
