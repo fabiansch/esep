@@ -183,7 +183,6 @@ bool Timer::killTimer(Signalname signalname){
 		if (event.signal.name == signalname){
 			event.active = false;
 			cout<<"TIMER KILLED"<<endl;
-			return true;
 		}
 	}
 	return false;
