@@ -80,7 +80,7 @@ private:
 		// ============================= IDLE =========================================
 		struct IDLE: public State {
 			virtual void calibration_start() { new (this) WaitingForItem; }
-			virtual void calibration_unsuccessful(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) override {}
 			virtual void stop() {}
 		};
 
@@ -312,7 +312,7 @@ private:
 				}
 			}
 			virtual void calibration_successful(uint8_t sender){
-				cout << "Calibration completed on machine " << (int)cb_this<<endl;
+				cout << "================= Calibration completed on machine " << (int)cb_this<<" =========="<<endl;
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 				new (this) IDLE;
 			}
@@ -366,5 +366,5 @@ private:
 		}
 	};
 
-} /* namespace logicLayer */
+	} /* namespace logicLayer */
 #endif /* CALIBRATION_H_ */
