@@ -39,7 +39,7 @@ void Dispatcher::notify() {
 			next_cb_busy = true;
 			break;
 		case Signalname::START_TIMERS_INPUT:
-			timer_ << signal;
+//			timer_ << signal;
 			hal.motorStart();
 			break;
 		case Signalname::MOTOR_STOP:
