@@ -43,10 +43,10 @@ void Dispatcher::notify() {
 //			hal.motorStart();
 			break;
 		case Signalname::MOTOR_STOP:
-//			timer_ << signal;
+			timer_ << signal;
 			break;
 		case Signalname::MOTOR_START:
-//			timer_ << signal;
+			timer_ << signal;
 			break;
 		case Signalname::MOTOR_SLOW:
 			timer_ << signal;
