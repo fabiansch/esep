@@ -316,7 +316,7 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 			} else {
 				cout<<"next_cb_busy != true"<<endl;
 				hal->motorStart();
-				hal->sendSerial(Signal(cb_this, cb_next, Signalname::START_TIMERS_INPUT));
+//				hal->sendSerial(Signal(cb_this, cb_next, Signalname::START_TIMERS_INPUT));
 			}
 		}
 

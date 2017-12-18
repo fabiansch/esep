@@ -329,9 +329,9 @@ private:
 	struct ArrivalOutput : public State{
 		ArrivalOutput(){
 			cout<<"ArrivalOutput"<<endl;
-//			Item::onOutputAction(hal_, item_, errorHandler_);
+			Item::onOutputAction(hal_, item_, errorHandler_);
 
-//			Item::printItem(hal_, item_);
+			Item::printItem(hal_, item_);
 		}
 
 		virtual void conveyer_belt_ready( Signal signal ) override {
