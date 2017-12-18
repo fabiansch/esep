@@ -12,7 +12,7 @@ namespace hardwareLayer {
 namespace io {
 namespace serial {
 
-constexpr int period = 250;
+constexpr int period = 1000;
 
 WatchDog::WatchDog(Interface& serial, SignalGenerator& sgen) :
 serial_(serial),
