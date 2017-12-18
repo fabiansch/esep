@@ -96,6 +96,7 @@ private:
 		virtual void timeframe_input_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_height_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_switch_enter( 	Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -138,6 +139,7 @@ private:
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
+		virtual void timeframe_switch_enter( 	Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -236,9 +238,10 @@ private:
 		ArrivalHeight() {
 			cout<<"ArrivalHeight"<<endl;
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+			*timerChannel_ << Signal(Signalname::START_TIMERS_SWITCH);
 		}
-		virtual void lb_height_freed( Signal signal ) override {
-			cout<<"lb_height_freed"<<endl;
+		void timeframe_switch_enter( Signal signal ) override {
+			cout<<"timeframe_switch_enter"<<endl;
 			new (this) WaitForArrivalAtSwitch;
 		}
 	};
@@ -258,6 +261,7 @@ private:
 			if(Sorting::amIWanted(item_)) {
 				Item::openSwitchPoint(hal_);
 			}
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_SWITCH_LEAVE_KILL);
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
