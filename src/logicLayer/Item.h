@@ -152,38 +152,36 @@ private:
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
 			if( cb_this != cb_first ) {
-				new (this) DepartureOutputPreviousCB;
+				new (this) WaitForArrivalAtInput;
 			}
 		}
 
 		virtual void timeframe_input_leave( Signal signal ) override {
 			cout<<"timeframe_input_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			if(cb_this == cb_sorting_2) {
+				send_CB_ready(hal_);
+			}
 		}
-
 
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
-//			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			if(cb_this == cb_sorting_2) {
+				send_CB_ready(hal_);
+			}
 		}
-	};
-
-	struct DepartureOutputPreviousCB : public State {
-		DepartureOutputPreviousCB() {
-			cout<<"DepartureOutputPreviousCB"<<endl;
-			Item::startMotor(hal_);
-			send_CB_busy(hal_);
-
-			//copy item from hal
-			copyItemFromHAL(hal_, item_);
-			new (this) WaitForArrivalAtInput;
-		}
-
 	};
 
 	struct WaitForArrivalAtInput : public State {
 		WaitForArrivalAtInput() {
 			cout<<"WaitForArrivalAtInput"<<endl;
+			Item::startMotor(hal_);
+			send_CB_busy(hal_);
+
+			//copy item from hal
+			copyItemFromHAL(hal_, item_);
+
 			// start timers height
 		}
 
@@ -199,6 +197,9 @@ private:
 			cout<<"ArrivalInput"<<endl;
 			Item::setID(&item_->id);
 			items_on_cb = items_on_cb + 1;
+
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_INPUT_LEAVE_KILL);
+
 			if (not item_on_output) {
 				Item::startMotor(hal_);
 			}
@@ -309,6 +310,9 @@ private:
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
 			cout<<"ArrivalSlide"<<endl;
+			if(cb_this == cb_sorting_2) {
+				send_CB_ready(hal_);
+			}
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 		}
