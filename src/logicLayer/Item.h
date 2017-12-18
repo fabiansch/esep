@@ -159,20 +159,15 @@ private:
 		virtual void timeframe_input_leave( Signal signal ) override {
 			cout<<"timeframe_input_leave"<<endl;
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			if(cb_this == cb_sorting_2) {
-				send_CB_ready(hal_);
-			}
+			Item::dequeueAndDeleteItem(item_);
+			this_cb_ready = false;
 		}
 
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
-
-			if(cb_this == cb_sorting_2) {
-				send_CB_ready(hal_);
-			}
+			this_cb_ready = false;
 		}
 	};
 
