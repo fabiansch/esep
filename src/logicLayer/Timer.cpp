@@ -98,13 +98,15 @@ void Timer::operator()() {
 		{
 			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 			for(auto& event : timer_events) {
-				event.active = false;
 				if(event.finished == false) {
 					event.duration = event.duration - (now - event.begin);
 					cout<<"TIMER STOPPED"<<endl;
-					event.started = false;
+					if(event.active) {
+						event.started = false;
+					}
 					event.finished = true;
 				}
+				event.active = false;
 			}
 
 			break;
@@ -117,6 +119,7 @@ void Timer::operator()() {
 					timer_events[j].begin = now;
 					timer_events[j].finished = false;
 					timer_events[j].started = true;
+					timer_events[j].active = true;
 					later(&fire_timer, std::ref(timer_events[j]));
 				}
 			}
