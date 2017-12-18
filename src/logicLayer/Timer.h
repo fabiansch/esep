@@ -49,7 +49,7 @@ public:
 	bool finished;
 };
 
-enum class Speed {FAST, SLOW, STOP};
+enum class Speed {FAST, SLOW};
 
 class Timer : public SignalReceiver {
 

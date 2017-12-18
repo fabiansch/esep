@@ -113,18 +113,18 @@ void Timer::operator()() {
 			break;
 		}
 		case Signalname::MOTOR_START:
-				{
-				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-				for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
-					if(timer_events[j].started == false) {
-						timer_events[j].begin = now;
-						timer_events[j].finished = false;
-						timer_events[j].started = true;
-						timer_events[j].active = true;
-						later(&fire_timer, std::ref(timer_events[j]));
-					}
+		{
+			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+			for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
+				if(timer_events[j].started == false) {
+					timer_events[j].begin = now;
+					timer_events[j].finished = false;
+					timer_events[j].started = true;
+					timer_events[j].active = true;
+					later(&fire_timer, std::ref(timer_events[j]));
 				}
-				break;
+			}
+			break;
 		}
 		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
 			killTimer(Signalname::TIMEFRAME_INPUT_LEAVE);
@@ -158,16 +158,24 @@ void Timer::operator()() {
 		{
 			switch(speed) {
 			case Speed::SLOW:
+			{
 				speed = Speed::FAST;
+				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
 					if(timer_events[j].active == true){
+
+						//TODO hier wird die zurückgelegte zeit abgezogen. darf aber NICHT passieren, wenn motor stopp ist. D.h. state oder flag benötigt.
 						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
 						timer_events[j].duration = timer_events[j].duration * slow_factor;
+						// TODO Brauch neuen thread; da an dieser arraypos ein thread läuft, muss neue pos gefunden werden
 					}
 				}
 				break;
+			}
 			case Speed::FAST:
 				// DO NOTHING, NO STATE CHANGE
+				break;
+			default:
 				break;
 			}
 			break;
@@ -176,7 +184,9 @@ void Timer::operator()() {
 		{
 			switch(speed) {
 			case Speed::FAST:
+			{
 				speed = Speed::SLOW;
+				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
 					if(timer_events[j].active == true){
 						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
@@ -184,8 +194,11 @@ void Timer::operator()() {
 					}
 				}
 				break;
+			}
 			case Speed::SLOW:
 				// DO NOTHING, NO STATE CHANGE
+				break;
+			default:
 				break;
 			}
 			break;
