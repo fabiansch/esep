@@ -38,6 +38,10 @@ void Dispatcher::notify() {
 		case Signalname::CONVEYOR_BELT_BUSY:
 			next_cb_busy = true;
 			break;
+		case Signalname::CONVEYOR_BELT_READY:
+			next_cb_busy = false;
+			controller_ << signal;
+			break;
 		case Signalname::START_TIMERS_INPUT:
 			timer_ << signal;
 //			hal.motorStart();
