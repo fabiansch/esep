@@ -72,7 +72,7 @@ void Timer::operator()() {
 		case Signalname::START_TIMERS_INPUT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_output_to_input+500),
+									std::chrono::milliseconds(2000+500),
 									Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
 									controller_channel);
 			later(&fire_timer, std::ref(timer_events[i]));
