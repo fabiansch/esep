@@ -117,7 +117,6 @@ void Timer::operator()() {
 					timer_events[j].begin = now;
 					timer_events[j].finished = false;
 					timer_events[j].started = true;
-					timer_events[j].active = true;
 					later(&fire_timer, std::ref(timer_events[j]));
 				}
 			}
