@@ -237,6 +237,7 @@ void Item::handle(Signal signal){
 			statePtr->conveyer_belt_ready( signal );
 			break;
 		case Signalname::SIGNAL_DUMMY:
+			cout<<"Item: SIGNAL_DUMMY"<<endl;
 			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
@@ -316,7 +317,7 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 			} else {
 				cout<<"next_cb_busy != true"<<endl;
 				hal->motorStart();
-//				hal->sendSerial(Signal(cb_this, cb_next, Signalname::START_TIMERS_INPUT));
+				hal->sendSerial(Signal(cb_this, cb_next, Signalname::SIGNAL_DUMMY));
 			}
 		}
 
