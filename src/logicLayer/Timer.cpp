@@ -33,6 +33,7 @@ namespace logicLayer {
 
 Timer::Timer()
 : SignalReceiver::SignalReceiver()
+, speed(Speed::FAST)
 , controller_channel(nullptr)
 {
 	i = 0;
@@ -112,18 +113,18 @@ void Timer::operator()() {
 			break;
 		}
 		case Signalname::MOTOR_START:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
-				if(timer_events[j].started == false) {
-					timer_events[j].begin = now;
-					timer_events[j].finished = false;
-					timer_events[j].started = true;
-					timer_events[j].active = true;
-					later(&fire_timer, std::ref(timer_events[j]));
+				{
+				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+				for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
+					if(timer_events[j].started == false) {
+						timer_events[j].begin = now;
+						timer_events[j].finished = false;
+						timer_events[j].started = true;
+						timer_events[j].active = true;
+						later(&fire_timer, std::ref(timer_events[j]));
+					}
 				}
-			}
-			break;
+				break;
 		}
 		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
 			killTimer(Signalname::TIMEFRAME_INPUT_LEAVE);
@@ -154,21 +155,41 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_OUTPUT_LEAVE);
 			break;
 		case Signalname::MOTOR_FAST:
-			speed = Speed::FAST;
-			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
-				if(timer_events[j].active == true){
-					timer_events[j].duration = timer_events[j].duration * slow_factor;
+		{
+			switch(speed) {
+			case Speed::SLOW:
+				speed = Speed::FAST;
+				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+					if(timer_events[j].active == true){
+						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
+						timer_events[j].duration = timer_events[j].duration * slow_factor;
+					}
 				}
+				break;
+			case Speed::FAST:
+				// DO NOTHING, NO STATE CHANGE
+				break;
 			}
 			break;
+		}
 		case Signalname::MOTOR_SLOW:
-			speed = Speed::SLOW;
-			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
-				if(timer_events[j].active == true){
-					timer_events[j].duration = timer_events[j].duration / slow_factor;
+		{
+			switch(speed) {
+			case Speed::FAST:
+				speed = Speed::SLOW;
+				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+					if(timer_events[j].active == true){
+						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
+						timer_events[j].duration = timer_events[j].duration / slow_factor;
+					}
 				}
+				break;
+			case Speed::SLOW:
+				// DO NOTHING, NO STATE CHANGE
+				break;
 			}
 			break;
+		}
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
@@ -207,20 +228,10 @@ void Timer::initialize(){
 
 void Timer::setTimers(Signalname entry, Signalname exit, unsigned int param){
 	checkIfAvailableSpace();
-	if (speed == Speed::FAST){
 		timer_events[i] = TimerEvent(
 								std::chrono::milliseconds(param-500),
 								Signal(entry),
 								controller_channel);
-	}
-//	else{
-//		auto time = std::chrono::milliseconds(param -500);
-//		time = time / slow_factor;
-//		timer_events[i] = TimerEvent(
-//								std::chrono::milliseconds(time),
-//								Signal(entry),
-//								controller_channel);
-//	}
 
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
