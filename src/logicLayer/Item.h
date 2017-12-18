@@ -346,7 +346,8 @@ private:
 
 			if(cb_this != cb_last) {
 				if(next_cb_busy == false) {
-					next_cb_busy.parameterList.showParameters();
+//					next_cb_busy.parameterList.showParameters();
+					cout<<"send item"<<endl;
 					Item::sendItem(hal_, item_);
 				} else {
 					// TODO error Item lost

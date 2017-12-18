@@ -305,12 +305,16 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 	if (hal != nullptr) {
 
 		if(cb_this == cb_last){
+			cout<<"cb_this == cb_last"<<endl;
 			hal->motorStop();
 			errorHandler->addPending(Signal(Signalname::LB_OUTPUT_FREED));
 		} else {
+			cout<<"cb_this != cb_last"<<endl;
 			if (next_cb_busy == true) {
+				cout<<"next_cb_busy == true"<<endl;
 				hal->motorStop();
 			} else {
+				cout<<"next_cb_busy != true"<<endl;
 				hal->motorStart();
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::START_TIMERS_INPUT));
 			}
