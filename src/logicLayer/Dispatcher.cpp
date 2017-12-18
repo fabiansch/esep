@@ -44,7 +44,7 @@ void Dispatcher::notify() {
 			break;
 		case Signalname::START_TIMERS_INPUT:
 			timer_ << signal;
-//			hal.motorStart();
+//			hal.motorStart(); // do not call hal here....
 			break;
 		case Signalname::MOTOR_STOP:
 			timer_ << signal;
