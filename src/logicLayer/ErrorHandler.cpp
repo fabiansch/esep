@@ -62,12 +62,13 @@ void ErrorHandler::handle(Signal signal) {
 		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		statePtr->isPending(signal);
 		break;
-	case Signalname::BUTTON_RESET_PUSHED:
-		break;
-	case Signalname::BUTTON_START_PUSHED:
-		break;
 	case Signalname::BUTTON_STOP_PUSHED:
+		hal.motorSlow();
 		break;
+	case Signalname::BUTTON_STOP_PULLED:
+		hal.motorFast();
+		break;
+
 	default:
 		statePtr->isPending(signal);
 	}

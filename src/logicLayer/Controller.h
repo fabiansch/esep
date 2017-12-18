@@ -138,6 +138,7 @@ private:
 			items_on_cb = 0;
 			item_on_switch = false;
 			item_on_output = false;
+			this_cb_busy = false;
 			next_cb_busy = false;
 			Item::resetId();
 		}
@@ -153,6 +154,9 @@ private:
 	};
 
 	struct Safe : public State{
+		Safe() {
+			cout<<"In SAFE State"<<endl;
+		}
 		virtual void run(){}
 		virtual void stop(){/* do nothing */ }
 		virtual void sensor_test(){}

@@ -102,6 +102,7 @@ extern Parameter<uint8_t> cb_sorting_2;
 extern Parameter<int> items_on_cb;
 extern Parameter<bool> item_on_switch;
 extern Parameter<bool> item_on_output;
+extern Parameter<bool> this_cb_busy;
 extern Parameter<bool> next_cb_busy;
 
 

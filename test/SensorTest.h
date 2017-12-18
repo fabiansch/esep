@@ -145,8 +145,6 @@ private:
 		virtual void sensor_test_timeout(){}
 	};
 
-
-
 	//============================ LB_HEIGHT_INTERRUPT =======================================
 	struct LB_HEIGHT_INTERRUPT : public State {
 		virtual void lb_height_interrupted() {
@@ -196,15 +194,15 @@ private:
 		virtual void lb_switch_interrupted() {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" => ";
-			new (this) SENSOR_SWITCH_IS_OPEN_test;
+			new (this) SENSOR_SWITCH_IS_OPEN;
 			LOG_TEST<<name()<<endl;
 			hal->switchPointOpen();
 		}
 		virtual void sensor_test_timeout(){}
 	};
 
-	//============================ SENSOR_SWITCH_IS_OPEN_test =======================================
-	struct SENSOR_SWITCH_IS_OPEN_test : public State {
+	//============================ SENSOR_SWITCH_IS_OPEN =======================================
+	struct SENSOR_SWITCH_IS_OPEN : public State {
 		virtual void sensor_switch_is_open() {
 			LOG_TEST<<__FUNCTION__<<endl;
 
@@ -567,24 +565,32 @@ public:
 				break;
 			// motor
 			case Signalname::MOTOR_START:
-				LOG_DEBUG << "call MOTOR start ";
-				hal.motorStart();
-				LOG_DEBUG << "MOTOR started ";
+				if(signal.sender != cb_this) {
+					LOG_DEBUG << "call MOTOR start ";
+					hal.motorStart();
+					LOG_DEBUG << "MOTOR started ";
+				}
 				break;
 			case Signalname::MOTOR_STOP:
-				LOG_DEBUG << "call MOTOR stop ";
-				hal.motorStop();
-				LOG_DEBUG << "call MOTOR stopped ";
+				if(signal.sender != cb_this) {
+					LOG_DEBUG << "call MOTOR stop ";
+					hal.motorStop();
+					LOG_DEBUG << "call MOTOR stopped ";
+				}
 				break;
 			case Signalname::MOTOR_FAST:
-				LOG_DEBUG << "call MOTOR fast ";
-				hal.motorFast();
-				LOG_DEBUG << "end MOTOR  fast";
+				if(signal.sender != cb_this) {
+					LOG_DEBUG << "call MOTOR fast ";
+					hal.motorFast();
+					LOG_DEBUG << "end MOTOR  fast";
+				}
 				break;
 			case Signalname::MOTOR_SLOW:
-				LOG_DEBUG << "call MOTOR slow ";
-				hal.motorSlow();
-				LOG_DEBUG << "end MOTOR  slow";
+				if(signal.sender != cb_this) {
+					LOG_DEBUG << "call MOTOR slow ";
+					hal.motorSlow();
+					LOG_DEBUG << "end MOTOR  slow";
+				}
 				break;
 			case Signalname::MOTOR_ROTATE_CLOCKWISE:
 				LOG_DEBUG << "call MOTOR clockwise ";

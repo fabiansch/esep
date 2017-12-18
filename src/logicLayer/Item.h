@@ -43,7 +43,7 @@ public:
 	static void printItem(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void setID(int* id);
-	static void ArrivalSlideAction(hardwareLayer::HardwareLayer* hal);
+	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
 
 
 
@@ -93,7 +93,9 @@ private:
 		virtual void lb_output_freed( 			Signal signal ){ forwardSignal( signal ); }
 		virtual void transfer_item( 			Signal signal ){ forwardSignal( signal ); }
 		virtual void conveyer_belt_ready(		Signal signal ){ forwardSignal( signal ); }
-		virtual void timeframe_input_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_input_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_height_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -113,6 +115,7 @@ private:
 
 		Item* item_;
 		hardwareLayer::HardwareLayer* hal_;
+		Channel<Signal>* timerChannel_;
 		ErrorHandler* errorHandler_;
 
 	} *statePtr;
@@ -125,7 +128,7 @@ private:
 		virtual void sensor_switch_is_closed( 	Signal signal ) override {}
 		virtual void sensor_switch_is_open( 	Signal signal ) override {}
 		virtual void lb_input_freed(			Signal signal ) override {}
-		virtual void lb_height_interrupted( 	Signal signal ) override {}
+		virtual void lb_height_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED)); }
 		virtual void lb_height_freed( 			Signal signal ) override {}
 		virtual void lb_switch_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SWITCH_FREED)); }
 		virtual void lb_switch_freed( 			Signal signal ) override {}
@@ -134,7 +137,7 @@ private:
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
-		virtual void timeframe_input_enter( 	Signal signal ) override {}
+		virtual void timeframe_height_enter( 	Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -149,33 +152,35 @@ private:
 		virtual void transfer_item( Signal signal ) override {
 			cout<<"transfer_item"<<endl;
 			if( cb_this != cb_first ) {
-				new (this) DepartureOutputPreviousCB;
+				new (this) WaitForArrivalAtInput;
 			}
 		}
-	};
 
-	struct DepartureOutputPreviousCB : public State {
-		DepartureOutputPreviousCB() {
-			cout<<"DepartureOutputPreviousCB"<<endl;
-			Item::startMotor(hal_);
-			send_CB_busy(hal_);
-
-			//copy item from hal
-			copyItemFromHAL(hal_, item_);
+		virtual void timeframe_input_leave( Signal signal ) override {
+			cout<<"timeframe_input_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			this_cb_busy = false;
 		}
 
-		virtual void timeframe_input_enter( Signal signal ) override {
-			cout<<"timeframe_input_enter"<<endl;
-			new (this) WaitForArrivalAtInput;
+		virtual void timeframe_height_leave( Signal signal ) override {
+			cout<<"timeframe_height_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			this_cb_busy = false;
 		}
-
-
 	};
 
 	struct WaitForArrivalAtInput : public State {
 		WaitForArrivalAtInput() {
 			cout<<"WaitForArrivalAtInput"<<endl;
-			// start timers height
+			Item::startMotor(hal_);
+			send_CB_busy(hal_);
+
+			//copy item from hal
+			copyItemFromHAL(hal_, item_);
 		}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -188,8 +193,13 @@ private:
 	struct ArrivalInput : public State {
 		ArrivalInput() {
 			cout<<"ArrivalInput"<<endl;
-			Item::setID(&item_->id);
+			if(cb_this == cb_1) {
+				Item::setID(&item_->id);
+			}
 			items_on_cb = items_on_cb + 1;
+
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_INPUT_LEAVE_KILL);
+
 			if (not item_on_output) {
 				Item::startMotor(hal_);
 			}
@@ -204,27 +214,43 @@ private:
 	struct DepartureInput : public State {
 		DepartureInput() {
 			cout<<"DepartureInput"<<endl;
+			*timerChannel_ << Signal(Signalname::START_TIMERS_HEIGHT);
+		}
+		void timeframe_height_enter( Signal signal ) override {
+			cout<<"timeframe_height_enter"<<endl;
+			new (this) WaitForArrivalAtHeight;
+		}
+	};
+
+	struct WaitForArrivalAtHeight : public State {
+		WaitForArrivalAtHeight() {
+			cout<<"WaitForArrivalAtHeight"<<endl;
+		}
+		virtual void lb_height_interrupted( Signal signal ) override {
+			cout<<"lb_height_interrupted"<<endl;
+			new (this) ArrivalHeight;
+		}
+	};
+
+	struct ArrivalHeight : public State {
+		ArrivalHeight() {
+			cout<<"ArrivalHeight"<<endl;
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+		}
+		virtual void lb_height_freed( Signal signal ) override {
+			cout<<"lb_height_freed"<<endl;
+			new (this) WaitForArrivalAtSwitch;
+		}
+	};
+
+	struct WaitForArrivalAtSwitch : public State {
+		WaitForArrivalAtSwitch() {
+			cout<<"WaitForArrivalAtSwitch"<<endl;
 		}
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;
 		}
-	};
-
-	struct WaitForArrivalAtHeight : public State{
-
-	};
-
-	struct ArrivalHeight : public State{
-
-	};
-
-	struct DepatureHeight : public State{
-
-	};
-
-	struct WaitForArrivalAtSwitch : public State{
-
 	};
 
 	struct ArrivalSwitch : public State{
@@ -274,8 +300,11 @@ private:
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
 			cout<<"ArrivalSlide"<<endl;
+			if(cb_this == cb_sorting_2) {
+				send_CB_ready(hal_);
+			}
 			Item::dequeueAndDeleteItem(item_);
-			Item::ArrivalSlideAction(hal_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
 		}
 	};
 
@@ -316,7 +345,8 @@ private:
 
 			if(cb_this != cb_last) {
 				if(next_cb_busy == false) {
-					next_cb_busy.parameterList.showParameters();
+//					next_cb_busy.parameterList.showParameters();
+					cout<<"send item"<<endl;
 					Item::sendItem(hal_, item_);
 				} else {
 					// TODO error Item lost
@@ -327,6 +357,7 @@ private:
 			}
 			Item::dequeueAndDeleteItem(item_);
 			Item::lbOutputFreedAction(hal_);
+			cout<<"DEPATURE OUTPUT DONE"<<endl;
 		}
 	};
 
