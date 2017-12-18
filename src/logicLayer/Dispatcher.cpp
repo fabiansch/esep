@@ -49,7 +49,7 @@ void Dispatcher::notify() {
 			timer_ << signal;
 			break;
 		case Signalname::MOTOR_SLOW:
-			timer_ << signal;
+//			timer_ << signal;
 			break;
 		case Signalname::MOTOR_FAST:
 			timer_ << signal;

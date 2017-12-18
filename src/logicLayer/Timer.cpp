@@ -80,19 +80,19 @@ void Timer::operator()() {
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-			setTimer(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,2118);
+			setTimers(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,2118);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-			setTimer(Signalname::TIMEFRAME_SWITCH_ENTER,Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch);
+			setTimers(Signalname::TIMEFRAME_SWITCH_ENTER,Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch);
 			break;
 		case Signalname::START_TIMERS_SLIDE:
 			cout<<"Timer got START_TIMERS_SLIDE"<<endl;
-			setTimer(Signalname::TIMEFRAME_SLIDE_ENTER,Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide);
+			setTimers(Signalname::TIMEFRAME_SLIDE_ENTER,Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide);
 			break;
 		case Signalname::START_TIMERS_OUTPUT:
 			cout<<"Timer got START_TIMERS_OUTPUT"<<endl;
-			setTimer(Signalname::TIMEFRAME_OUTPUT_ENTER,Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output);
+			setTimers(Signalname::TIMEFRAME_OUTPUT_ENTER,Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output);
 			break;
 		case Signalname::MOTOR_STOP:
 		{
@@ -179,7 +179,7 @@ void Timer::operator()() {
 }
 
 bool Timer::killTimer(Signalname signalname){
-	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head
+	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head, kill first others not
 		if (event.signal.name == signalname){
 			event.active = false;
 			cout<<"TIMER KILLED"<<endl;
@@ -204,7 +204,7 @@ void Timer::initialize(){
 	}
 }
 
-void Timer::setTimer(Signalname entry, Signalname exit, unsigned int param){
+void Timer::setTimers(Signalname entry, Signalname exit, unsigned int param){
 	checkIfAvailableSpace();
 	if (speed == Speed::FAST){
 		timer_events[i] = TimerEvent(
@@ -212,14 +212,14 @@ void Timer::setTimer(Signalname entry, Signalname exit, unsigned int param){
 								Signal(entry),
 								controller_channel);
 	}
-	else{
-		auto time = std::chrono::milliseconds(param -500);
-		time = time / slow_factor;
-		timer_events[i] = TimerEvent(
-								std::chrono::milliseconds(time),
-								Signal(entry),
-								controller_channel);
-	}
+//	else{
+//		auto time = std::chrono::milliseconds(param -500);
+//		time = time / slow_factor;
+//		timer_events[i] = TimerEvent(
+//								std::chrono::milliseconds(time),
+//								Signal(entry),
+//								controller_channel);
+//	}
 
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
