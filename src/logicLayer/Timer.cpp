@@ -80,7 +80,7 @@ void Timer::operator()() {
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-			setTimer(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,time_input_to_height);
+			setTimer(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,2118);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
