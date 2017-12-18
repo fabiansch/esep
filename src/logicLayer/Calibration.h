@@ -36,7 +36,6 @@ private:
 			new (this) FAIL_STATE;
 		}
 		virtual void calibration_timeout(uint8_t sender) {	calibrationFailed(__FUNCTION__);}
-
 		virtual void lb_input_interrupted() {	calibrationFailed(__FUNCTION__);}
 		virtual void lb_input_freed() {}
 		virtual void lb_height_interrupted() {	calibrationFailed(__FUNCTION__);}
@@ -81,7 +80,7 @@ private:
 		// ============================= IDLE =========================================
 		struct IDLE: public State {
 			virtual void calibration_start() { new (this) WaitingForItem; }
-			virtual void calibration_unsuccessful(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) override {}
 			virtual void stop() {}
 		};
 
