@@ -312,7 +312,7 @@ private:
 				}
 			}
 			virtual void calibration_successful(uint8_t sender){
-				cout << "Calibration completed on machine " << (int)cb_this<<endl;
+				cout << "================= Calibration completed on machine " << (int)cb_this<<" =========="<<endl;
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 				new (this) IDLE;
 			}
