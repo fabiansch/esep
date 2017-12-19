@@ -237,6 +237,12 @@ void Item::handle(Signal signal){
 		case Signalname::TIMEFRAME_SWITCH_LEAVE:
 			statePtr->timeframe_switch_leave( signal );
 			break;
+		case Signalname::TIMEFRAME_SLIDE_ENTER:
+			statePtr->timeframe_slide_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_SLIDE_LEAVE:
+			statePtr->timeframe_slide_leave( signal );
+			break;
 		case Signalname::TIMEFRAME_OUTPUT_ENTER:
 			statePtr->timeframe_output_enter( signal );
 			break;
