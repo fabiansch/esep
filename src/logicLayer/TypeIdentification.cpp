@@ -197,14 +197,14 @@ float TypeIdentification::toMm( int measuredHeight ){
 }
 
 void TypeIdentification::setUnitToMm(){
-	mmPerUnit = (float) (25 / (height_conveyor_belt - height_item) );
+	mmPerUnit = (float) 25 / ( height_conveyor_belt - height_item );
 	cout << "Höhe Band : " << height_conveyor_belt << endl;
 	cout << "Höhe Item : " << height_item << endl;
 	cout << "mm/unit : " << mmPerUnit << endl;
 }
 
 void TypeIdentification::setHoleLevel(){
-	validHeightReference = 7 / mmPerUnit; //<-- !need to be parameter from calibration ( 7mm hole height )
+	validHeightReference = height_conveyor_belt - ( 8 / mmPerUnit ); //<-- !need to be parameter from calibration ( 7mm hole height )
 }
 
 
