@@ -36,7 +36,6 @@ Timer::Timer()
 , speed(Speed::FAST)
 , controller_channel(nullptr)
 {
-	i = 0;
 	initialize();
 	speed = Speed::FAST;
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
@@ -58,7 +57,7 @@ void fire_timer(TimerEvent& timerEvent)
 	} else {
 		cout<<"NOT FIRED"<<endl;
 	}
-	timerEvent.finished = true;
+	//timerEvent.finished = true;
 	return;
 }
 
@@ -72,16 +71,17 @@ void Timer::operator()() {
 		switch (signal.name) {
 		case Signalname::START_TIMERS_INPUT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_output_to_input+2000),
-									Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
+
+			setTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input-TOLERANCE, true, controller_channel);
+			setTimerEvent(Signalname::TIMEFRAME_INPUT_ENTER, time_output_to_input+TOLERANCE, true, controller_channel);
+
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-			setTimers(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,time_input_to_height);
+
+			setTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_output_to_input-TOLERANCE, true, controller_channel);
+			setTimerEvent(Signalname::TIMEFRAME_HEIGHT_LEAVE, time_output_to_input+TOLERANCE, true, controller_channel);
+
 			break;
 		case Signalname::START_TIMERS_SWITCH:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
@@ -95,37 +95,17 @@ void Timer::operator()() {
 			cout<<"Timer got START_TIMERS_OUTPUT"<<endl;
 			setTimers(Signalname::TIMEFRAME_OUTPUT_ENTER,Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output);
 			break;
+
 		case Signalname::MOTOR_STOP:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(auto& event : timer_events) {
-				if(event.finished == false) {
-					event.duration = event.duration - (now - event.begin);
-					cout<<"TIMER STOPPED"<<endl;
-					if(event.active) {
-						event.started = false;
-					}
-					event.finished = true;
-				}
-				event.active = false;
-			}
+
+			pauseAll();
 
 			break;
-		}
 		case Signalname::MOTOR_START:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
-				if(timer_events[j].started == false) {
-					timer_events[j].begin = now;
-					timer_events[j].finished = false;
-					timer_events[j].started = true;
-					timer_events[j].active = true;
-					later(&fire_timer, std::ref(timer_events[j]));
-				}
-			}
+
+
 			break;
-		}
+
 		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
 			killTimer(Signalname::TIMEFRAME_INPUT_LEAVE);
 			break;
@@ -156,50 +136,38 @@ void Timer::operator()() {
 			break;
 		case Signalname::MOTOR_FAST:
 		{
-			switch(speed) {
-			case Speed::SLOW:
-			{
-				speed = Speed::FAST;
+			if (speed == Speed::SLOW){
 				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+				int j = i;
+				do {
 					if(timer_events[j].active == true){
-
 						//TODO hier wird die zurückgelegte zeit abgezogen. darf aber NICHT passieren, wenn motor stopp ist. D.h. state oder flag benötigt.
 						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
 						timer_events[j].duration = timer_events[j].duration * slow_factor;
-						// TODO Brauch neuen thread; da an dieser arraypos ein thread läuft, muss neue pos gefunden werden
 					}
-				}
-				break;
-			}
-			case Speed::FAST:
-				// DO NOTHING, NO STATE CHANGE
-				break;
-			default:
-				break;
+					if(j ==0){
+						j = sizeof(timer_events)/sizeof(TimerEvent);
+					}
+					j--;
+				} while ( j != i );
 			}
 			break;
 		}
 		case Signalname::MOTOR_SLOW:
 		{
-			switch(speed) {
-			case Speed::FAST:
-			{
-				speed = Speed::SLOW;
+			if (speed == Speed::SLOW){
 				std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-				for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
+				int j = i;
+				do {
 					if(timer_events[j].active == true){
 						timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
 						timer_events[j].duration = timer_events[j].duration / slow_factor;
 					}
-				}
-				break;
-			}
-			case Speed::SLOW:
-				// DO NOTHING, NO STATE CHANGE
-				break;
-			default:
-				break;
+					if(j ==0){
+						j = sizeof(timer_events)/sizeof(TimerEvent)-1;
+					}
+					j--;
+				} while ( j != i );
 			}
 			break;
 		}
@@ -211,10 +179,55 @@ void Timer::operator()() {
 			break;
 		}
 	}
-
 }
 
-bool Timer::killTimer(Signalname signalname){
+void Timer::pauseAll() {
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	for ( int i=0; i<sizeof(timer_events) / sizeof(TimerEvent); i++) {
+		if(not timer_events[i].active) {
+			makeInactive(std::ref(timer_events[i]));
+		}
+	}
+
+
+
+//			OLD CODE:
+//		//timer_events[j].duration = timer_events[j].duration - (now - timer_events[j].begin);
+//		cout<<"TIMER STOPPED"<<endl;
+//
+//		if(timer_events[j].active) {
+//			modifyTimer(timer_events[j].signal, timer_events[j].duration - (now - timer_events[j].begin));
+//			timer_events[j].started = false;
+//		}
+//
+//		timer_events[j].finished = true;
+//		timer_events[j].active = false;
+//
+//		if (j==0){
+//			j = sizeof(timer_events)/sizeof(TimerEvent);
+//		}
+}
+
+void Timer::startAll() {
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	// alle 'not started' timer starten
+	int j = i;
+	do {
+		if(timer_events[j].started == false) {
+			timer_events[j].begin = now;
+			timer_events[j].finished = false;
+			timer_events[j].started = true;
+			timer_events[j].active = true;
+			later(&fire_timer, std::ref(timer_events[j]));
+		}
+		if (j==0){
+			j = sizeof(timer_events)/sizeof(TimerEvent);
+		}
+		j--;
+	} while ( j != i );
+}
+
+bool Timer::killTimerEvent(Signalname signalname){
 	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head, kill first others not
 		if (event.signal.name == signalname){
 			event.active = false;
@@ -224,44 +237,41 @@ bool Timer::killTimer(Signalname signalname){
 	return false;
 }
 
-void Timer::checkIfAvailableSpace(){
-	if (i == sizeof(timer_events)/sizeof(TimerEvent)-1){
-		i = 0;
+int Timer::getAvailablePos(){
+	for ( int i=0; i<sizeof(timer_events)/sizeof(TimerEvent); i++) {
+		if(not timer_events[i].active) {
+			return i;
+		}
 	}
-	if (timer_events[i].active == true){
-		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite active timer which was expected to be inactive";
-		//TODO FAIL
-	}
+	LOG_ERROR << __FUNCTION__ << " Timer: no free places in timer array"<<endl;
+	cout<<" ERROR: Timer: no free places in timer array"<<endl;
+	return -1; // cause of warning
 }
+
 void Timer::initialize(){
 	for (int j =0;j< sizeof(timer_events)/sizeof(TimerEvent);j++ ){
 		timer_events[j] = TimerEvent();
 	}
 }
 
-void Timer::setTimers(Signalname entry, Signalname exit, unsigned int param){
-	checkIfAvailableSpace();
-		timer_events[i] = TimerEvent(
-								std::chrono::milliseconds(param-500),
-								Signal(entry),
-								controller_channel);
-
+void Timer::modifyTimerEvent(Signalname signal, std::chrono::steady_clock::duration duration){
+	timer_events[i] = TimerEvent(duration, Signal(signal),controller_channel);
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
+}
 
-	checkIfAvailableSpace();
-	// TODO if else
+void Timer::setTimerEvent(Signalname entry, unsigned int millies, bool active, Channel<Signal>* receiver){
+	int i = getAvailablePos();
 	timer_events[i] = TimerEvent(
-							std::chrono::milliseconds(param+500),
-							Signal(exit),
-							controller_channel);
+							std::chrono::milliseconds(millies),
+							Signal(entry),
+							receiver);
+
 	later(&fire_timer, std::ref(timer_events[i]));
-	i++;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
 	controller_channel = controller;
 }
-
 
 } /* namespace logicLayer */

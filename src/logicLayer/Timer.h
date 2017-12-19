@@ -14,6 +14,9 @@
 #include "Channel.h"
 #include "SignalReceiver.h"
 
+const int TIMER_EVENTS = 200;
+const int TOLERANCE = 500;
+
 namespace logicLayer {
 
 class TimerEvent {
@@ -25,7 +28,6 @@ public:
 	, receiverChannel(receiverChannel)
 	, started(true)
 	, active(true)
-	, finished(false)
 	{}
 
 	TimerEvent()
@@ -34,19 +36,16 @@ public:
 	, receiverChannel(nullptr)
 	, started(true)
 	, active(false)
-	, finished(true)
-	{
-	}
+	{}
 
-	std::chrono::steady_clock::time_point begin;
-	std::chrono::steady_clock::duration duration;
+	const std::chrono::steady_clock::time_point begin;
+	const std::chrono::steady_clock::duration duration;
 
 	Signal signal;
 	logicLayer::Channel<Signal>* receiverChannel;
 
 	bool started;
 	bool active;
-	bool finished;
 };
 
 enum class Speed {FAST, SLOW};
@@ -62,12 +61,18 @@ public:
 
 private:
 	Speed speed;
-	bool killTimer(Signalname);
-	void setTimers(Signalname,Signalname,unsigned int);
+	TimerEvent timer_events[TIMER_EVENTS];
+
+	bool killTimerEvent(Signalname);
+	void setTimerEvent(Signalname, unsigned int millies, bool active, Channel<Signal>* receiver);
+	void pauseAll();
+	void startAll();
+
+	void makeInactive(TimerEvent&);
+	void modifyTimerEvent(Signalname,std::chrono::steady_clock::duration);
+	int getAvailablePos();
+	void fire_timer(TimerEvent&);
 	void initialize();
-	TimerEvent timer_events[100];
-	void checkIfAvailableSpace();
-	int i;
 
 	Channel<Signal>* controller_channel;
 };
