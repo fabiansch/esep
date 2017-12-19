@@ -198,6 +198,9 @@ float TypeIdentification::toMm( int measuredHeight ){
 
 void TypeIdentification::setUnitToMm(){
 	mmPerUnit = (float) (25 / (height_conveyor_belt - height_item) );
+	cout << "Höhe Band : " << height_conveyor_belt << endl;
+	cout << "Höhe Item : " << height_item << endl;
+	cout << "mm/unit : " << mmPerUnit << endl;
 }
 
 void TypeIdentification::setHoleLevel(){
