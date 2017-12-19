@@ -12,7 +12,7 @@
 namespace logicLayer {
 
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
-int TypeIdentification::delta = 100;
+int TypeIdentification::delta = 200;
 float TypeIdentification::mmPerUnit = 0;
 float TypeIdentification::validHeightReference = 0;
 
