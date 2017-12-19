@@ -211,6 +211,10 @@ namespace logicLayer {
 				break;
 			case Signalname::SENSOR_SWITCH_IS_CLOSED:
 				break;
+			case Signalname::CONVEYOR_BELT_BUSY:
+				break;
+			case Signalname::CONVEYOR_BELT_READY:
+				break;
 			default:
 				LOG_ERROR<<"Calibration does not support following Signal: "<<(int)signal.name<<endl;
 				exit(EXIT_FAILURE);
