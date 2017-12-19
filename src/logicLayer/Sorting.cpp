@@ -42,15 +42,16 @@ bool Sorting::amIWanted(Item* item) {
 
 	//CASE 4 of 4 : both slides are free , sorting out defined favorites
 	if( !SLIDE_CB1_FULL && !SLIDE_CB2_FULL ){
+		cout << "CASE 4" << endl;
 		result = sorting.checkOrder(item);
 		//if false need check against preference list
-		if(!result){
+		/*if(!result){
 			result = (bool) item->getId() % 2; // <-- to keep it at begin simple - toggle sorting
 			//if item will be let through, mark as pending Sortout
 			if( result ){
 				item->setPendingSortout(true);
 			}
-		}
+		}*/
 	}
 
 	return result;
@@ -62,18 +63,21 @@ bool Sorting::checkOrder(Item* passedItem){
 
 	switch (orderState) {
 		case Order::BOM1:
+			cout << "In BOM1" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && !passedItem->getType().metal ){
 				result = true;
 				orderState = Order::BOM2;
 			}
 		break;
 		case Order::BOM2:
+			cout << "In BOM2" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && !passedItem->getType().metal ){
 				result = true;
 				orderState = Order::BMM;
 			}
 		break;
 		case Order::BMM:
+			cout << "In BMM" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && passedItem->getType().metal ){
 				result = true;
 				orderState = Order::BOM1;

@@ -14,12 +14,12 @@ namespace logicLayer {
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 int TypeIdentification::delta = 100;
 
-int TypeIdentification::normalLevel = 2620; //<-- !need to be parameter from calibration
+int TypeIdentification::normalLevel = 2450; //<-- !need to be parameter from calibration
 int TypeIdentification::groundLevel = 4050; //<-- !need to be parameter from calibration
 
 TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
 		hal_(hal)
-		, validHeightReference(3600) //<-- !need to be parameter from calibration
+		, validHeightReference(3500) //<-- !need to be parameter from calibration
 		, inMeasurement(false)
 		, mmPerUnit( (float) 25 / (TypeIdentification::groundLevel - TypeIdentification::normalLevel) )
 {
@@ -97,7 +97,7 @@ void TypeIdentification::measureProfil(bool& running, hardwareLayer::HardwareLay
 	//profile recognition via following state machine
 	while(running){
 		int height = hal->getHeight();
-		cout << "EVAL:" << height << endl;
+		//cout << "EVAL:" << height << endl;
 
 		switch ( state ) {
 			case ProfileState::NL1:

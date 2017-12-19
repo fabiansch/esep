@@ -19,6 +19,8 @@ namespace hardwareLayer {
 	class HardwareLayer;
 }
 
+static bool amIwanted = false;
+
 namespace logicLayer {
 
 class ErrorHandler;
@@ -248,8 +250,8 @@ private:
 			//get values from type identification
 			item_->type = TypeIdentification::typeScans.front();
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
-
-			if(Sorting::amIWanted(item_)) {
+			amIwanted = Sorting::amIWanted(item_);
+			if(amIwanted) {
 				Item::openSwitchPoint(hal_);
 			}
 		}
@@ -257,7 +259,7 @@ private:
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
 			Item::closeSwitchPoint(800, hal_);
-			if(Sorting::amIWanted(item_)) {
+			if(amIwanted) {
 				new (this) DepatureSwitchToOutput;
 			} else {
 				new (this) DepatureSwitchToSlide;
