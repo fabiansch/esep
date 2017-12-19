@@ -97,6 +97,8 @@ private:
 		virtual void timeframe_height_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_switch_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_switch_leave( 	Signal signal ){ forwardSignal( signal ); }
+
 
 
 
@@ -139,7 +141,10 @@ private:
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
+		virtual void timeframe_height_leave( 	Signal signal ) override {}
 		virtual void timeframe_switch_enter( 	Signal signal ) override {}
+		virtual void timeframe_switch_leave( 	Signal signal ) override {}
+
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -163,15 +168,9 @@ private:
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
-			this_cb_busy = false;
-		}
-
-		virtual void timeframe_height_leave( Signal signal ) override {
-			cout<<"timeframe_height_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
-			this_cb_busy = false;
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
 		}
 	};
 
@@ -224,10 +223,21 @@ private:
 		}
 	};
 
-	struct WaitForArrivalAtHeight : public State {
-		WaitForArrivalAtHeight() {
-			cout<<"WaitForArrivalAtHeight"<<endl;
+		struct WaitForArrivalAtHeight : public State {
+			WaitForArrivalAtHeight() {
+				cout<<"WaitForArrivalAtHeight"<<endl;
+			}
+
+		virtual void timeframe_height_leave( Signal signal ) override {
+			cout<<"timeframe_height_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
 		}
+
 		virtual void lb_height_interrupted( Signal signal ) override {
 			cout<<"lb_height_interrupted"<<endl;
 			new (this) ArrivalHeight;
@@ -250,6 +260,17 @@ private:
 		WaitForArrivalAtSwitch() {
 			cout<<"WaitForArrivalAtSwitch"<<endl;
 		}
+
+		virtual void timeframe_switch_leave( Signal signal ) override {
+			cout<<"timeframe_switch_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;

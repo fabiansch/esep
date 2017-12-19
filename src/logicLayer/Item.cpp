@@ -234,6 +234,9 @@ void Item::handle(Signal signal){
 		case Signalname::TIMEFRAME_SWITCH_ENTER:
 			statePtr->timeframe_switch_enter( signal );
 			break;
+		case Signalname::TIMEFRAME_SWITCH_LEAVE:
+			statePtr->timeframe_switch_leave( signal );
+			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
 			next_cb_busy = false;
