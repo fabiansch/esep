@@ -72,10 +72,7 @@ private:
 	hardwareLayer::HardwareLayer* hal_;
 
 
-	/**
-	 *	@brief reference value to check against - need to calibrate
-	 */
-	int validHeightReference;
+
 
 	/**
 	 *	@brief shows if typeId is in measurement or not
@@ -88,6 +85,11 @@ private:
 	 *	default false
 	 */
 	float mmPerUnit;
+
+	/**
+	 *	@brief reference value to check against - need to calibrate
+	 */
+	int validHeightReference;
 
 	/**
 	 * @brief convert sensor units to mm

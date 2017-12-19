@@ -14,14 +14,12 @@ namespace logicLayer {
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 int TypeIdentification::delta = 100;
 
-int TypeIdentification::normalLevel = height_item; //<-- !need to be parameter from calibration
-int TypeIdentification::groundLevel = height_conveyor_belt; //<-- !need to be parameter from calibration
 
 TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
 		hal_(hal)
-		, validHeightReference(3500) //<-- !need to be parameter from calibration
 		, inMeasurement(false)
-		, mmPerUnit( (float) 25 / (TypeIdentification::groundLevel - TypeIdentification::normalLevel) )
+		, mmPerUnit( (float) 25 / (height_conveyor_belt - height_item) )
+		, validHeightReference( 7 / mmPerUnit ) //<-- !need to be parameter from calibration ( 7mm hole height )
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
@@ -160,7 +158,7 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 
 	int amountOfNeededValues = 3;
 
-	if( abs( measuredHeight - normalLevel ) > delta ){
+	if( abs( measuredHeight - height_item ) > delta ){
 		*count = *count + 1;
 		*avgValue = *avgValue + measuredHeight;
 	}
@@ -182,7 +180,7 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 
 	int amountOfNeededValues = 3;
 
-	if( abs( measuredHeight - normalLevel ) < delta ){
+	if( abs( measuredHeight - height_item ) < delta ){
 		*count = *count + 1;
 	}
 
@@ -195,7 +193,7 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 }
 
 float TypeIdentification::toMm( int measuredHeight ){
-	return mmPerUnit * ( TypeIdentification::groundLevel - measuredHeight );
+	return mmPerUnit * ( height_conveyor_belt - measuredHeight );
 }
 
 } /* namespace logicLayer */
