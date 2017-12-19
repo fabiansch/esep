@@ -30,6 +30,7 @@ Item::Item( hardwareLayer::HardwareLayer* hal, Channel<Signal>* timerChannel, It
 	LOG_SCOPE
 	statePtr->item_ = this;
 	statePtr->hal_ = hal;
+	statePtr->timerChannel_ = timerChannel;
 	statePtr->errorHandler_ = errorHandler;
 
 	id = 0;
@@ -197,26 +198,6 @@ void Item::handle(Signal signal){
 			hal_->StartLEDOff();
 			break;
 		// motor
-		case Signalname::MOTOR_START:
-			LOG_DEBUG << "call MOTOR start ";
-			hal_->motorStart();
-			LOG_DEBUG << "MOTOR started ";
-			break;
-		case Signalname::MOTOR_STOP:
-			LOG_DEBUG << "call MOTOR stop ";
-			hal_->motorStop();
-			LOG_DEBUG << "call MOTOR stopped ";
-			break;
-		case Signalname::MOTOR_FAST:
-			LOG_DEBUG << "call MOTOR fast ";
-			hal_->motorFast();
-			LOG_DEBUG << "end MOTOR  fast";
-			break;
-		case Signalname::MOTOR_SLOW:
-			LOG_DEBUG << "call MOTOR slow ";
-			hal_->motorSlow();
-			LOG_DEBUG << "end MOTOR  slow";
-			break;
 		case Signalname::MOTOR_ROTATE_CLOCKWISE:
 			LOG_DEBUG << "call MOTOR clockwise ";
 			hal_->motorRotateClockwise();
@@ -241,9 +222,32 @@ void Item::handle(Signal signal){
 		// controller
 		case Signalname::STOP:
 			break;
-		// timer
-		case Signalname::TIMEFRAME_INPUT_ENTER:
-			statePtr->timeframe_input_enter( signal );
+		case Signalname::TIMEFRAME_INPUT_LEAVE:
+			statePtr->timeframe_input_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_HEIGHT_ENTER:
+			statePtr->timeframe_height_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_HEIGHT_LEAVE:
+			statePtr->timeframe_height_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_SWITCH_ENTER:
+			statePtr->timeframe_switch_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_SWITCH_LEAVE:
+			statePtr->timeframe_switch_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_SLIDE_ENTER:
+			statePtr->timeframe_slide_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_SLIDE_LEAVE:
+			statePtr->timeframe_slide_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_ENTER:
+			statePtr->timeframe_output_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_LEAVE:
+			statePtr->timeframe_output_leave( signal );
 			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
@@ -251,6 +255,7 @@ void Item::handle(Signal signal){
 			statePtr->conveyer_belt_ready( signal );
 			break;
 		case Signalname::SIGNAL_DUMMY:
+			cout<<"Item: SIGNAL_DUMMY"<<endl;
 			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
@@ -285,6 +290,7 @@ void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
 
 void Item::send_CB_busy(hardwareLayer::HardwareLayer* hal) {
 	if (cb_this == cb_sorting_2) {
+		this_cb_busy = true;
 		hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_BUSY));
 	}
 }
@@ -319,12 +325,16 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 	if (hal != nullptr) {
 
 		if(cb_this == cb_last){
+			cout<<"cb_this == cb_last"<<endl;
 			hal->motorStop();
 			errorHandler->addPending(Signal(Signalname::LB_OUTPUT_FREED));
 		} else {
+			cout<<"cb_this != cb_last"<<endl;
 			if (next_cb_busy == true) {
+				cout<<"next_cb_busy == true"<<endl;
 				hal->motorStop();
 			} else {
+				cout<<"next_cb_busy != true"<<endl;
 				hal->motorStart();
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::START_TIMERS_INPUT));
 			}
@@ -376,6 +386,8 @@ void Item::sendItem(hardwareLayer::HardwareLayer* hal, Item* item) {
 }
 
 void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
+	cout<<"send CONVEYOR_BELT_READY"<<endl;
+	this_cb_busy = false;
 	hal->sendSerial(Signal(cb_this, cb_previous, Signalname::CONVEYOR_BELT_READY));
 }
 
@@ -401,7 +413,7 @@ void Item::resetId() {
 	idCounter_ = 0;
 }
 
-void Item::ArrivalSlideAction(hardwareLayer::HardwareLayer* hal) {
+void Item::stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal) {
 	if(items_on_cb <= 0) {
 		hal->motorStop();
 	}

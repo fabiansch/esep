@@ -38,7 +38,24 @@ void Dispatcher::notify() {
 		case Signalname::CONVEYOR_BELT_BUSY:
 			next_cb_busy = true;
 			break;
+		case Signalname::CONVEYOR_BELT_READY:
+			next_cb_busy = false;
+			controller_ << signal;
+			break;
 		case Signalname::START_TIMERS_INPUT:
+			timer_ << signal;
+//			hal.motorStart(); // do not call hal here....
+			break;
+		case Signalname::MOTOR_STOP:
+			timer_ << signal;
+			break;
+		case Signalname::MOTOR_START:
+			timer_ << signal;
+			break;
+		case Signalname::MOTOR_SLOW:
+//			timer_ << signal;
+			break;
+		case Signalname::MOTOR_FAST:
 			timer_ << signal;
 			break;
 		default:

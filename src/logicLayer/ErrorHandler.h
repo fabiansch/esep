@@ -40,6 +40,10 @@ private:
 			hal->motorLock(false);
 			hal->redLightOff();
 			hal->blinkGreen(Speed::slow);
+			if(this_cb_busy == false && cb_this == cb_sorting_2) {
+				cout<<"send CONVEYOR_BELT_READY"<<endl;
+				hal->sendSerial(Signal(cb_this,cb_previous,Signalname::CONVEYOR_BELT_READY));
+			}
 		}
 		virtual void errorOccurred() {
 			new (this) ERROR;

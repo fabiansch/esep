@@ -48,7 +48,7 @@ SensorEvent SignalGenerator::SENSOR_SWITCH_OPEN(	0b00100000, "SENSOR_SWITCH_OPEN
 																													Signalname::SENSOR_SWITCH_IS_CLOSED));
 SensorEvent SignalGenerator::LIGHT_BARRIER_SLIDE(	0b01000000, "LIGHT_BARRIER_SLIDE", NO_CHATTER_TIME, SPair( 		Signalname::LB_SLIDE_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_SLIDE_INTERRUPTED));
-SensorEvent SignalGenerator::LIGHT_BARRIER_OUTPUT(	0b10000000, "LIGHT_BARRIER_OUTPUT", NO_CHATTER_TIME, SPair(		Signalname::LB_OUTPUT_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_OUTPUT(	0b10000000, "LIGHT_BARRIER_OUTPUT", CHATTER_TIME, SPair(		Signalname::LB_OUTPUT_FREED,
 																								  	  	  	  	  	Signalname::LB_OUTPUT_INTERRUPTED));
 
 std::vector< SensorEvent>  SignalGenerator::events = init_events();

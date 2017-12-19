@@ -11,7 +11,7 @@ namespace hardwareLayer {
 
 HardwareLayer::HardwareLayer() :
 serial(signalGenerator),
-_motor(actuators::Motor::instance()),
+_motor(actuators::Motor::instance(signalGenerator)),
 _switchPoint(actuators::SwitchPoint::instance()),
 _trafficLight(mmi::TrafficLight::instance()),
 _heightSensor(sensors::HeightSensor::instance()),

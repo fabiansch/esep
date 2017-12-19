@@ -27,6 +27,7 @@ Parameter<int> items_on_cb("amount of items that currently are on cb_this");
 Parameter<bool> item_on_switch("Item on SwitchPoint");
 Parameter<bool> item_on_output("Item on Output");
 
+Parameter<bool> this_cb_busy("this conveyer belt busy");
 Parameter<bool> next_cb_busy("next conveyer belt busy");
 
 

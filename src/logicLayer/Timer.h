@@ -9,20 +9,67 @@
 #define TIMER_H_
 
 #include <thread>
+#include <chrono>
 
 #include "Channel.h"
 #include "SignalReceiver.h"
 
 namespace logicLayer {
 
+class TimerEvent {
+public:
+	TimerEvent(std::chrono::steady_clock::duration duration, Signal signal, logicLayer::Channel<Signal>* receiverChannel)
+	: begin(std::chrono::steady_clock::now())
+	, duration(duration)
+	, signal(signal)
+	, receiverChannel(receiverChannel)
+	, started(true)
+	, active(true)
+	, finished(false)
+	{}
+
+	TimerEvent()
+	: begin(std::chrono::steady_clock::now())
+	, duration(std::chrono::steady_clock::duration())
+	, receiverChannel(nullptr)
+	, started(true)
+	, active(false)
+	, finished(true)
+	{
+	}
+
+	std::chrono::steady_clock::time_point begin;
+	std::chrono::steady_clock::duration duration;
+
+	Signal signal;
+	logicLayer::Channel<Signal>* receiverChannel;
+
+	bool started;
+	bool active;
+	bool finished;
+};
+
+enum class Speed {FAST, SLOW};
+
 class Timer : public SignalReceiver {
+
 public:
 	Timer();
 	virtual ~Timer();
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
+
+
 private:
-	Channel<Signal>* controller_;
+	Speed speed;
+	bool killTimer(Signalname);
+	void setTimers(Signalname,Signalname,unsigned int);
+	void initialize();
+	TimerEvent timer_events[100];
+	void checkIfAvailableSpace();
+	int i;
+
+	Channel<Signal>* controller_channel;
 };
 
 } // end namespace
