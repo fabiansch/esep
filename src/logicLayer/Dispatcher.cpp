@@ -26,6 +26,7 @@ Dispatcher::Dispatcher(
 
 Dispatcher::~Dispatcher() {
 	LOG_SCOPE
+	hal.getSignalGenerator().unregister_observer(this);
 }
 
 void Dispatcher::notify() {
