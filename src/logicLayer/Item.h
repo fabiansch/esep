@@ -98,6 +98,8 @@ private:
 		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_switch_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_switch_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_slide_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_slide_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_output_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_output_leave( 	Signal signal ){ forwardSignal( signal ); }
 
@@ -137,7 +139,7 @@ private:
 		virtual void lb_height_freed( 			Signal signal ) override {}
 		virtual void lb_switch_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SWITCH_FREED)); }
 		virtual void lb_switch_freed( 			Signal signal ) override {}
-		virtual void lb_slide_interrupted( 		Signal signal ) override {}
+		virtual void lb_slide_interrupted( 		Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SLIDE_FREED)); }
 		virtual void lb_slide_freed( 			Signal signal ) override {}
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
@@ -146,6 +148,8 @@ private:
 		virtual void timeframe_height_leave( 	Signal signal ) override {}
 		virtual void timeframe_switch_enter( 	Signal signal ) override {}
 		virtual void timeframe_switch_leave( 	Signal signal ) override {}
+		virtual void timeframe_slide_enter( 	Signal signal ) override {}
+		virtual void timeframe_slide_leave( 	Signal signal ) override {}
 		virtual void timeframe_output_enter( 	Signal signal ) override {}
 		virtual void timeframe_output_leave( 	Signal signal ) override {}
 
@@ -289,42 +293,52 @@ private:
 				Item::openSwitchPoint(hal_);
 				*timerChannel_ << Signal(Signalname::START_TIMERS_OUTPUT);
 			} else {
-				//*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
+				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
 			}
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
-			if(Sorting::amIWanted(item_)) {
-				Item::closeSwitchPoint(800, hal_);
-			} else {
-				new (this) DepatureSwitchToSlide;
-			}
+			Item::closeSwitchPoint(800, hal_);
 		}
 
 		virtual void timeframe_output_enter( Signal signal ) override {
 			new (this) WaitForArrivalAtOuput;
 		}
 
+		virtual void timeframe_slide_enter( Signal signal ) override {
+			new (this) WaitForArrivalAtSlide;
+		}
+
 	};
 
-	struct DepatureSwitchToSlide : public State {
-		DepatureSwitchToSlide() {
-			cout<<"DepatureSwitchToSlide"<<endl;
+	struct WaitForArrivalAtSlide : public State {
+		WaitForArrivalAtSlide() {
+			cout<<"WaitForArrivalAtSlide"<<endl;
 		}
+
+		virtual void timeframe_slide_leave( Signal signal ) override {
+			cout<<"timeframe_slide_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
 		virtual void lb_slide_interrupted( Signal signal ) override {
 			cout<<"lb_slide_interrupted"<<endl;
 			new (this) ArrivalSlide;
 		}
-	};
-
-	struct WaitForArrivalAtSlide : public State{
 
 	};
 
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
 			cout<<"ArrivalSlide"<<endl;
+
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_SLIDE_LEAVE_KILL);
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
 			}
