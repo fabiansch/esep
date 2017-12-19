@@ -65,8 +65,22 @@ public:
 	 */
 	static int mapToBinary(int);
 
+	/**
+	 *	@brief shows if typeId is in measurement or not
+	 *	default false
+	 */
+	static float mmPerUnit;
+
+	/**
+	 *	@brief
+	 */
+	static float validHeightReference;
+
 	static void switchToState(int, ProfileState*, ProfileState, int*, int*, int* );
 	static void switchToState(int, ProfileState*, ProfileState, int* );
+
+	static void setUnitToMm();
+	static void setHoleLevel();
 
 private:
 	hardwareLayer::HardwareLayer* hal_;
@@ -80,16 +94,7 @@ private:
 	 */
 	bool inMeasurement;
 
-	/**
-	 *	@brief shows if typeId is in measurement or not
-	 *	default false
-	 */
-	float mmPerUnit;
 
-	/**
-	 *	@brief reference value to check against - need to calibrate
-	 */
-	int validHeightReference;
 
 	/**
 	 * @brief convert sensor units to mm

@@ -13,13 +13,13 @@ namespace logicLayer {
 
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 int TypeIdentification::delta = 100;
+float TypeIdentification::mmPerUnit = 0;
+float TypeIdentification::validHeightReference = 0;
 
 
 TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
 		hal_(hal)
 		, inMeasurement(false)
-		, mmPerUnit( (float) 25 / (height_conveyor_belt - height_item) )
-		, validHeightReference( 7 / mmPerUnit ) //<-- !need to be parameter from calibration ( 7mm hole height )
 {
 	LOG_SCOPE
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
@@ -195,5 +195,15 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 float TypeIdentification::toMm( int measuredHeight ){
 	return mmPerUnit * ( height_conveyor_belt - measuredHeight );
 }
+
+void TypeIdentification::setUnitToMm(){
+	mmPerUnit = (float) (25 / (height_conveyor_belt - height_item) );
+}
+
+void TypeIdentification::setHoleLevel(){
+	validHeightReference = 7 / mmPerUnit; //<-- !need to be parameter from calibration ( 7mm hole height )
+}
+
+
 
 } /* namespace logicLayer */

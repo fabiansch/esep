@@ -147,6 +147,9 @@ private:
 			this_cb_busy = false;
 			next_cb_busy = false;
 			Item::resetId();
+
+			TypeIdentification::setUnitToMm();
+			TypeIdentification::setHoleLevel();
 		}
 		virtual void run(){}
 		virtual void sensor_test(){}
