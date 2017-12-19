@@ -228,7 +228,7 @@ void Timer::setTimers(Signalname entry, Signalname exit, unsigned int param){
 	checkIfAvailableSpace();
 	// TODO if else
 	timer_events[i] = TimerEvent(
-							std::chrono::milliseconds(param+500),
+							std::chrono::milliseconds(param+ (exit == Signalname::TIMEFRAME_SWITCH_LEAVE ? 1500 : 500)),
 							Signal(exit),
 							controller_channel);
 	later(&fire_timer, std::ref(timer_events[i]));

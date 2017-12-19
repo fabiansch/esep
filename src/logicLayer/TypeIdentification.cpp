@@ -14,8 +14,8 @@ namespace logicLayer {
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 int TypeIdentification::delta = 100;
 
-int TypeIdentification::normalLevel = 2450; //<-- !need to be parameter from calibration
-int TypeIdentification::groundLevel = 4050; //<-- !need to be parameter from calibration
+int TypeIdentification::normalLevel = height_item; //<-- !need to be parameter from calibration
+int TypeIdentification::groundLevel = height_conveyor_belt; //<-- !need to be parameter from calibration
 
 TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
 		hal_(hal)

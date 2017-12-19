@@ -42,5 +42,5 @@ Parameter<unsigned int> time_switch_to_output(	"duration time between LB_SWITCH_
 Parameter<unsigned int> time_switch_to_slide(	"duration time between LB_SWITCH_FREED and LB_SLIDE_INT");
 Parameter<unsigned int> time_lb_slide_freed(		"duration time between LB_SWITCH_INT and LB_SWITCH_FREED");
 Parameter<float> slow_factor(					"factor, which is used to calculate slow speed");
-Parameter<float> height_conveyor_belt(			"Height of conveyor belt for calibration purposes");
-Parameter<float> height_item(					"Height of item for calibration purposes");
+Parameter<int> height_conveyor_belt(			"Height of conveyor belt for calibration purposes");
+Parameter<int> height_item(					"Height of item for calibration purposes");
