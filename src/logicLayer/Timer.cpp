@@ -72,7 +72,7 @@ void Timer::operator()() {
 		case Signalname::START_TIMERS_INPUT:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(2000+500),
+									std::chrono::milliseconds(time_output_to_input+2000),
 									Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
 									controller_channel);
 			later(&fire_timer, std::ref(timer_events[i]));
@@ -80,7 +80,7 @@ void Timer::operator()() {
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-			setTimers(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,2118);
+			setTimers(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,time_input_to_height);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
 			cout<<"Timer got START_TIMERS_INPUT"<<endl;
