@@ -96,8 +96,12 @@ private:
 		virtual void timeframe_input_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_height_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_height_leave( 	Signal signal ){ forwardSignal( signal ); }
-
-
+		virtual void timeframe_switch_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_switch_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_slide_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_slide_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_output_enter( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void timeframe_output_leave( 	Signal signal ){ forwardSignal( signal ); }
 
 
 		void createItem(){
@@ -132,12 +136,19 @@ private:
 		virtual void lb_height_freed( 			Signal signal ) override {}
 		virtual void lb_switch_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SWITCH_FREED)); }
 		virtual void lb_switch_freed( 			Signal signal ) override {}
-		virtual void lb_slide_interrupted( 		Signal signal ) override {}
+		virtual void lb_slide_interrupted( 		Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_SLIDE_FREED)); }
 		virtual void lb_slide_freed( 			Signal signal ) override {}
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
+		virtual void timeframe_height_leave( 	Signal signal ) override {}
+		virtual void timeframe_switch_enter( 	Signal signal ) override {}
+		virtual void timeframe_switch_leave( 	Signal signal ) override {}
+		virtual void timeframe_slide_enter( 	Signal signal ) override {}
+		virtual void timeframe_slide_leave( 	Signal signal ) override {}
+		virtual void timeframe_output_enter( 	Signal signal ) override {}
+		virtual void timeframe_output_leave( 	Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -161,15 +172,10 @@ private:
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
-			this_cb_busy = false;
-		}
 
-		virtual void timeframe_height_leave( Signal signal ) override {
-			cout<<"timeframe_height_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
-			this_cb_busy = false;
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
 		}
 	};
 
@@ -181,8 +187,6 @@ private:
 
 			//copy item from hal
 			copyItemFromHAL(hal_, item_);
-
-			// start timers height
 		}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -195,7 +199,9 @@ private:
 	struct ArrivalInput : public State {
 		ArrivalInput() {
 			cout<<"ArrivalInput"<<endl;
-			Item::setID(&item_->id);
+			if(cb_this == cb_1) {
+				Item::setID(&item_->id);
+			}
 			items_on_cb = items_on_cb + 1;
 
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_INPUT_LEAVE_KILL);
@@ -226,6 +232,17 @@ private:
 		WaitForArrivalAtHeight() {
 			cout<<"WaitForArrivalAtHeight"<<endl;
 		}
+
+		virtual void timeframe_height_leave( Signal signal ) override {
+			cout<<"timeframe_height_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
 		virtual void lb_height_interrupted( Signal signal ) override {
 			cout<<"lb_height_interrupted"<<endl;
 			new (this) ArrivalHeight;
@@ -236,74 +253,89 @@ private:
 		ArrivalHeight() {
 			cout<<"ArrivalHeight"<<endl;
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+			*timerChannel_ << Signal(Signalname::START_TIMERS_SWITCH);
 		}
-		virtual void lb_height_freed( Signal signal ) override {
-			cout<<"lb_height_freed"<<endl;
-			new (this) DepatureHeight;
+		void timeframe_switch_enter( Signal signal ) override {
+			cout<<"timeframe_switch_enter"<<endl;
+			new (this) WaitForArrivalAtSwitch;
 		}
 	};
 
-	struct DepatureHeight : public State {
-		DepatureHeight() {
-			cout<<"DepatureHeight"<<endl;
+	struct WaitForArrivalAtSwitch : public State {
+		WaitForArrivalAtSwitch() {
+			cout<<"WaitForArrivalAtSwitch"<<endl;
 		}
+
+		virtual void timeframe_switch_leave( Signal signal ) override {
+			cout<<"timeframe_switch_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
 		virtual void lb_switch_interrupted( Signal signal ) override {
 			cout<<"lb_switch_interrupted"<<endl;
 			new (this) ArrivalSwitch;
 		}
 	};
 
-	struct WaitForArrivalAtSwitch : public State{
-
-	};
-
 	struct ArrivalSwitch : public State{
 		ArrivalSwitch() {
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_SWITCH_LEAVE_KILL);
+
 			if(Sorting::amIWanted(item_)) {
 				Item::openSwitchPoint(hal_);
+				*timerChannel_ << Signal(Signalname::START_TIMERS_OUTPUT);
+			} else {
+				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
 			}
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
 			Item::closeSwitchPoint(800, hal_);
-			if(Sorting::amIWanted(item_)) {
-				new (this) DepatureSwitchToOutput;
-			} else {
-				new (this) DepatureSwitchToSlide;
+		}
+
+		virtual void timeframe_output_enter( Signal signal ) override {
+			new (this) WaitForArrivalAtOuput;
+		}
+
+		virtual void timeframe_slide_enter( Signal signal ) override {
+			new (this) WaitForArrivalAtSlide;
+		}
+
+	};
+
+	struct WaitForArrivalAtSlide : public State {
+		WaitForArrivalAtSlide() {
+			cout<<"WaitForArrivalAtSlide"<<endl;
+		}
+
+		virtual void timeframe_slide_leave( Signal signal ) override {
+			cout<<"timeframe_slide_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
 			}
 		}
 
-	};
-
-	struct DepatureSwitchToOutput : public State {
-		DepatureSwitchToOutput() {
-			cout<<"DepatureSwitchToOutput"<<endl;
-		}
-
-		virtual void lb_output_interrupted( Signal signal ) override {
-			cout<<"lb_output_interrupted"<<endl;
-			new (this) ArrivalOutput;
-		}
-	};
-
-	struct DepatureSwitchToSlide : public State {
-		DepatureSwitchToSlide() {
-			cout<<"DepatureSwitchToSlide"<<endl;
-		}
 		virtual void lb_slide_interrupted( Signal signal ) override {
 			cout<<"lb_slide_interrupted"<<endl;
 			new (this) ArrivalSlide;
 		}
-	};
-
-	struct WaitForArrivalAtSlide : public State{
 
 	};
 
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
 			cout<<"ArrivalSlide"<<endl;
+
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_SLIDE_LEAVE_KILL);
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
 			}
@@ -320,13 +352,32 @@ private:
 
 	};
 
-	struct WaitForArrivalAtOuput : public State{
+	struct WaitForArrivalAtOuput : public State {
+		WaitForArrivalAtOuput() {
+			cout<<"WaitForArrivalAtOuput"<<endl;
+		}
+
+		virtual void timeframe_output_leave( Signal signal ) override {
+			cout<<"timeframe_output_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
+		virtual void lb_output_interrupted( Signal signal ) override {
+			cout<<"lb_output_interrupted"<<endl;
+			new (this) ArrivalOutput;
+		}
 
 	};
 
 	struct ArrivalOutput : public State{
 		ArrivalOutput(){
 			cout<<"ArrivalOutput"<<endl;
+			*timerChannel_ << Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL);
 			Item::onOutputAction(hal_, item_, errorHandler_);
 
 			Item::printItem(hal_, item_);

@@ -231,6 +231,24 @@ void Item::handle(Signal signal){
 		case Signalname::TIMEFRAME_HEIGHT_LEAVE:
 			statePtr->timeframe_height_leave( signal );
 			break;
+		case Signalname::TIMEFRAME_SWITCH_ENTER:
+			statePtr->timeframe_switch_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_SWITCH_LEAVE:
+			statePtr->timeframe_switch_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_SLIDE_ENTER:
+			statePtr->timeframe_slide_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_SLIDE_LEAVE:
+			statePtr->timeframe_slide_leave( signal );
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_ENTER:
+			statePtr->timeframe_output_enter( signal );
+			break;
+		case Signalname::TIMEFRAME_OUTPUT_LEAVE:
+			statePtr->timeframe_output_leave( signal );
+			break;
 		// other conveyer belt
 		case Signalname::CONVEYOR_BELT_READY:
 			next_cb_busy = false;
