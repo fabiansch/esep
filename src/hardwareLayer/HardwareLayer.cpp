@@ -6,6 +6,7 @@
  */
 
 #include "HardwareLayer.h"
+#include "Header.h"
 
 namespace hardwareLayer {
 
@@ -19,23 +20,13 @@ _ButtonLEDs(mmi::ButtonLEDs::instance())
 {
 	LOG_SCOPE;
 
-	motorStop();
-	motorRotateClockwise();
-	switchPointClose();
-	greenLightOff();
-	redLightOff();
-	yellowLightOff();
+	startUpRoutine();
 }
 
 HardwareLayer::~HardwareLayer() {
 	LOG_SCOPE;
 
-	motorStop();
-	switchPointClose();
-	greenLightOff();
-	redLightOff();
-	yellowLightOff();
-
+	shutDownRoutine();
 }
 
 void HardwareLayer::motorStart() {
@@ -171,6 +162,56 @@ uint16_t HardwareLayer::getHeight() {
 
 io::SignalGenerator& HardwareLayer::getSignalGenerator(){
 	return this->signalGenerator;
+}
+
+void HardwareLayer::startUpRoutine() {
+	redLightOff();
+	yellowLightOff();
+	greenLightOff();
+	switchPointClose();
+	motorStop();
+	motorFast();
+	motorRotateClockwise();
+
+	switchPointOpen();
+	redLightOn(); 		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
+	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
+
+	switchPointClose();
+	redLightOn(); 		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
+	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
+}
+
+void HardwareLayer::shutDownRoutine() {
+	redLightOff();
+	yellowLightOff();
+	greenLightOff();
+	switchPointClose();
+	motorStop();
+	motorFast();
+	motorRotateClockwise();
+
+	greenLightOn();		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
+	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
+
+	greenLightOn();		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
+	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
 }
 
 } /* hardwareLayer */
