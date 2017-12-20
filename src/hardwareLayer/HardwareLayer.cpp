@@ -8,7 +8,13 @@
 #include "HardwareLayer.h"
 #include "Header.h"
 
+#include <csignal>
+#include <sys/neutrino.h>
+#include <hw/inout.h>
+
 namespace hardwareLayer {
+
+void signalHandler( int signum );
 
 HardwareLayer::HardwareLayer() :
 serial(signalGenerator),
@@ -19,6 +25,9 @@ _heightSensor(sensors::HeightSensor::instance()),
 _ButtonLEDs(mmi::ButtonLEDs::instance())
 {
 	LOG_SCOPE;
+
+	signal(SIGINT,  signalHandler);
+	signal(SIGTERM, signalHandler);
 
 	startUpRoutine();
 }
@@ -212,6 +221,15 @@ void HardwareLayer::shutDownRoutine() {
 	greenLightOff();	WAIT(250);
 	yellowLightOff();	WAIT(250);
 	redLightOff();		WAIT(250);
+}
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received.\n";
+
+   out8(0x300, 0b00001000); // stop motor, close switch point, turn off lights
+   out8(0x302, 0); // turn off led's
+
+   _Exit(signum);
 }
 
 } /* hardwareLayer */
