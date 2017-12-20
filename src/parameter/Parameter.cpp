@@ -30,6 +30,9 @@ Parameter<bool> item_on_output("Item on Output");
 Parameter<bool> this_cb_busy("this conveyer belt busy");
 Parameter<bool> next_cb_busy("next conveyer belt busy");
 
+Parameter<bool> this_slide_full("this slide full");
+
+
 
 // ====== TIMES FROM CALIBRATION FOR RUN MODE ==========
 
