@@ -13,6 +13,7 @@
 #include "Channel.h"
 #include "SignalReceiver.h"
 #include "Sorting.h"
+#include <thread>
 
 namespace hardwareLayer {
 	class HardwareLayer;
@@ -44,6 +45,10 @@ public:
 	static void copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item);
 	static void setID(int* id);
 	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
+	static void stopMotorIfOneOrZeroItemsOnCB(hardwareLayer::HardwareLayer* hal);
+	static void sendSlideFull(hardwareLayer::HardwareLayer* hal);
+	static void sendSlideEmpty(hardwareLayer::HardwareLayer* hal);
+
 
 
 
@@ -102,6 +107,7 @@ private:
 		virtual void timeframe_slide_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_output_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_output_leave( 	Signal signal ){ forwardSignal( signal ); }
+		virtual void slide_full(				Signal signal ){ forwardSignal( signal ); }
 
 
 
@@ -152,6 +158,8 @@ private:
 		virtual void timeframe_slide_leave( 	Signal signal ) override {}
 		virtual void timeframe_output_enter( 	Signal signal ) override {}
 		virtual void timeframe_output_leave( 	Signal signal ) override {}
+		virtual void slide_full(				Signal signal ) override {}
+
 
 
 
@@ -342,16 +350,48 @@ private:
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
 			}
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
+			Item::stopMotorIfOneOrZeroItemsOnCB(hal_);
+			std::thread([=]() {
+				WAIT(500);
+				if(this->item_) {
+					this->item_->handle(Signal(Signalname::SLIDE_FULL));
+				}
+			}).detach();
 		}
+
+		virtual void slide_full (Signal signal ) override {
+			cout<<"slide_full"<<endl;
+			new (this) SlideFull;
+		}
+
+		virtual void lb_slide_freed( Signal signal ) override {
+			cout<<"lb_slide_freed"<<endl;
+			new (this) DepatureSlide;
+		}
+
 	};
 
-	struct DepatureSlide : public State{
+	struct SlideFull : public State {
+		SlideFull() {
+			cout<<"SlideFull"<<endl;
+			this_slide_full = true;
+			Item::sendSlideFull(hal_);
+		}
+
+		virtual void lb_slide_freed( Signal signal ) override {
+			cout<<"lb_slide_freed"<<endl;
+			this_slide_full = false;
+			Item::sendSlideEmpty(hal_);
+			new (this) DepatureSlide;
+		}
 
 	};
 
-	struct SlideIsFull : public State{
+	struct DepatureSlide : public State {
+		DepatureSlide() {
+			cout<<"DepatureSlide"<<endl;
+			Item::dequeueAndDeleteItem(item_);
+		}
 
 	};
 

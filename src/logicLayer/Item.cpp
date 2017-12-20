@@ -257,6 +257,9 @@ void Item::handle(Signal signal){
 		case Signalname::SIGNAL_DUMMY:
 			cout<<"Item: SIGNAL_DUMMY"<<endl;
 			break;
+		case Signalname::SLIDE_FULL:
+			statePtr->slide_full( signal );
+			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
 			exit(EXIT_FAILURE);
@@ -415,6 +418,21 @@ void Item::stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal) {
 		hal->motorStop();
 	}
 }
+
+void Item::stopMotorIfOneOrZeroItemsOnCB(hardwareLayer::HardwareLayer* hal) {
+	if(items_on_cb <= 1) {
+		hal->motorStop();
+	}
+}
+
+void Item::sendSlideFull(hardwareLayer::HardwareLayer* hal) {
+	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_FULL));
+}
+
+void Item::sendSlideEmpty(hardwareLayer::HardwareLayer* hal) {
+	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_EMPTY));
+}
+
 
 
 
