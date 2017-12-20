@@ -204,7 +204,15 @@ struct Signal {
 	}
 	bool operator<(const Signal& signal) const
 	{
-	   return name < signal.name;
+		if(sizeof(Signal::sender) + sizeof(Signal::name) > sizeof(int)) {
+			LOG_WARNING<<__FUNCTION__<<": comparation of Signal may overflows."<<endl;
+		}
+		int left  = ( (int)sender << (sizeof(Signalname) * 8) )
+					+ (int)name;
+		int right = ( (int)signal.sender << (sizeof(Signalname) * 8) )
+					+ (int)signal.name;
+
+		return left < right;
 	}
 	Signalname name;
 	uint8_t sender;

@@ -56,12 +56,11 @@ private:
 			hal->motorLock(true);
 			hal->greenLightOff();
 			hal->blinkRed(Speed::fast);
-
 		}
 		virtual void isPending(Signal signal) {
 			pendingSignals->erase(signal);
 
-			if(pendingSignals->empty() && *eStopCounter == 0) {
+			if(pendingSignals->empty()) {
 				new (this) NO_ERROR;
 			}
 		}
@@ -77,7 +76,8 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;
-	int eStopCounter;
+
+	void broadcastEStopStatus();
 };
 
 } /* namespace logicLayer */

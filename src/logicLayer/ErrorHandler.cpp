@@ -11,13 +11,11 @@ namespace logicLayer {
 
 ErrorHandler::ErrorHandler(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
-, eStopCounter(0)
 {
 	LOG_SCOPE
 	statePtr = &memberState;
 	statePtr->hal = &hal;
 	statePtr->pendingSignals = &pendingSignals;
-	statePtr->eStopCounter = &eStopCounter;
 	hal.blinkGreen(Speed::slow);
 }
 
@@ -34,33 +32,28 @@ void ErrorHandler::handle(Signal signal) {
 	switch(signal.name) {
 	case Signalname::CONNECTION_LOST:
 		addPending(Signal(Signalname::CONNECTION_CONNECTED));
+
 		cout<<"CONNECTION LOST"<<endl;
-		cb_this.parameterList.showParameters();
 		LOG_WARNING<<"ERROR CONNECTION LOST"<<endl;
 		break;
 	case Signalname::CONNECTION_CONNECTED:
 		statePtr->isPending(signal);
+		broadcastEStopStatus();
+
 		cout<<"CONNECTION CONNECTED"<<endl;
 		LOG_DEBUG<<"CONNECTION CONNECTED"<<endl;
-		cb_this.parameterList.showParameters();
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
-		addPending(Signal(Signalname::BUTTON_E_STOP_PULLED));
-		if(signal.sender == cb_this) {
-			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
-		}
-		eStopCounter++;
-		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
+		addPending(Signal(signal.sender, signal.receiver, Signalname::BUTTON_E_STOP_PULLED));
+		broadcastEStopStatus();
+
+		LOG_DEBUG<<"E STOP pushed on cb: "<<(int)signal.sender<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
-		if(signal.sender == cb_this) {
-			hal.sendSerial(Signal(cb_this, cb_available, signal.name));
-		}
-		if(eStopCounter>0) {
-			eStopCounter--;
-		}
-		LOG_DEBUG<<"ESTOP COUNTER "<<eStopCounter<<endl;
 		statePtr->isPending(signal);
+		broadcastEStopStatus();
+
+		LOG_DEBUG<<"E STOP pulled on cb: "<<(int)signal.sender<<endl;
 		break;
 	case Signalname::BUTTON_STOP_PUSHED:
 		hal.motorSlow();
@@ -71,6 +64,16 @@ void ErrorHandler::handle(Signal signal) {
 
 	default:
 		statePtr->isPending(signal);
+	}
+}
+
+void ErrorHandler::broadcastEStopStatus() {
+	auto pending(Signal(Signalname::BUTTON_E_STOP_PULLED));
+
+	if (pendingSignals.find(pending) != pendingSignals.end()) {
+		hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_E_STOP_PUSHED));
+	} else {
+		hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_E_STOP_PUSHED));
 	}
 }
 
