@@ -30,7 +30,8 @@ Parameter<bool> item_on_output("Item on Output");
 Parameter<bool> this_cb_busy("this conveyer belt busy");
 Parameter<bool> next_cb_busy("next conveyer belt busy");
 
-Parameter<bool> this_slide_full("this slide full");
+Parameter<bool> this_slide_full(" this slide full");
+Parameter<bool> other_slide_full("other slide full");
 
 
 

@@ -46,6 +46,8 @@ public:
 	static void setID(int* id);
 	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
 	static void stopMotorIfOneOrZeroItemsOnCB(hardwareLayer::HardwareLayer* hal);
+	static void sendSlideFull(hardwareLayer::HardwareLayer* hal);
+	static void sendSlideEmpty(hardwareLayer::HardwareLayer* hal);
 
 
 
@@ -373,11 +375,13 @@ private:
 		SlideFull() {
 			cout<<"SlideFull"<<endl;
 			this_slide_full = true;
+			Item::sendSlideFull(hal_);
 		}
 
 		virtual void lb_slide_freed( Signal signal ) override {
 			cout<<"lb_slide_freed"<<endl;
 			this_slide_full = false;
+			Item::sendSlideEmpty(hal_);
 			new (this) DepatureSlide;
 		}
 

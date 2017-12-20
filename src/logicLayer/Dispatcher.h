@@ -29,7 +29,7 @@ private:
 	Channel<Signal>& controller_;
 	Channel<Signal>& timer_;
 
-
+	void set_other_slide_full(const Signal& signal);
 };
 
 } /* namespace logicLayer */
