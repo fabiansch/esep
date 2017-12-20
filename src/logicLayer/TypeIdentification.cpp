@@ -95,7 +95,7 @@ void TypeIdentification::measureProfil(bool& running, hardwareLayer::HardwareLay
 	//profile recognition via following state machine
 	while(running){
 		int height = hal->getHeight();
-		//cout << "EVAL:" << height << endl;
+		cout << "EVAL:" << height << endl;
 
 		switch ( state ) {
 			case ProfileState::NL1:
@@ -120,7 +120,7 @@ void TypeIdentification::measureProfil(bool& running, hardwareLayer::HardwareLay
 			break;
 		}
 
-		WAIT(10);
+		WAIT(5);
 	}
 }
 
@@ -144,13 +144,13 @@ ItemType* TypeIdentification::createScan(){
 int TypeIdentification::mapToBinary( int height ){
 	int binaryValue = 0;
 
-	int low = 2950; // need to be parameter from calibration
-	int delta = 100; // need to be figured out by empirical investigation
+	int low = height_item + (5 / mmPerUnit); // need to be parameter from calibration
+	int delta = 50; // need to be figured out by empirical investigation
 
-	if( abs(height-low) < delta ){
+	if( height > low-delta ){
 		binaryValue = 1;
 	}
-	cout << "Binary:" << binaryValue << endl;
+	cout << "Binary:" << binaryValue << " - low: " << low << endl;
 	return binaryValue;
 }
 
@@ -158,7 +158,7 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 
 	int amountOfNeededValues = 3;
 
-	if( abs( measuredHeight - height_item ) > delta ){
+	if( abs( measuredHeight - height_item ) > 100  && measuredHeight > height_item ){
 		*count = *count + 1;
 		*avgValue = *avgValue + measuredHeight;
 	}
@@ -180,7 +180,7 @@ void TypeIdentification::switchToState(int measuredHeight, ProfileState* current
 
 	int amountOfNeededValues = 3;
 
-	if( abs( measuredHeight - height_item ) < delta ){
+	if( abs( measuredHeight - height_item ) < 100 ){
 		*count = *count + 1;
 	}
 
