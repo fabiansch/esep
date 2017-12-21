@@ -157,8 +157,9 @@ int TypeIdentification::mapToBinary( int height ){
 void TypeIdentification::switchToState(int measuredHeight, ProfileState* currentState, ProfileState switchToState, int* avgValue, int* count, int* code ){
 
 	int amountOfNeededValues = 3;
+	int delta = 80;
 
-	if( abs( measuredHeight - height_item ) > 100  && measuredHeight > height_item ){
+	if( abs( measuredHeight - height_item ) > delta  && measuredHeight > height_item ){
 		*count = *count + 1;
 		*avgValue = *avgValue + measuredHeight;
 	}

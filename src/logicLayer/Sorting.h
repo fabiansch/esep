@@ -22,6 +22,8 @@ class Sorting
   private:
 	Order orderState = Order::BOM1;
 	bool checkOrder(Item*);
+	bool checkAgainstCB1Preferences(Item*);
+	bool checkAgainstCB2Preferences(Item*);
 };
 
 } /* namespace logicLayer */

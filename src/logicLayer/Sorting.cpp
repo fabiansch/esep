@@ -44,14 +44,20 @@ bool Sorting::amIWanted(Item* item) {
 	if( !SLIDE_CB1_FULL && !SLIDE_CB2_FULL ){
 		cout << "CASE 4" << endl;
 		result = sorting.checkOrder(item);
-		//if false need check against preference list
-		/*if(!result){
-			result = (bool) item->getId() % 2; // <-- to keep it at begin simple - toggle sorting
+		//if false need to check against preference list
+		if(!result){
+			//result = (bool) item->getId() % 2; // <-- to keep it at begin simple - toggle sorting
+			if( cb_this == cb_1 ){
+				result = sorting.checkAgainstCB1Preferences(item);
+			}
+			else{
+				result = sorting.checkAgainstCB2Preferences(item);
+			}
 			//if item will be let through, mark as pending Sortout
 			if( result ){
 				item->setPendingSortout(true);
 			}
-		}*/
+		}
 	}
 
 	return result;
@@ -87,5 +93,35 @@ bool Sorting::checkOrder(Item* passedItem){
 
 	return result;
 }
+
+bool Sorting::checkAgainstCB1Preferences(Item* item){
+	bool result = true;
+
+	if( item->getType().code == 1){
+		result= false;
+	}
+	else if( item->getType().code == 5){
+		result= false;
+	}
+	else if( item->getType().profile == Profile::FLAT){
+		result= false;
+	}
+
+	return result;
+}
+
+bool Sorting::checkAgainstCB2Preferences(Item* item){
+	bool result = false;
+
+	if( item->getType().code == 2){
+		result= false;
+	}
+	else if( item->getType().code == 4){
+		result= false;
+	}
+
+	return result;
+}
+
 
 } /* namespace logicLayer */
