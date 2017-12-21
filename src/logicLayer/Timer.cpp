@@ -253,11 +253,11 @@ void Timer::pauseAll(){
 	int j = i;
 	int head_saved = i;
 	do{
-		if (!timer_events[j].finished){ //active prev
+		if (timer_events[j].active){ //active prev
 			setTimerEvent(timer_events[j].signal.name, (timer_events[j].duration - (now - timer_events[j].begin)) ,false);
-			//timer_events[j].active = false;
+			timer_events[j].active = false;
 			timer_events[j].started = false;
-			timer_events[j].active = false; // prev not used
+			//timer_events[j].active = false; // prev not used
 		}
 		j++;
 		if (j == (sizeof(timer_events)/sizeof(TimerEvent))){
