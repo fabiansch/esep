@@ -187,7 +187,7 @@ void Timer::checkIfAvailableSpace(){
 	if (i == sizeof(timer_events)/sizeof(TimerEvent)-1){
 		i = 0;
 	}
-	if (timer_events[i].finished == true){
+	if (timer_events[i].active == true){
 		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite active timer which was expected to be inactive";
 		//TODO FAIL
 	}
@@ -252,13 +252,14 @@ void Timer::pauseAll(){
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	int j = i;
 	do{
-		if (timer_events[j].active){
+		if (!timer_events[j].finished){ //active prev
 			setTimerEvent(timer_events[j].signal.name, (timer_events[j].duration - (now - timer_events[j].begin)) ,false);
 			//timer_events[j].active = false;
 			timer_events[j].started = false;
+			timer_events[j].active = false; // prev not used
 		}
 		j++;
-		if (j == (sizeof(timer_events)/sizeof(TimerEvent)) -1){
+		if (j == (sizeof(timer_events)/sizeof(TimerEvent))){
 			j = 0;
 		}
 	} while (j != i);
