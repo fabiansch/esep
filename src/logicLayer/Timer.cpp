@@ -93,9 +93,9 @@ void Timer::operator()() {
 			setTimerEvent(Signalname::TIMEFRAME_OUTPUT_ENTER,time_switch_to_output - 500, true);
 			setTimerEvent(Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output + 500, true);
 			break;
-		case Signalname::MOTOR_STOP:{
+		case Signalname::MOTOR_STOP:
 			pauseAll();
-		}
+			break;
 		case Signalname::MOTOR_START:
 			startAll();
 			break;
@@ -251,6 +251,7 @@ void Timer::setTimerEvent(Signalname signal, std::chrono::steady_clock::duration
 void Timer::pauseAll(){
 	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	int j = i;
+	int head_saved = i;
 	do{
 		if (!timer_events[j].finished){ //active prev
 			setTimerEvent(timer_events[j].signal.name, (timer_events[j].duration - (now - timer_events[j].begin)) ,false);
@@ -262,7 +263,7 @@ void Timer::pauseAll(){
 		if (j == (sizeof(timer_events)/sizeof(TimerEvent))){
 			j = 0;
 		}
-	} while (j != i);
+	} while (j != head_saved);
 	//			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 	//			for(auto& event : timer_events) {
 	//				if(event.finished == false) {
