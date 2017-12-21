@@ -63,11 +63,13 @@ public:
 private:
 	Speed speed;
 	bool killTimer(Signalname);
-	void setTimers(Signalname,Signalname,unsigned int);
+	void setTimerEvent(Signalname,unsigned int,bool);
 	void initialize();
 	TimerEvent timer_events[100];
 	void checkIfAvailableSpace();
 	int i;
+	void pauseAll();
+	void startAll();
 
 	Channel<Signal>* controller_channel;
 };
