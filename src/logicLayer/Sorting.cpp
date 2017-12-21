@@ -111,7 +111,7 @@ bool Sorting::checkAgainstCB1Preferences(Item* item){
 }
 
 bool Sorting::checkAgainstCB2Preferences(Item* item){
-	bool result = false;
+	bool result = true;
 
 	if( item->getType().code == 2){
 		result= false;
