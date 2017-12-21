@@ -183,20 +183,21 @@ void HardwareLayer::startUpRoutine() {
 	motorRotateClockwise();
 
 	switchPointOpen();
-	redLightOn(); 		WAIT(250);
-	yellowLightOn();	WAIT(250);
 	greenLightOn();		WAIT(250);
-	redLightOff();		WAIT(250);
-	yellowLightOff();	WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
 	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
 
 	switchPointClose();
-	redLightOn(); 		WAIT(250);
-	yellowLightOn();	WAIT(250);
 	greenLightOn();		WAIT(250);
-	redLightOff();		WAIT(250);
-	yellowLightOff();	WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
 	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
+
 }
 
 void HardwareLayer::shutDownRoutine() {
@@ -208,26 +209,31 @@ void HardwareLayer::shutDownRoutine() {
 	motorFast();
 	motorRotateClockwise();
 
-	greenLightOn();		WAIT(250);
-	yellowLightOn();	WAIT(250);
 	redLightOn(); 		WAIT(250);
-	greenLightOff();	WAIT(250);
-	yellowLightOff();	WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
 	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
 
-	greenLightOn();		WAIT(250);
-	yellowLightOn();	WAIT(250);
 	redLightOn(); 		WAIT(250);
-	greenLightOff();	WAIT(250);
-	yellowLightOff();	WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
 	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
 }
 
 void signalHandler( int signum ) {
-   cout << "Interrupt signal (" << signum << ") received.\n";
+   cout << "Interrupt signal (" << signum << ") received."<<endl;
+   cout << "Begin stopping system in a safely manner.." << endl;
+   LOG_ERROR << "Interrupt signal (" << signum << ") received."<<endl;
 
    out8(0x300, 0b00001000); // stop motor, close switch point, turn off lights
    out8(0x302, 0); // turn off led's
+
+   cout << "Finish stopping system in a safely manner." << endl;
+   cout << "Good bye." << endl;
 
    _Exit(signum);
 }
