@@ -16,6 +16,7 @@
 
 namespace logicLayer {
 
+
 class TimerEvent {
 public:
 	TimerEvent(std::chrono::steady_clock::duration duration, Signal signal, logicLayer::Channel<Signal>* receiverChannel)
@@ -26,6 +27,7 @@ public:
 	, started(true)
 	, active(true)
 	, finished(false)
+	, speed(Speed::fast)
 	{}
 
 	TimerEvent()
@@ -35,6 +37,7 @@ public:
 	, started(true)
 	, active(false)
 	, finished(true)
+	, speed(Speed::fast)
 	{
 	}
 
@@ -47,9 +50,9 @@ public:
 	bool started;
 	bool active;
 	bool finished;
-};
 
-enum class Speed {FAST, SLOW};
+	Speed speed;
+};
 
 class Timer : public SignalReceiver {
 
