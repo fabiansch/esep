@@ -45,13 +45,13 @@ bool Sorting::amIWanted(Item* item) {
 		cout << "CASE 4" << endl;
 
 		//if false need to check against preference list
-		if( cb_this == cb_1 ){
+		if( cb_this == cb_sorting_1 ){
 			result = sorting.checkOrder(item); //check at first if item is desired
 			if(!result){
 				result = sorting.checkAgainstCB1Preferences(item);
 			}
 		}
-		else{
+		else if(cb_this == cb_sorting_2){
 			result = sorting.checkOrder(item);
 		}
 		//if item will be let through, mark as pending Sortout
