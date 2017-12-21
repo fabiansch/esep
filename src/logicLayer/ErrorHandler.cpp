@@ -78,7 +78,7 @@ void ErrorHandler::broadcastEStopStatus() {
 	if (pendingSignals.find(pending) != pendingSignals.end()) {
 		hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_E_STOP_PUSHED));
 	} else {
-		hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_E_STOP_PUSHED));
+		hal.sendSerial(Signal(cb_this, cb_available, Signalname::BUTTON_E_STOP_PULLED));
 	}
 }
 
