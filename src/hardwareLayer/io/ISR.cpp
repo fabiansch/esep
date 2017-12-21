@@ -48,6 +48,11 @@ void ISR::clearAllPendingIntFlag() {
 	GPIO::instance().clearBits(DIO_CHG_STATE_IRQ_STATUS, FULL_BYTE);
 }
 
+// no debug message allowed, otherwise isr crashes
+void ISR::clearPendingIntFlag() {
+	GPIO::instance().clearBits(DIO_CHG_STATE_IRQ_STATUS,
+			DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
+}
 
 const struct sigevent* ISR::mainISR(void* arg, int id) {
 	int interrupt_service_register;
@@ -58,7 +63,7 @@ const struct sigevent* ISR::mainISR(void* arg, int id) {
 			GPIO::instance().read(DIO_CHG_STATE_IRQ_STATUS) &
 			(DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
 
-	ISR::clearAllPendingIntFlag();
+	ISR::clearPendingIntFlag();
 
 	/* 	no interrupt? */
 	if (interrupt_service_register == 0) return nullptr; /* then no event */

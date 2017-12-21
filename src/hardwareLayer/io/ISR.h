@@ -50,6 +50,11 @@ private:
 	static void clearAllPendingIntFlag();
 
 	/*
+	 * @brief clears pending Interrupts
+	 */
+	static void clearPendingIntFlag();
+
+	/*
 	 * @brief enables interrupts by mask
 	 * @param mask
 	 */
