@@ -95,20 +95,6 @@ void Timer::operator()() {
 			break;
 		case Signalname::MOTOR_STOP:{
 			pauseAll();
-//			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-//			for(auto& event : timer_events) {
-//				if(event.finished == false) {
-//					event.duration = event.duration - (now - event.begin);
-//					cout<<"TIMER STOPPED"<<endl;
-//					if(event.active) {
-//						event.started = false;
-//					}
-//					event.finished = true;
-//				}
-//				event.active = false;
-//			}
-//
-//			break;
 		}
 		case Signalname::MOTOR_START:
 		{
@@ -208,7 +194,7 @@ void Timer::setTimerEvent(Signalname signal, unsigned int param, bool start){
 	checkIfAvailableSpace();
 	if (speed == Speed::FAST){
 		timer_events[i] = TimerEvent(
-								std::chrono::milliseconds(param-500),
+								std::chrono::milliseconds(param),
 								Signal(signal),
 								controller_channel);
 	}
@@ -223,11 +209,70 @@ void Timer::setTimerEvent(Signalname signal, unsigned int param, bool start){
 	if (start){
 		later(&fire_timer, std::ref(timer_events[i]));
 	}
+	else{
+		timer_events[i].started = false;
+	}
+	i++;
+}
+
+void Timer::setTimerEvent(Signalname signal, std::chrono::steady_clock::duration d, bool start){
+	checkIfAvailableSpace();
+	if (speed == Speed::FAST){
+		timer_events[i] = TimerEvent(
+								d,
+								Signal(signal),
+								controller_channel);
+	}
+//	else{
+//		auto time = std::chrono::milliseconds(param -500);
+//		time = time / slow_factor;
+//		timer_events[i] = TimerEvent(
+//								std::chrono::milliseconds(time),
+//								Signal(entry),
+//								controller_channel);
+//	}
+	if (start){
+		later(&fire_timer, std::ref(timer_events[i]));
+	}
+	else{
+		timer_events[i].started = false;
+	}
 	i++;
 }
 
 void Timer::pauseAll(){
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	int j = i;
+	do{
+		if (timer_events[j].active){
+			std::chrono::steady_clock::duration duration = timer_events[j].duration - (now - timer_events[j].begin);
+			Signalname signame = timer_events[j].signal.name;
 
+			setTimerEvent(timer_events[j].signal.name, (timer_events[j].duration - (now - timer_events[j].begin)) ,false);
+		}
+		j++;
+		if (j == (sizeof(timer_events)/sizeof(TimerEvent)) -1){
+			j = 0;
+		}
+	} while (j != i);
+
+
+
+
+	//			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	//			for(auto& event : timer_events) {
+	//				if(event.finished == false) {
+	//					event.duration = event.duration - (now - event.begin);
+	//					cout<<"TIMER STOPPED"<<endl;
+	//					if(event.active) {
+	//						event.started = false;
+	//					}
+	//					event.finished = true;
+	//				}
+	//				event.active = false;
+	//			}
+	//
+	//			break;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
