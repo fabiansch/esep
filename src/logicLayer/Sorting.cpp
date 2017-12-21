@@ -43,21 +43,22 @@ bool Sorting::amIWanted(Item* item) {
 	//CASE 4 of 4 : both slides are free , sorting out defined favorites
 	if( !SLIDE_CB1_FULL && !SLIDE_CB2_FULL ){
 		cout << "CASE 4" << endl;
-		result = sorting.checkOrder(item);
+
 		//if false need to check against preference list
-		if(!result){
-			//result = (bool) item->getId() % 2; // <-- to keep it at begin simple - toggle sorting
-			if( cb_this == cb_1 ){
+		if( cb_this == cb_1 ){
+			result = sorting.checkOrder(item); //check at first if item is desired
+			if(!result){
 				result = sorting.checkAgainstCB1Preferences(item);
 			}
-			else{
-				result = sorting.checkAgainstCB2Preferences(item);
-			}
-			//if item will be let through, mark as pending Sortout
-			if( result ){
-				item->setPendingSortout(true);
-			}
 		}
+		else{
+			result = sorting.checkOrder(item);
+		}
+		//if item will be let through, mark as pending Sortout
+		if( result ){
+			item->setPendingSortout(true);
+		}
+
 	}
 
 	return result;
