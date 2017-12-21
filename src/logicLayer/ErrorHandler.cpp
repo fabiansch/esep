@@ -48,6 +48,11 @@ void ErrorHandler::handle(Signal signal) {
 		broadcastEStopStatus();
 
 		LOG_DEBUG<<"E STOP pushed on cb: "<<(int)signal.sender<<endl;
+		if(signal.sender == cb_this) {
+			cout<<"E STOP pushed on this cb."<<endl;
+		} else {
+			cout<<"E STOP pushed on other cb."<<endl;
+		}
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
 		statePtr->isPending(signal);
