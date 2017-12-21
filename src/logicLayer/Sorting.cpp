@@ -13,20 +13,18 @@ namespace logicLayer {
 
 static Sorting sorting;
 
-static bool SLIDE_CB1_FULL = false;
-static bool SLIDE_CB2_FULL = false;
 
 bool Sorting::amIWanted(Item* item) {
 
 	bool result = false;
 
 	//CASE 1 of 4 : both cb slides are full
-	if( SLIDE_CB1_FULL && SLIDE_CB2_FULL ){
+	if( this_slide_full && other_slide_full ){
 		//throw error & stop cb's
 	}
 
 	//CASE 2 of 4 : this cb has to pass through everything
-	if( SLIDE_CB1_FULL && !SLIDE_CB2_FULL ){
+	if( this_slide_full && !other_slide_full  ){
 		result = sorting.checkOrder(item);
 		//mark pending sorting flag to determine sorting out on next cb, but only if item is undesired
 		if(!result){
@@ -36,12 +34,12 @@ bool Sorting::amIWanted(Item* item) {
 	}
 
 	//CASE 3 of 4 : this cb have to sort everything out
-	if( !SLIDE_CB1_FULL && SLIDE_CB2_FULL ){
+	if( !this_slide_full && other_slide_full  ){
 		result = sorting.checkOrder(item);
 	}
 
 	//CASE 4 of 4 : both slides are free , sorting out defined favorites
-	if( !SLIDE_CB1_FULL && !SLIDE_CB2_FULL ){
+	if( !this_slide_full && !other_slide_full  ){
 		cout << "CASE 4" << endl;
 
 		//if false need to check against preference list
