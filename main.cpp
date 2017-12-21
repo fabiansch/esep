@@ -3,9 +3,6 @@
 
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
-#include "Test.h"
-
-
 
 using namespace std;
 
@@ -16,10 +13,10 @@ int main(int argc, char *argv[])
 {
 	LOG_SET_LEVEL(DEBUG);
 	LOG_SCOPE;
-	printStartMessage();
 
 	bool restart = false;
 	do {
+		printStartMessage();
 		cb_this.parameterList.initParameters();
 		evaluateIfCb_1();
 

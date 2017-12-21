@@ -43,6 +43,16 @@ void Dispatcher::notify() {
 			next_cb_busy = false;
 			controller_ << signal;
 			break;
+		case Signalname::SLIDE_FULL:
+			other_slide_full = true;
+			this_slide_full.showValue();
+			other_slide_full.showValue();
+			break;
+		case Signalname::SLIDE_EMPTY:
+			other_slide_full = false;
+			this_slide_full.showValue();
+			other_slide_full.showValue();
+			break;
 		case Signalname::START_TIMERS_INPUT:
 			timer_ << signal;
 //			hal.motorStart(); // do not call hal here....

@@ -100,6 +100,9 @@ namespace hardwareLayer {
 		io::SignalGenerator& getSignalGenerator();
 
 	private:
+		void startUpRoutine();
+		void shutDownRoutine();
+
 		io::SignalGenerator signalGenerator;
 		io::serial::Serial serial;
 		actuators::Motor& _motor;
