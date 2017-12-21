@@ -433,9 +433,15 @@ void Item::sendSlideEmpty(hardwareLayer::HardwareLayer* hal) {
 	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_EMPTY));
 }
 
-
-
-
+void Item::blinkYellowFor(int seconds) {
+	std::thread ([=]() {
+		if(this->hal_) {
+			this->hal_->blinkYellow(Speed::fast);
+			WAIT(seconds*1000);
+			this->hal_->yellowLightOff();
+		}
+	}).detach();
+}
 
 
 } /* namespace logicLayer */

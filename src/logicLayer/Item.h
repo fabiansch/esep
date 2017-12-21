@@ -49,6 +49,8 @@ public:
 	static void sendSlideFull(hardwareLayer::HardwareLayer* hal);
 	static void sendSlideEmpty(hardwareLayer::HardwareLayer* hal);
 
+	void blinkYellowFor(int seconds);
+
 
 
 
@@ -302,6 +304,7 @@ private:
 				*timerChannel_ << Signal(Signalname::START_TIMERS_OUTPUT);
 			} else {
 				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
+				item_->blinkYellowFor(5);
 			}
 		}
 
