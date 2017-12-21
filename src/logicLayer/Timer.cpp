@@ -168,14 +168,20 @@ void Timer::operator()() {
 }
 
 bool Timer::killTimer(Signalname signalname){
-	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head, kill first others not
-		if (event.signal.name == signalname){
-			event.active = false;
+	int j = i;
+	do{
+		if (timer_events[j].signal.name == signalname && timer_events[j].active){
+			timer_events[j].active = false;
 			cout<<"TIMER KILLED"<<endl;
 		}
-	}
-	return false;
+		j++;
+		if (j == sizeof(timer_events)/sizeof(TimerEvent)-1){
+			j = 0;
+		}
+
+	}while(j!=i);
 }
+
 
 void Timer::checkIfAvailableSpace(){
 	if (i == sizeof(timer_events)/sizeof(TimerEvent)-1){
@@ -282,6 +288,10 @@ void Timer::startAll(){
 			timer_events[j].active = true;
 			later(&fire_timer, std::ref(timer_events[j]));
 		}
+		if (j ==  0){
+			j = sizeof(timer_events)/sizeof(TimerEvent);
+		}
+		j--;
 	}while (j != i);
 }
 
