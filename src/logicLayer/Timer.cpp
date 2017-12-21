@@ -220,6 +220,10 @@ void Timer::setTimerEvent(Signalname signal, unsigned int param, bool start){
 //								Signal(entry),
 //								controller_channel);
 //	}
+	if (start){
+		later(&fire_timer, std::ref(timer_events[i]));
+	}
+	i++;
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
