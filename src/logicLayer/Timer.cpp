@@ -93,22 +93,22 @@ void Timer::operator()() {
 			setTimerEvent(Signalname::TIMEFRAME_OUTPUT_ENTER,time_switch_to_output - 500, true);
 			setTimerEvent(Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output + 500, true);
 			break;
-		case Signalname::MOTOR_STOP:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(auto& event : timer_events) {
-				if(event.finished == false) {
-					event.duration = event.duration - (now - event.begin);
-					cout<<"TIMER STOPPED"<<endl;
-					if(event.active) {
-						event.started = false;
-					}
-					event.finished = true;
-				}
-				event.active = false;
-			}
-
-			break;
+		case Signalname::MOTOR_STOP:{
+			pauseAll();
+//			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+//			for(auto& event : timer_events) {
+//				if(event.finished == false) {
+//					event.duration = event.duration - (now - event.begin);
+//					cout<<"TIMER STOPPED"<<endl;
+//					if(event.active) {
+//						event.started = false;
+//					}
+//					event.finished = true;
+//				}
+//				event.active = false;
+//			}
+//
+//			break;
 		}
 		case Signalname::MOTOR_START:
 		{
@@ -209,7 +209,7 @@ void Timer::setTimerEvent(Signalname signal, unsigned int param, bool start){
 	if (speed == Speed::FAST){
 		timer_events[i] = TimerEvent(
 								std::chrono::milliseconds(param-500),
-								Signal(entry),
+								Signal(signal),
 								controller_channel);
 	}
 //	else{
@@ -224,6 +224,10 @@ void Timer::setTimerEvent(Signalname signal, unsigned int param, bool start){
 		later(&fire_timer, std::ref(timer_events[i]));
 	}
 	i++;
+}
+
+void Timer::pauseAll(){
+
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
