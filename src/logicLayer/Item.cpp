@@ -277,7 +277,7 @@ void Item::setPrevious(Item* item) {
 
 void Item::copyData(Item item){
 	this->id = item.getId();
-	this->type = item.getType();
+	this->type.height_cb_1 = item.getType().height_cb_1;
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal) {

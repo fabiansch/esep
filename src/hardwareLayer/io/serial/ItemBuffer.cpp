@@ -26,17 +26,17 @@ void ItemBuffer::pushItem(logicLayer::Item item){
 logicLayer::Item ItemBuffer::pullItem() {
 
 	logicLayer::Item item = items.front();
-	while(item.getId()==0){
-		item = items.front();
-		items.erase(items.begin());
-	}
+	items.erase( items.begin() );
 
-	items.erase(items.begin());
 	return item;
 }
 
 int ItemBuffer::size(){
 	return items.size();
+}
+
+void ItemBuffer::reset(){
+	return items.clear();
 }
 
 } /* namespace itembuffer */

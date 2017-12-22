@@ -22,6 +22,7 @@ public:
 	void pushItem(logicLayer::Item);
 	logicLayer::Item pullItem();
 	int size();
+	void reset();
 
 private :
 	vector<logicLayer::Item> items;

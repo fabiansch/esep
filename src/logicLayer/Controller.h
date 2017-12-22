@@ -150,6 +150,7 @@ private:
 
 			TypeIdentification::setUnitToMm();
 			TypeIdentification::setHoleLevel();
+			hal->clearItemBuffer();
 		}
 		virtual void run(){}
 		virtual void sensor_test(){}

@@ -318,8 +318,11 @@ private:
 	struct ArrivalSwitch : public State{
 		ArrivalSwitch() {
 
-			//get values from type identification
+			//get values from type identification and keep value from cb 1
+			float height_at_cb_1 = item_->getType().height_cb_1;
 			item_->type = TypeIdentification::typeScans.front();
+			item_->type.height_cb_1 = height_at_cb_1;
+
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
 
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_SWITCH_LEAVE_KILL);

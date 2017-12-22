@@ -96,6 +96,13 @@ namespace hardwareLayer {
 		 */
 		void clearSignalBuffer();
 
+		/**
+		 * @brief deletes all element in buffer
+		 */
+		void clearItemBuffer();
+
+
+
 		//GETTER
 		io::SignalGenerator& getSignalGenerator();
 
