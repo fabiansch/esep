@@ -69,6 +69,12 @@ void ErrorHandler::handle(Signal signal) {
 			cout<<"E STOP pulled on other cb."<<endl;
 		}
 		break;
+	case Signalname::BUTTON_RESET_PUSHED:
+		statePtr->button_reset_pushed();
+		break;
+	case Signalname::BUTTON_START_PUSHED:
+		statePtr->button_start_pushed();
+		break;
 	case Signalname::BUTTON_STOP_PUSHED:
 		hal.motorSlow();
 		break;

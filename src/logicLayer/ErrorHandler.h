@@ -18,8 +18,10 @@ namespace logicLayer {
 class ErrorHandler {
 private:
 	struct State {
+		void errorOccurred() { new (this) ERROR; }
 		virtual void isPending(Signal signal){}
-		virtual void errorOccurred(){}
+		virtual void button_reset_pushed(){}
+		virtual void button_start_pushed(){}
 
 		hardwareLayer::HardwareLayer* hal;
 		std::set<Signal>* pendingSignals;
@@ -28,11 +30,6 @@ private:
 
 
 	struct IDLE : public State {
-		IDLE() {
-		}
-		virtual void errorOccurred() {
-			new (this) ERROR;
-		}
 	};
 
 	struct NO_ERROR : public State {
@@ -46,20 +43,25 @@ private:
 				hal->sendSerial(Signal(cb_this,cb_previous,Signalname::CONVEYOR_BELT_READY));
 			}
 		}
-		virtual void errorOccurred() {
-			new (this) ERROR;
-		}
-
 	};
 
 	struct ERROR : public State {
 		ERROR() {
 			cout<<"ERROR"<<endl;
 			hal->motorLock(true);
-			hal->greenLightOff();
-			hal->blinkRed(Speed::fast);
+			hal->greenLightOff(); // better lock
+			if ((*pendingSignals->begin()).name != Signalname::BUTTON_RESET_PUSHED) {
+				hal->blinkRed(Speed::slow);
+			} else {
+				hal->blinkRed(Speed::fast);
+			}
 		}
-		virtual void isPending(Signal signal) {
+
+		virtual void button_reset_pushed() override {
+			hal->redLightOn();
+		}
+
+		virtual void isPending(Signal signal) override {
 			pendingSignals->erase(signal);
 
 			for(auto &pendingSignal : *pendingSignals) {
@@ -69,9 +71,24 @@ private:
 				cout<<"name: "<<(int)pendingSignal.name<<endl<<endl;
 
 			}
+
 			if(pendingSignals->empty()) {
-				new (this) NO_ERROR;
+				if(signal.name == Signalname::BUTTON_RESET_PUSHED) {
+					new (this) NO_ERROR;
+				} else {
+					new (this) WaitForStart;
+				}
+
 			}
+		}
+	};
+
+	struct WaitForStart : public State {
+		WaitForStart() {
+		}
+
+		virtual void button_start_pushed() override {
+			new (this) NO_ERROR;
 		}
 	};
 

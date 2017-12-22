@@ -183,7 +183,7 @@ private:
 
 		virtual void timeframe_input_leave( Signal signal ) override {
 			cout<<"timeframe_input_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_RESET_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
@@ -248,7 +248,7 @@ private:
 
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_RESET_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
@@ -281,7 +281,7 @@ private:
 
 		virtual void timeframe_switch_leave( Signal signal ) override {
 			cout<<"timeframe_switch_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_RESET_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
@@ -330,7 +330,7 @@ private:
 
 		virtual void timeframe_slide_leave( Signal signal ) override {
 			cout<<"timeframe_slide_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_RESET_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
@@ -405,7 +405,7 @@ private:
 
 		virtual void timeframe_output_leave( Signal signal ) override {
 			cout<<"timeframe_output_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_RESET_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
