@@ -37,6 +37,7 @@ private:
 
 	struct NO_ERROR : public State {
 		NO_ERROR() {
+			cout<<"NO_ERROR"<<endl;
 			hal->motorLock(false);
 			hal->redLightOff();
 			hal->blinkGreen(Speed::slow);
@@ -53,6 +54,7 @@ private:
 
 	struct ERROR : public State {
 		ERROR() {
+			cout<<"ERROR"<<endl;
 			hal->motorLock(true);
 			hal->greenLightOff();
 			hal->blinkRed(Speed::fast);
@@ -60,6 +62,13 @@ private:
 		virtual void isPending(Signal signal) {
 			pendingSignals->erase(signal);
 
+			for(auto &pendingSignal : *pendingSignals) {
+				cout<<"pending signal:"<<endl;
+				cout<<"sender: "<<(int)pendingSignal.sender<<endl;
+				cout<<"receiver: "<<(int)pendingSignal.sender<<endl;
+				cout<<"name: "<<(int)pendingSignal.sender<<endl<<endl;
+
+			}
 			if(pendingSignals->empty()) {
 				new (this) NO_ERROR;
 			}
