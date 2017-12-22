@@ -38,8 +38,8 @@ void WatchDog::operator()(){
 
 	Message token( Signal(cb_1, cb_all, Signalname::SERIAL_WATCHDOG_TOKEN) );
 
-	Signal connectionLost(cb_this,cb_this, Signalname::CONNECTION_LOST);
-	Signal connectionConnected(cb_this,cb_this, Signalname::CONNECTION_CONNECTED);
+	Signal connectionLost(Signalname::CONNECTION_LOST);
+	Signal connectionConnected(Signalname::CONNECTION_CONNECTED);
 
 	while(running) {
 
