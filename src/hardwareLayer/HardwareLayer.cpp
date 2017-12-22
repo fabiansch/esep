@@ -82,6 +82,11 @@ void HardwareLayer::greenLightOff(){
 	_trafficLight.greenLightOff();
 }
 
+void HardwareLayer::greenLightLock(bool lock) {
+	_trafficLight.lockGreen(lock);
+}
+
+
 void HardwareLayer::yellowLightOn(){
 	_trafficLight.yellowLightOn();
 }

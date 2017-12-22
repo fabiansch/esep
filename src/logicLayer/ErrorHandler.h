@@ -36,8 +36,8 @@ private:
 		NO_ERROR() {
 			cout<<"NO_ERROR"<<endl;
 			hal->motorLock(false);
+			hal->greenLightLock(false);
 			hal->redLightOff();
-			hal->blinkGreen(Speed::slow);
 			if(this_cb_busy == false && cb_this == cb_sorting_2) {
 				cout<<"send CONVEYOR_BELT_READY"<<endl;
 				hal->sendSerial(Signal(cb_this,cb_previous,Signalname::CONVEYOR_BELT_READY));
@@ -49,7 +49,7 @@ private:
 		ERROR() {
 			cout<<"ERROR"<<endl;
 			hal->motorLock(true);
-			hal->greenLightOff(); // better lock
+			hal->greenLightLock(true);
 			if ((*pendingSignals->begin()).name != Signalname::BUTTON_RESET_PUSHED) {
 				hal->blinkRed(Speed::slow);
 			} else {
