@@ -276,8 +276,8 @@ void Item::setPrevious(Item* item) {
 }
 
 void Item::copyData(Item item){
-	this->id = item.id;
-	this->type = item.type;
+	this->id = item.getId();
+	this->type = item.getType();
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
@@ -400,7 +400,8 @@ void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 	cout << "Type: "  << (int) item->type.profile << endl;
 	cout << "Metal: " << (int) item->type.metal << endl;
 	cout << "Code: " << (int) item->type.code << endl;
-	cout << "Height: " << item->type.height << "mm" << endl;
+	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;
+	cout << "Height on CB2: " << item->type.height_cb_2 << "mm" << endl;
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){

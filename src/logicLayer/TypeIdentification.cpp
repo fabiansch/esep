@@ -54,7 +54,13 @@ void TypeIdentification::operator()(){
 				typeScans.front().profile = heightMapping(hal_->getHeight());
 
 				//set height
-				typeScans.front().height = toMm( hal_->getHeight() );
+				if(cb_this == cb_sorting_1){
+					typeScans.front().height_cb_1 = toMm( hal_->getHeight() );
+				}
+				else{
+					typeScans.front().height_cb_2 = toMm( hal_->getHeight() );
+				}
+
 			break;
 			case Signalname::SENSOR_METAL_MATCH:
 
@@ -217,14 +223,14 @@ float TypeIdentification::toMm( int measuredHeight ){
 }
 
 void TypeIdentification::setUnitToMm(){
-	mmPerUnit = (float) 25 / ( height_conveyor_belt - height_item );
+	mmPerUnit = (float) 25 / ( height_conveyor_belt - height_item ); //25 --> valid item height in mm
 	cout << "Höhe Band : " << height_conveyor_belt << endl;
 	cout << "Höhe Item : " << height_item << endl;
 	cout << "mm/unit : " << mmPerUnit << endl;
 }
 
 void TypeIdentification::setHoleLevel(){
-	validHeightReference = height_conveyor_belt - ( 8 / mmPerUnit ); //<-- !need to be parameter from calibration ( 7mm hole height )
+	validHeightReference = height_conveyor_belt - ( 8 / mmPerUnit ); //<-- !need to be parameter from calibration ( 8mm hole height )
 }
 
 

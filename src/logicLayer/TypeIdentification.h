@@ -23,7 +23,8 @@ struct ItemType{
 	bool metal = false;
 	int code = -1;
 	bool inDetection = true;
-	float height = 0;
+	float height_cb_1 = 0;
+	float height_cb_2 = 0;
 };
 
 namespace logicLayer {

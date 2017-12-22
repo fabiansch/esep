@@ -20,7 +20,6 @@ namespace hardwareLayer {
 	class HardwareLayer;
 }
 
-static bool amIwanted = false;
 
 namespace logicLayer {
 
@@ -74,8 +73,11 @@ public:
 		this->pendingSortout = pendingSortout;
 	}
 
+	//only need for sensor test
 	int heightAbsolute;
 	int heightCenter;
+
+
 
 private:
 
@@ -329,6 +331,8 @@ private:
 				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
 				item_->blinkYellowFor(5);
 			}
+
+			Item::printItem(hal_, item_);
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
@@ -378,7 +382,6 @@ private:
 				send_CB_ready(hal_);
 			}
 
-			Item::printItem(hal_, item_);
 			Item::stopMotorIfOneOrZeroItemsOnCB(hal_);
 			std::thread([=]() {
 				WAIT(500);
@@ -453,7 +456,6 @@ private:
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL);
 			Item::onOutputAction(hal_, item_, errorHandler_);
 
-			Item::printItem(hal_, item_);
 		}
 
 		virtual void conveyer_belt_ready( Signal signal ) override {
