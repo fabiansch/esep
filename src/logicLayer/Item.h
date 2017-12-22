@@ -247,9 +247,7 @@ private:
 			new (this) DepartureInput;
 		}
 
-		virtual void timeframe_input_leave( Signal signal ) override {
 
-		}
 
 	};
 
