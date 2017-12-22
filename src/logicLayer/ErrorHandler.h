@@ -65,8 +65,8 @@ private:
 			for(auto &pendingSignal : *pendingSignals) {
 				cout<<"pending signal:"<<endl;
 				cout<<"sender: "<<(int)pendingSignal.sender<<endl;
-				cout<<"receiver: "<<(int)pendingSignal.sender<<endl;
-				cout<<"name: "<<(int)pendingSignal.sender<<endl<<endl;
+				cout<<"receiver: "<<(int)pendingSignal.receiver<<endl;
+				cout<<"name: "<<(int)pendingSignal.name<<endl<<endl;
 
 			}
 			if(pendingSignals->empty()) {
