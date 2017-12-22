@@ -60,6 +60,10 @@ namespace serial {
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
 								itemBuffer_.pushItem(msg.item);
+
+								cout << "### Item in Receiver ###" << endl;
+								cout << "ID: "<< msg.item.getId() << endl;
+
 								sgen_.pushBackOnSignalBuffer(msg.signal);
 							}
 						break;
