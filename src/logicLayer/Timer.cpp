@@ -49,13 +49,11 @@ void fire_timer(TimerEvent& timerEvent)
 {
 	if(timerEvent.active) {
 		if(timerEvent.receiverChannel) {
-			cout<<"FIRE"<<endl;
 			*(timerEvent.receiverChannel) << timerEvent.signal;
 		} else {
 			//error nullptr
 		}
 	} else {
-		cout<<"NOT FIRED"<<endl;
 	}
 	timerEvent.finished = true;
 	return;
@@ -71,26 +69,21 @@ void Timer::operator()() {
 
 		switch (signal.name) {
 		case Signalname::START_TIMERS_INPUT:
-			cout<<"Timer got START_TIMERS_INPUT"<<endl;
 			setNewTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input + 2000);
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
-			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
 			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_input_to_height - 500);
 			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_LEAVE, time_input_to_height + 500);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
-			cout<<"Timer got START_TIMERS_SWITCH"<<endl;
 			setNewTimerEvent(Signalname::TIMEFRAME_SWITCH_ENTER,time_height_to_switch - 500);
 			setNewTimerEvent(Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch + 500);
 			break;
 		case Signalname::START_TIMERS_SLIDE:
-			cout<<"Timer got START_TIMERS_SLIDE"<<endl;
 			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_ENTER,1000);
 			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide + 2000);
 			break;
 		case Signalname::START_TIMERS_OUTPUT:
-			cout<<"Timer got START_TIMERS_OUTPUT"<<endl;
 			setNewTimerEvent(Signalname::TIMEFRAME_OUTPUT_ENTER,time_switch_to_output - 500);
 			setNewTimerEvent(Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output + 500);
 			break;
@@ -107,7 +100,6 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_HEIGHT_ENTER);
 			break;
 		case Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL:
-			cout<<"TIMEFRAME_HEIGHT_LEAVE_KILL SIGNAL"<<endl;
 			killTimer(Signalname::TIMEFRAME_HEIGHT_LEAVE);
 			break;
 		case Signalname::TIMEFRAME_SWITCH_ENTER_KILL:
@@ -129,28 +121,24 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_OUTPUT_LEAVE);
 			break;
 		case Signalname::MOTOR_FAST:
-			cout<<"MOTOR_FAST"<<endl;
 			now = std::chrono::steady_clock::now();
 			speed = Speed::fast;
 			head_saved = i;
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow){
-					cout<<"Change speed of timer to FAST------------"<<endl;
 					setModifiedTimerEvent(timer_events[index], true, now);
 					timer_events[index].active = false;
 				}
 			}
 			break;
 		case Signalname::MOTOR_SLOW:
-			cout<<"MOTOR_SLOW"<<endl;
 			now = std::chrono::steady_clock::now();
 			speed = Speed::slow;
 			head_saved = i;
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast){
-					cout<<"Change speed of timer to SLOW------------"<<endl;
 					setModifiedTimerEvent(timer_events[index], true, now);
 					timer_events[index].active = false;
 				}
@@ -176,7 +164,6 @@ void Timer::killTimer(Signalname signalname){
 
 		if (timer_events[index].signal.name == signalname && timer_events[index].active){
 			timer_events[index].active = false;
-			cout<<"TIMER KILLED"<<endl;
 			return;
 		}
 	}
@@ -214,7 +201,6 @@ void Timer::setNewTimerEvent(Signalname signal, unsigned int time){
 }
 
 void Timer::setModifiedTimerEvent(TimerEvent old, bool start,std::chrono::steady_clock::time_point now){
-	cout<<"MOOOOODIIIIFIIIEDDD-------------------------------------"<<endl;
 	checkIfAvailableSpace();
 	std::chrono::steady_clock::duration duration;
 	if(speed == Speed::fast && old.speed == Speed::slow){
@@ -249,7 +235,6 @@ void Timer::pauseAll(){
 	for(int j = 0; j < SIZE; j++) {
 		int index = (head_saved + j) % SIZE;
 		if (timer_events[index].active && (!timer_events[index].finished)) {
-			cout<<"stopping timer"<<endl;
 			setModifiedTimerEvent(timer_events[index], false, now);
 			timer_events[index].active = false;
 		}
