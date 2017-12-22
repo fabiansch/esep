@@ -16,6 +16,8 @@
 
 namespace logicLayer {
 
+constexpr int SIZE = 100;
+
 
 class TimerEvent {
 public:
@@ -69,7 +71,7 @@ private:
 	void setTimerEvent(Signalname,unsigned int,bool);
 	void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
 	void initialize();
-	TimerEvent timer_events[100];
+	TimerEvent timer_events[SIZE];
 	void checkIfAvailableSpace();
 	int i;
 	void pauseAll();
