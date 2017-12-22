@@ -68,11 +68,13 @@ public:
 private:
 	Speed speed;
 	bool killTimer(Signalname);
-	void setTimerEvent(Signalname,unsigned int,bool);
-	void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
+	//void setTimerEvent(Signalname,unsigned int,bool);
+	//void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
+	void setModifiedTimerEvent(TimerEvent old, bool start,std::chrono::steady_clock::time_point);
 	void initialize();
 	TimerEvent timer_events[SIZE];
 	void checkIfAvailableSpace();
+	void setNewTimerEvent(Signalname, unsigned int, bool);
 	int i;
 	void pauseAll();
 	void startAll();
