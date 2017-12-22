@@ -282,7 +282,6 @@ void Item::copyData(Item item){
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
 	if (hal != nullptr) {
-		hal->motorFast();
 		hal->motorRotateClockwise();
 		hal->motorStart();
 	} else {
