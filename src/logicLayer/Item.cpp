@@ -262,7 +262,7 @@ void Item::handle(Signal signal){
 			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
-			exit(EXIT_FAILURE);
+			//exit(EXIT_FAILURE);
 		break;
 	}
 }

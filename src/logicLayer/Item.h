@@ -242,6 +242,10 @@ private:
 				Item::startMotor(hal_);
 			}
 		}
+	    virtual void timeframe_input_leave( Signal signal ) override {
+
+	    }
+
 
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
