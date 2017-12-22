@@ -405,7 +405,16 @@ void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){
-	item->copyData( hal->getPassedItem() );
+	Item itm = hal->getPassedItem();
+
+	item->copyData( itm );
+
+	cout << "#####ITEM from HAL######" << endl;
+	cout << "ID: " <<  itm.getId() << endl;
+	cout << "HÖHE: " << itm.getType().height_cb_1 << "mm" << endl;
+	cout << "" << endl;
+	cout << "" << endl;
+
 }
 
 void Item::setID(int* id) {
