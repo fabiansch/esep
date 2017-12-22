@@ -226,7 +226,6 @@ private:
 			new (this) ArrivalInput;
 		}
 
-
 	};
 
 	struct ArrivalInput : public State {
@@ -246,6 +245,10 @@ private:
 
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
+		}
+
+		virtual void timeframe_input_leave( Signal signal ) override {
+
 		}
 
 	};

@@ -214,6 +214,7 @@ namespace logicLayer {
 			case Signalname::CONVEYOR_BELT_BUSY:
 				break;
 			case Signalname::CONVEYOR_BELT_READY:
+				// hot fix
 				break;
 			default:
 				LOG_ERROR<<"Calibration does not support following Signal: "<<(int)signal.name<<endl;
