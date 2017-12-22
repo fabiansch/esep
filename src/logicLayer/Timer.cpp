@@ -136,6 +136,7 @@ void Timer::operator()() {
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow){
+					cout<<"Change speed of timer to FAST------------"<<endl;
 					setModifiedTimerEvent(timer_events[index], true, now);
 					timer_events[index].active = false;
 				}
@@ -149,6 +150,7 @@ void Timer::operator()() {
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast){
+					cout<<"Change speed of timer to SLOW------------"<<endl;
 					setModifiedTimerEvent(timer_events[index], true, now);
 					timer_events[index].active = false;
 				}
@@ -216,7 +218,9 @@ void Timer::setModifiedTimerEvent(TimerEvent old, bool start,std::chrono::steady
 	checkIfAvailableSpace();
 	std::chrono::steady_clock::duration duration;
 	if(speed == Speed::fast && old.speed == Speed::slow){
-		duration = (((old.duration-(now - old.begin))*1000) * ((int)(slow_factor*1000)));
+		duration = (((old.duration-(now - old.begin))) * ((int)(slow_factor*1000)));
+		duration /= 1000;
+
 	}
 	else if (speed == Speed::slow && old.speed == Speed::fast){
 		duration = (((old.duration-(now - old.begin))*1000) / ((int)(slow_factor*1000)));
@@ -245,6 +249,7 @@ void Timer::pauseAll(){
 	for(int j = 0; j < SIZE; j++) {
 		int index = (head_saved + j) % SIZE;
 		if (timer_events[index].active && (!timer_events[index].finished)) {
+			cout<<"stopping timer"<<endl;
 			setModifiedTimerEvent(timer_events[index], false, now);
 			timer_events[index].active = false;
 		}
