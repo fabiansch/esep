@@ -202,6 +202,7 @@ struct Signal {
 	{
 		LOG_SCOPE
 	}
+
 	bool operator<(const Signal& signal) const
 	{
 		if(sizeof(Signal::sender) + sizeof(Signal::name) > sizeof(int)) {
@@ -214,6 +215,12 @@ struct Signal {
 
 		return left < right;
 	}
+
+	bool operator==(const Signal& signal) const
+	{
+		return name == signal.name;
+	}
+
 	Signalname name;
 	uint8_t sender;
 	uint8_t receiver;

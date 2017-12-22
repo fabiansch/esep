@@ -24,8 +24,8 @@ private:
 		virtual void button_start_pushed(){}
 
 		hardwareLayer::HardwareLayer* hal;
+		ErrorHandler* errorHandler;
 		std::set<Signal>* pendingSignals;
-		int* eStopCounter;
 	} *statePtr;
 
 
@@ -47,7 +47,7 @@ private:
 
 	struct ERROR : public State {
 		ERROR() {
-			cout<<"ERROR"<<endl;
+			errorHandler->printErrors();
 			hal->motorLock(true);
 			hal->greenLightLock(true);
 			if ((*pendingSignals->begin()).name != Signalname::BUTTON_RESET_PUSHED) {
@@ -100,10 +100,11 @@ public:
 	void addPending(Signal);
 	void handle(Signal);
 private:
+	void broadcastEStopStatus();
+	void printErrors();
+
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;
-
-	void broadcastEStopStatus();
 };
 
 } /* namespace logicLayer */
