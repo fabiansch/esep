@@ -45,7 +45,9 @@ void ErrorHandler::handle(Signal signal) {
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
 		addPending(Signal(signal.sender, signal.receiver, Signalname::BUTTON_E_STOP_PULLED));
-		broadcastEStopStatus();
+		if(signal.sender == cb_this) {
+			broadcastEStopStatus();
+		}
 
 		LOG_DEBUG<<"E STOP pushed on cb: "<<(int)signal.sender<<endl;
 		if(signal.sender == cb_this) {
@@ -56,9 +58,16 @@ void ErrorHandler::handle(Signal signal) {
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
 		statePtr->isPending(signal);
-		broadcastEStopStatus();
+		if(signal.sender == cb_this) {
+			broadcastEStopStatus();
+		}
 
 		LOG_DEBUG<<"E STOP pulled on cb: "<<(int)signal.sender<<endl;
+		if(signal.sender == cb_this) {
+			cout<<"E STOP pulled on this cb."<<endl;
+		} else {
+			cout<<"E STOP pulled on other cb."<<endl;
+		}
 		break;
 	case Signalname::BUTTON_STOP_PUSHED:
 		hal.motorSlow();
