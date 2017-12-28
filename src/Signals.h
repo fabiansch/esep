@@ -129,6 +129,7 @@ enum class Signalname : uint16_t {
 	//Serial Interface
 	SERIAL_WATCHDOG_TOKEN,
 	SERIAL_WATCHDOG_FEED,
+	SERIAL_FLUSH,
 
 	//CONNECTION
 	CONNECTION_LOST,
