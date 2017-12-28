@@ -17,7 +17,7 @@ namespace hardwareLayer {
 void signalHandler( int signum );
 
 HardwareLayer::HardwareLayer() :
-serial(signalGenerator),
+// serial(signalGenerator),
 _motor(actuators::Motor::instance(signalGenerator)),
 _switchPoint(actuators::SwitchPoint::instance()),
 _trafficLight(mmi::TrafficLight::instance()),
@@ -154,15 +154,17 @@ void HardwareLayer::sendSerial(Signal signal) {
 }
 
 void HardwareLayer::sendItemViaSerial(logicLayer::Item* item) {
-	serial.send(item);
+	// serial.send(item);
 }
 
 logicLayer::Item HardwareLayer::getPassedItem() {
-	return serial.getReceiver().getItemBuffer().pullItem();
+	// return serial.getReceiver().getItemBuffer().pullItem();
+	return logicLayer::item(nullptr, nullptr, nullptr, nullptr);
 }
 
-int HardwareLayer::getItemBufferSize(){
-	return serial.getReceiver().getItemBuffer().size();
+int HardwareLayer::getItemBufferSize() {
+	// return serial.getReceiver().getItemBuffer().size();
+	return 0;
 }
 
 uint16_t HardwareLayer::getHeight() {

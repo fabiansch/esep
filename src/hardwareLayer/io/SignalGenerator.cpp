@@ -61,7 +61,7 @@ SignalGenerator::SignalGenerator()
 	init_events();
 	GPIO::instance().gainAccess();
 	stored_mask = GPIO::instance().read(PORT::C)<<8 | GPIO::instance().read(PORT::B);
-	ISR::registerISR(AsyncChannel::instance(), MAGIC_NUMBER);
+	// ISR::registerISR(AsyncChannel::instance(), MAGIC_NUMBER);
 	signal_generator_th = std::thread(std::ref(*this));
 }
 
@@ -71,7 +71,7 @@ SignalGenerator::~SignalGenerator() {
 	AsyncChannel::instance().sendMessage({0,stored_mask});
 	chatter_timer_th.join();
 	signal_generator_th.join();
-	ISR::unregisterISR();
+	// ISR::unregisterISR();
 }
 
 void SignalGenerator::operator()() {

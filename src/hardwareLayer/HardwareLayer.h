@@ -104,7 +104,7 @@ namespace hardwareLayer {
 		void shutDownRoutine();
 
 		io::SignalGenerator signalGenerator;
-		io::serial::Serial serial;
+		// io::serial::Serial serial;
 		actuators::Motor& _motor;
 		actuators::SwitchPoint& _switchPoint;
 		mmi::TrafficLight& _trafficLight;

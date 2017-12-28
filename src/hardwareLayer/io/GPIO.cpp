@@ -32,22 +32,24 @@ GPIO::~GPIO() {
 }
 
 void GPIO::gainAccess(){
-	if (ThreadCtl(_NTO_TCTL_IO_PRIV, 0) == -1){
-		LOG_ERROR<<errno<<" "<<strerror(errno);
-		exit(EXIT_FAILURE);
-	}
+	// if (ThreadCtl(_NTO_TCTL_IO_PRIV, 0) == -1){
+	// 	LOG_ERROR<<errno<<" "<<strerror(errno);
+	// 	exit(EXIT_FAILURE);
+	// }
 }
 
 void GPIO::write(uint8_t address, port_t val){
-	out8(DIO_BASE+(uint8_t)address, val);
+	// out8(DIO_BASE+(uint8_t)address, val);
 }
 
 uint8_t GPIO::read(uint8_t address){
-	return in8(DIO_BASE + address);
+	// return in8(DIO_BASE + address);
+	return 0;
 }
 
 port_t GPIO::read(PORT port){
-    return in8(DIO_BASE+(port_t)port);
+    // return in8(DIO_BASE+(port_t)port);
+	return 0;
 }
 
 void GPIO::setBits(PORT port, port_t bitmask) {
