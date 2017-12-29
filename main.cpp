@@ -47,26 +47,31 @@ SCENARIO( "light barriers can be interrupted and can be freed" ) {
                         } else {
                             REQUIRE(false);
                         }
-                        WHEN( "LB_HEIGHT_INTERRUPTED was sent and max_delta was waited" ) {
+                        WHEN( "LB_HEIGHT_INTERRUPTED was sent" ) {
                             hal.getSignalGenerator().pushBackOnSignalBuffer(
                                 Signal(Signalname::LB_HEIGHT_INTERRUPTED));
-                            WAIT(max_delta);
 
-                            THEN( "no TIMEFRAME_HEIGHT_LEAVE was sent" ) {
-                                REQUIRE(testController.receivedSignals.size() == 0 );
+                            WHEN( "max_delta was waited" ) {
+                                WAIT(max_delta);
+
+                                THEN( "no TIMEFRAME_HEIGHT_LEAVE was sent" ) {
+                                    REQUIRE(testController.receivedSignals.size() == 0 );
+                                }
                             }
                         }
-                        WHEN( "LB_HEIGHT_INTERRUPTED was NOT sent and max_delta was waited" ) {
-                            WAIT(max_delta);
+                        WHEN( "LB_HEIGHT_INTERRUPTED was NOT sent" ) {
+                            WHEN( "max_delta was waited" ) {
+                                WAIT(max_delta);
 
-                            THEN( "TIMEFRAME_HEIGHT_LEAVE was sent" ) {
-                                if( testController.receivedSignals.size() > 0 ) {
-                                    Signal s1 = testController.receivedSignals.front();
-                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
-                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
-                                    REQUIRE( s1.name == s2.name );
-                                } else {
-                                    REQUIRE(false);
+                                THEN( "TIMEFRAME_HEIGHT_LEAVE was sent" ) {
+                                    if( testController.receivedSignals.size() > 0 ) {
+                                        Signal s1 = testController.receivedSignals.front();
+                                        testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                        Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                        REQUIRE( s1.name == s2.name );
+                                    } else {
+                                        REQUIRE(false);
+                                    }
                                 }
                             }
                         }
