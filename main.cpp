@@ -13,19 +13,16 @@ using namespace std;
 void evaluateIfCb_1();
 void printStartMessage();
 
-SCENARIO( "light barriers can be interrupted and can be freed" ) {
+SCENARIO( "START_TIMERS_HEIGHT fast" ) {
 
     int max_delta = 600; // ms
 
-    GIVEN( "a sortingmachine in RUN state" ) {
+    GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
         time_input_to_height = 1000;
         logicLayer::TestController testController;
         lol.getTimer().setControllerChannel(&testController.getChannel());
-
-        hal.getSignalGenerator().pushBackOnSignalBuffer(
-                Signal(Signalname::RUN));
 
         WHEN( "in: START_TIMERS_HEIGHT" ) {
             lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
@@ -77,6 +74,112 @@ SCENARIO( "light barriers can be interrupted and can be freed" ) {
 
                                 WHEN( "time_input_to_height + max_delta was waited" ) {
                                     WAIT(time_input_to_height + max_delta);
+
+                                    THEN( "not out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                        if( testController.receivedSignals.size() > 0 ) {
+                                            Signal s1 = testController.receivedSignals.front();
+                                            Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                            REQUIRE( s1.name != s2.name );
+                                        } else {
+                                            REQUIRE(true);
+                                        }
+
+                                        THEN( "out: TIMEFRAME_HEIGHT_ENTER" ) {
+                                            if( testController.receivedSignals.size() > 0 ) {
+                                                Signal s1 = testController.receivedSignals.front();
+                                                testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                                Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_ENTER);
+                                                REQUIRE( s1.name == s2.name );
+                                            } else {
+                                                REQUIRE(false);
+                                            }
+
+                                            THEN( "out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                                if( testController.receivedSignals.size() > 0 ) {
+                                                    Signal s1 = testController.receivedSignals.front();
+                                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                                    REQUIRE( s1.name == s2.name );
+                                                } else {
+                                                    REQUIRE(false);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+SCENARIO( "START_TIMERS_HEIGHT slow" ) {
+
+    int max_delta = 600; // ms
+
+    GIVEN( "a sortingmachine in IDLE state" ) {
+        hardwareLayer::HardwareLayer hal;
+        logicLayer::LogicLayer lol(hal);
+        time_input_to_height = 1000;
+        slow_factor = 0.5;
+        logicLayer::TestController testController;
+        lol.getTimer().setControllerChannel(&testController.getChannel());
+
+
+        WHEN( "in: MOTOR_SLOW, START_TIMERS_HEIGHT" ) {
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_SLOW);
+            lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
+            THEN( "to TestController was nothing sent yet" ) {
+                REQUIRE( testController.receivedSignals.size() == 0 );
+
+                WHEN( "waited for time_input_to_height / slow_factor" ) {
+                    WAIT((int)(time_input_to_height / slow_factor));
+
+                    THEN( "out: TIMEFRAME_HEIGHT_ENTER" ) {
+                        if( testController.receivedSignals.size() > 0 ) {
+                            Signal s1 = testController.receivedSignals.front();
+                            testController.receivedSignals.erase(testController.receivedSignals.begin());
+                            Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_ENTER);
+                            REQUIRE( s1.name == s2.name );
+                        } else {
+                            REQUIRE(false);
+                        }
+                        WHEN( "in: TIMEFRAME_HEIGHT_LEAVE_KILL" ) {
+                            lol.getTimer().getChannel() << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+
+                            WHEN( "max_delta was waited" ) {
+                                WAIT(max_delta);
+
+                                THEN( "not out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                    REQUIRE(testController.receivedSignals.size() == 0 );
+                                }
+                            }
+                        }
+                        WHEN( "max_delta / slow_factor was waited" ) {
+                            WAIT((int)(max_delta / slow_factor));
+
+                            THEN( "out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                if( testController.receivedSignals.size() > 0 ) {
+                                    Signal s1 = testController.receivedSignals.front();
+                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                    REQUIRE( s1.name == s2.name );
+                                } else {
+                                    REQUIRE(false);
+                                }
+                            }
+                        }
+                        WHEN( "START_TIMERS_HEIGHT" ) {
+                            lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
+
+                            WHEN( "in TIMEFRAME_HEIGHT_LEAVE_KILL" ) {
+                                lol.getTimer().getChannel() << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+
+                                WHEN( "(time_input_to_height + max_delta) / slow_factor was waited" ) {
+                                    WAIT((int)((time_input_to_height + max_delta) / slow_factor));
 
                                     THEN( "not out: TIMEFRAME_HEIGHT_LEAVE" ) {
                                         if( testController.receivedSignals.size() > 0 ) {
