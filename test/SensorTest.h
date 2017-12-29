@@ -84,7 +84,7 @@ private:
 			new (this) LB_INPUT;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_test_start() {
+		virtual void sensor_test_start() override {
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_INPUT;
 			LOG_TEST<<name()<<endl;
@@ -94,20 +94,20 @@ private:
 
 	//============================ LB_INPUT =======================================
 	struct LB_INPUT : public State {
-		virtual void stop() {}
-		virtual void lb_input_interrupted() {
+		virtual void stop() override {}
+		virtual void lb_input_interrupted() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->blinkGreen(Speed::slow);
 			hal->redLightOff();
 		}
 
-		virtual void sensor_test_enter_on_enter() {
+		virtual void sensor_test_enter_on_enter() override {
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
 		}
 
-		virtual void lb_input_freed() {
+		virtual void lb_input_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
@@ -115,12 +115,12 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_start(){
+		virtual void sensor_test_start() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<"### SENSOR TEST started ###"<<endl;
 		}
 
-		virtual void item_arrived(){
+		virtual void item_arrived() override {
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
@@ -131,7 +131,7 @@ private:
 
 	//============================ SENSOR_HEIGHT_MATCH =======================================
 	struct SENSOR_HEIGHT_MATCH : public State {
-		virtual void sensor_height_match() {
+		virtual void sensor_height_match() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			testItem->heightAbsolute = hal->getHeight();
@@ -141,13 +141,13 @@ private:
 			new (this) LB_HEIGHT_INTERRUPT;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_height_not_match() {}
-		virtual void sensor_test_timeout(){}
+		virtual void sensor_height_not_match() override {}
+		virtual void sensor_test_timeout() override {}
 	};
 
 	//============================ LB_HEIGHT_INTERRUPT =======================================
 	struct LB_HEIGHT_INTERRUPT : public State {
-		virtual void lb_height_interrupted() {
+		virtual void lb_height_interrupted() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			testItem->heightCenter = hal->getHeight();
@@ -170,56 +170,56 @@ private:
 			new (this) SENSOR_METAL_MATCH;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_test_timeout(){}
-		virtual void sensor_height_match() {}
-		virtual void sensor_height_not_match() {}
+		virtual void sensor_test_timeout() override {}
+		virtual void sensor_height_match() override {}
+		virtual void sensor_height_not_match() override {}
 	};
 
 	//============================ SENSOR_METAL_MATCH =======================================
 	struct SENSOR_METAL_MATCH : public State {
 		virtual void sensor_height_match() override {}
 		virtual void sensor_height_not_match() override {}
-		virtual void sensor_metal_match() {
+		virtual void sensor_metal_match() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SWITCH_INTERRUPT;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_test_timeout(){}
+		virtual void sensor_test_timeout() override {}
 	};
 
 	//============================ LB_SWITCH_INTERRUPT =======================================
 	struct LB_SWITCH_INTERRUPT : public State {
-		virtual void lb_switch_interrupted() {
+		virtual void lb_switch_interrupted() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" => ";
 			new (this) SENSOR_SWITCH_IS_OPEN;
 			LOG_TEST<<name()<<endl;
 			hal->switchPointOpen();
 		}
-		virtual void sensor_test_timeout(){}
+		virtual void sensor_test_timeout() override {}
 	};
 
 	//============================ SENSOR_SWITCH_IS_OPEN =======================================
 	struct SENSOR_SWITCH_IS_OPEN : public State {
-		virtual void sensor_switch_is_open() {
+		virtual void sensor_switch_is_open() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
 			new (this) SENSOR_METAL_NOT_MATCH;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_test_timeout(){}
-		virtual void sensor_metal_match() {}
-		virtual void sensor_metal_not_match() {}
+		virtual void sensor_test_timeout() override {}
+		virtual void sensor_metal_match() override {}
+		virtual void sensor_metal_not_match() override {}
 
 	};
 
 	//============================ SENSOR_METAL_NOT_MATCH =======================================
 	struct SENSOR_METAL_NOT_MATCH : public State {
 
-		virtual void sensor_metal_not_match() {
+		virtual void sensor_metal_not_match() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST<<name()<<" => ";
@@ -227,15 +227,15 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){}
-		virtual void sensor_metal_match() {}
-		virtual void sensor_switch_is_open() {}
-		virtual void sensor_switch_is_closed() {}
+		virtual void sensor_test_timeout() override {}
+		virtual void sensor_metal_match() override {}
+		virtual void sensor_switch_is_open() override {}
+		virtual void sensor_switch_is_closed() override {}
 	};
 
 	//============================ LB_SWITCH_FREE =======================================
 	struct LB_SWITCH_FREE : public State {
-		virtual void lb_switch_freed() {
+		virtual void lb_switch_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			timeout_timer_th->detach();
@@ -246,17 +246,14 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_switch_is_open() {}
-		virtual void sensor_switch_is_closed() {}
-
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_switch_is_open() override {}
+		virtual void sensor_switch_is_closed() override {}
+		virtual void sensor_test_timeout() override {}
 	};
 
 	//============================ LB_OUTPUT =======================================
 	struct LB_OUTPUT_INTERRUPTED : public State {
-		virtual void lb_output_interrupted() {
+		virtual void lb_output_interrupted() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->switchPointClose();
 
@@ -273,14 +270,14 @@ private:
 			new (this) LB_OUTPUT_FREED;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_switch_is_closed(){}
+		virtual void sensor_switch_is_closed() override {}
 
 	};
 
 	//============================ LB_OUTPUT_FREED =======================================
 	struct LB_OUTPUT_FREED : public State {
-		virtual void sensor_test_timeout() {}
-		virtual void lb_output_freed() {
+		virtual void sensor_test_timeout() override {}
+		virtual void lb_output_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			LOG_TEST<<name()<<" successfully"<<endl;
 			if(cb_this != cb_last) {
@@ -292,35 +289,35 @@ private:
 			new (this) LB_SLIDE_INT;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_switch_is_closed() {}
+		virtual void sensor_switch_is_closed() override {}
 
 
 	};
 
 	//============================ LB_SLIDE =======================================
 	struct LB_SLIDE_INT : public State {
-		virtual void sensor_test_timeout() {}
-		virtual void lb_input_interrupted(){
+		virtual void sensor_test_timeout() override {}
+		virtual void lb_input_interrupted() override {
 			hal->motorRotateClockwise();
 			hal->motorFast();
 			hal->motorStart();
 		}
-		virtual void lb_input_freed() {}
-		virtual void lb_height_interrupted() {}
-		virtual void lb_height_freed() {}
-		virtual void lb_switch_interrupted() {}
-		virtual void lb_switch_freed() {
+		virtual void lb_input_freed() override {}
+		virtual void lb_height_interrupted() override {}
+		virtual void lb_height_freed() override {}
+		virtual void lb_switch_interrupted() override {}
+		virtual void lb_switch_freed() override {
 			timeout_timer_th->detach();
 			*timeout_timer_th = std::thread(timeout_timer, hal, 5000);
 			LOG_TEST<<name()<<" => ";
 			new (this) LB_SLIDE_INT;
 			LOG_TEST<<name()<<endl;
 		}
-		virtual void sensor_height_match(){	}
-		virtual void sensor_height_not_match(){}
-		virtual void sensor_metal_match(){}
-		virtual void sensor_metal_not_match(){}
-		virtual void sensor_test_unsuccessful(uint8_t sender) {
+		virtual void sensor_height_match() override {}
+		virtual void sensor_height_not_match() override {}
+		virtual void sensor_metal_match() override {}
+		virtual void sensor_metal_not_match() override {}
+		virtual void sensor_test_unsuccessful(uint8_t sender) override {
 			LOG_TEST<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Please restart test. Type 'stop' to go back to main menu."<<endl;
@@ -329,11 +326,11 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void lb_slide_interrupted() {
+		virtual void lb_slide_interrupted() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 			hal->motorStop();
 		}
-		virtual void lb_slide_freed() {
+		virtual void lb_slide_freed() override {
 			LOG_TEST<<__FUNCTION__<<endl;
 
 			LOG_TEST << name() << " => ";
@@ -350,7 +347,7 @@ private:
 
 	//============================ OTHER_CBs =======================================
 	struct OTHER_CBs : public State {
-		virtual void sensor_test_successful(uint8_t sender) {
+		virtual void sensor_test_successful(uint8_t sender) override {
 			LOG_TEST<<"Test was successful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Test was successful on conveyer belt: "<<(int)sender<<"Please, put Item on next CB."<<endl;
 			if(sender == cb_last) {
@@ -363,7 +360,7 @@ private:
 				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::STOP));
 			}
 		}
-		virtual void sensor_test_unsuccessful(uint8_t sender) {
+		virtual void sensor_test_unsuccessful(uint8_t sender) override {
 			LOG_TEST<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Test UNsuccessful on conveyer belt: "<<(int)sender<<endl;
 			cout<<"Please restart test. Type 'stop' to go back to main menu."<<endl;
@@ -372,9 +369,7 @@ private:
 			LOG_TEST<<name()<<endl;
 		}
 
-		virtual void sensor_test_timeout(){
-
-		}
+		virtual void sensor_test_timeout() override {}
 	};
 
 	static void timeout_timer(hardwareLayer::HardwareLayer* hal, int milliseconds) {
