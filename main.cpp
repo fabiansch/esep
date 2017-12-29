@@ -3,50 +3,102 @@
 
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
+#include "TestController.h"
 
-#include <chrono>
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 
 using namespace std;
 
 void evaluateIfCb_1();
 void printStartMessage();
 
-int main(int argc, char *argv[])
-{
-	LOG_SET_LEVEL(DEBUG);
-	LOG_SCOPE;
+SCENARIO( "light barriers can be interrupted and can be freed" ) {
 
-	std::chrono::steady_clock::time_point tp1,tp2,tp3;
-	std::chrono::steady_clock::duration d1,d2(std::chrono::milliseconds(1000));
-	float f1 = 0.5;
+    int max_delta = 600; // ms
 
-	tp1 = std::chrono::steady_clock::now();
-	WAIT(200);
-	tp2 = std::chrono::steady_clock::now();
+    GIVEN( "a sortingmachine in RUN state" ) {
+        hardwareLayer::HardwareLayer hal;
+        logicLayer::LogicLayer lol(hal);
+        time_input_to_height = 1000;
+        logicLayer::TestController testController;
+        lol.getTimer().setControllerChannel(&testController.getChannel());
 
-	//tp3 = std::chrono::steady_clock::time_point(tp2-tp1);
-//
-//	d1 = ((d2-(tp2-tp1))*1000) / (int)(0*1000);
-//
-//	cout<<"time: "<<std::chrono::duration_cast<std::chrono::milliseconds>(d1).count()<<endl;
+        hal.getSignalGenerator().pushBackOnSignalBuffer(
+                Signal(Signalname::RUN));
 
+        WHEN( "LB_INPUT was interrupted and freed again" ) {
+            hal.getSignalGenerator().pushBackOnSignalBuffer(
+                Signal(Signalname::LB_INPUT_INTERRUPTED));
+            hal.getSignalGenerator().pushBackOnSignalBuffer(
+                Signal(Signalname::LB_INPUT_FREED));
+            THEN( "to TestController was nothing sent yet" ) {
+                REQUIRE( testController.receivedSignals.size() == 0 );
 
-	bool restart = false;
-	do {
-		printStartMessage();
-		cb_this.parameterList.initParameters();
-		evaluateIfCb_1();
+                WHEN( "waited for time_input_to_height" ) {
+                    WAIT(time_input_to_height);
 
-		hardwareLayer::HardwareLayer hal;
-		logicLayer::LogicLayer loLay(hal);
+                    THEN( "TIMEFRAME_HEIGHT_ENTER was fired" ) {
+                        if( testController.receivedSignals.size() > 0 ) {
+                            Signal s1 = testController.receivedSignals.front();
+                            testController.receivedSignals.erase(testController.receivedSignals.begin());
+                            Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_ENTER);
+                            REQUIRE( s1.name == s2.name );
+                        } else {
+                            REQUIRE(false);
+                        }
+                        WHEN( "LB_HEIGHT_INTERRUPTED was sent and max_delta was waited" ) {
+                            hal.getSignalGenerator().pushBackOnSignalBuffer(
+                                Signal(Signalname::LB_HEIGHT_INTERRUPTED));
+                            WAIT(max_delta);
 
-		restart = loLay.getMenu().isRestart();
-	} while (restart);
+                            THEN( "no TIMEFRAME_HEIGHT_LEAVE was sent" ) {
+                                REQUIRE(testController.receivedSignals.size() == 0 );
+                            }
+                        }
+                        WHEN( "LB_HEIGHT_INTERRUPTED was NOT sent and max_delta was waited" ) {
+                            WAIT(max_delta);
 
-	cout << "===================== Shutting down Sortingmachine =========================" << endl;
-
-	return EXIT_SUCCESS;
+                            THEN( "TIMEFRAME_HEIGHT_LEAVE was sent" ) {
+                                if( testController.receivedSignals.size() > 0 ) {
+                                    Signal s1 = testController.receivedSignals.front();
+                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                    REQUIRE( s1.name == s2.name );
+                                } else {
+                                    REQUIRE(false);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
+
+
+// int main(int argc, char *argv[])
+// {
+// 	LOG_SET_LEVEL(DEBUG);
+// 	LOG_SCOPE;
+
+// 	bool restart = false;
+// 	do {
+// 		printStartMessage();
+// 		cb_this.parameterList.initParameters();
+// 		evaluateIfCb_1();
+
+// 		hardwareLayer::HardwareLayer hal;
+// 		logicLayer::LogicLayer loLay(hal);
+
+// 		restart = loLay.getMenu().isRestart();
+// 	} while (restart);
+
+// 	cout << "===================== Shutting down Sortingmachine =========================" << endl;
+
+// 	return EXIT_SUCCESS;
+// }
 
 
 void evaluateIfCb_1() {

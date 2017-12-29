@@ -27,7 +27,8 @@ public:
 	LogicLayer(hardwareLayer::HardwareLayer&);
 	virtual ~LogicLayer();
 	Controller& getController();
-	Menu& getMenu();
+	Timer& getTimer() { return timer_; };
+	// Menu& getMenu();
 
 private:
 	hardwareLayer::HardwareLayer& hal;
@@ -37,7 +38,7 @@ private:
 	Calibration calibration_;
 	Sorting sorting_;
 	Dispatcher dispatcher_;
-	Menu menu_;  // have to be last one
+	// Menu menu_;  // have to be last one
 };
 
 } /* namespace logicLayer */

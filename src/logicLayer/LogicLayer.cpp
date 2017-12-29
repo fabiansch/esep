@@ -19,20 +19,20 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 		controller_.getChannel(),
 		timer_.getChannel()
 		)
-, menu_(hal, controller_.getChannel())
+// , menu_(hal, controller_.getChannel())
 {
 	LOG_SCOPE
 	timer_.setControllerChannel(&controller_.getChannel());
-	menu_.computeInput();
+	// menu_.computeInput();
 }
 
 LogicLayer::~LogicLayer() {
 	LOG_SCOPE
 }
 
-Menu& LogicLayer::getMenu(){
-	return menu_;
-}
+// Menu& LogicLayer::getMenu(){
+// 	return menu_;
+// }
 
 Controller& LogicLayer::getController() {
 	return controller_;
