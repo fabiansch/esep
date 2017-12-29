@@ -8,7 +8,7 @@
  */
 
 #include "ISR.h"
-#include <sys/neutrino.h>
+// #include <sys/neutrino.h>
 #include "DIO48.h"
 #include "GPIO.h"
 
@@ -23,7 +23,7 @@ namespace hardwareLayer {
 namespace io {
 
 int ISR::isrId;
-struct sigevent ISR::isrEvent;
+// struct sigevent ISR::isrEvent;
 
 ISR::ISR() {
 	GPIO::instance().gainAccess();
@@ -54,26 +54,26 @@ void ISR::clearPendingIntFlag() {
 			DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
 }
 
-const struct sigevent* ISR::mainISR(void* arg, int id) {
-	int interrupt_service_register;
-	struct sigevent* event = (struct sigevent*) arg;
+// const struct sigevent* ISR::mainISR(void* arg, int id) {
+// 	int interrupt_service_register;
+// 	struct sigevent* event = (struct sigevent*) arg;
 
-	// determine the source of the interrupt by reading the Interrupt Status Register
-	interrupt_service_register =
-			GPIO::instance().read(DIO_CHG_STATE_IRQ_STATUS) &
-			(DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
+// 	// determine the source of the interrupt by reading the Interrupt Status Register
+// 	interrupt_service_register =
+// 			GPIO::instance().read(DIO_CHG_STATE_IRQ_STATUS) &
+// 			(DIO_GROUP0_PB_STATE_CHANGED | DIO_GROUP0_PC_HI_STATE_CHANGED);
 
-	ISR::clearPendingIntFlag();
+// 	ISR::clearPendingIntFlag();
 
-	/* 	no interrupt? */
-	if (interrupt_service_register == 0) return nullptr; /* then no event */
+// 	/* 	no interrupt? */
+// 	if (interrupt_service_register == 0) return nullptr; /* then no event */
 
-	int mask = ((GPIO::instance().read(PORT::C) & UPPER_BYTE) << 8) |
-				(GPIO::instance().read(PORT::B) & FULL_BYTE);
+// 	int mask = ((GPIO::instance().read(PORT::C) & UPPER_BYTE) << 8) |
+// 				(GPIO::instance().read(PORT::B) & FULL_BYTE);
 
-	event->sigev_value.sival_int = mask;
-	return event;
-}
+// 	event->sigev_value.sival_int = mask;
+// 	return event;
+// }
 
 
 void ISR::registerISR(AsyncChannel& chan, char msgType){
@@ -84,14 +84,14 @@ void ISR::registerISR(AsyncChannel& chan, char msgType){
     ISR::clearAllPendingIntFlag();
 
 	// initialize event structure
-    SIGEV_PULSE_INIT(&isrEvent, chan.getConnectionId(), SIGEV_PULSE_PRIO_INHERIT, (int)msgType, 0);
+    // SIGEV_PULSE_INIT(&isrEvent, chan.getConnectionId(), SIGEV_PULSE_PRIO_INHERIT, (int)msgType, 0);
 
     // attach mainISR handler to hardware interrupt
-    isrId = InterruptAttach(HW_INTERRUPT, ISR::mainISR, &isrEvent, sizeof(isrEvent), 0);
-    if (isrId == -1) {
-        LOG_ERROR<<"Could not attach mainISR handler to hw interrupt"<<std::endl;
-        exit(EXIT_FAILURE);
-    }
+    // isrId = InterruptAttach(HW_INTERRUPT, ISR::mainISR, &isrEvent, sizeof(isrEvent), 0);
+    // if (isrId == -1) {
+    //     LOG_ERROR<<"Could not attach mainISR handler to hw interrupt"<<std::endl;
+    //     exit(EXIT_FAILURE);
+    // }
 
     // enable IRQ for PortB and PortC
     ISR::enableInterrupts(DIO_GROUP0_PB_IRQ_ENABLE | DIO_GROUP0_PC_IRQ_ENABLE);
@@ -100,10 +100,10 @@ void ISR::registerISR(AsyncChannel& chan, char msgType){
 void ISR::unregisterISR(){
 
     // detach interrupt handler
-    if( InterruptDetach(isrId) < 0 ){
-        LOG_ERROR<<"Could not detach interrupt handler"<<std::endl;
-        exit(EXIT_FAILURE);
-    }
+    // if( InterruptDetach(isrId) < 0 ){
+    //     LOG_ERROR<<"Could not detach interrupt handler"<<std::endl;
+    //     exit(EXIT_FAILURE);
+    // }
 
     // disable IRQ
     ISR::disableInterrupts();

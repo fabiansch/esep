@@ -9,7 +9,7 @@
 #ifndef ISR_H_
 #define ISR_H_
 
-#include <sys/siginfo.h>
+// #include <sys/siginfo.h>
 #include "AsyncChannel.h"
 
 namespace hardwareLayer {
@@ -68,10 +68,10 @@ private:
 	ISR();
 	~ISR();
 
-	static const struct sigevent* mainISR(void* arg, int id);
+	// static const struct sigevent* mainISR(void* arg, int id);
 
 	static int isrId;
-	static struct sigevent isrEvent;
+	// static struct sigevent isrEvent;
 };
 
 } /* io */

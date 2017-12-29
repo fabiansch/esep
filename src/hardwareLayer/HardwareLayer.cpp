@@ -9,8 +9,8 @@
 #include "Header.h"
 
 #include <csignal>
-#include <sys/neutrino.h>
-#include <hw/inout.h>
+// #include <sys/neutrino.h>
+// #include <hw/inout.h>
 
 namespace hardwareLayer {
 
@@ -150,7 +150,7 @@ void HardwareLayer::clearSignalBuffer() {
 }
 
 void HardwareLayer::sendSerial(Signal signal) {
-	serial.send(signal);
+	// serial.send(signal);
 }
 
 void HardwareLayer::sendItemViaSerial(logicLayer::Item* item) {
@@ -159,7 +159,7 @@ void HardwareLayer::sendItemViaSerial(logicLayer::Item* item) {
 
 logicLayer::Item HardwareLayer::getPassedItem() {
 	// return serial.getReceiver().getItemBuffer().pullItem();
-	return logicLayer::item(nullptr, nullptr, nullptr, nullptr);
+	return logicLayer::Item(nullptr, nullptr, nullptr, nullptr);
 }
 
 int HardwareLayer::getItemBufferSize() {
@@ -231,8 +231,8 @@ void signalHandler( int signum ) {
    cout << "Begin stopping system in a safely manner.." << endl;
    LOG_ERROR << "Interrupt signal (" << signum << ") received."<<endl;
 
-   out8(0x300, 0b00001000); // stop motor, close switch point, turn off lights
-   out8(0x302, 0); // turn off led's
+   // out8(0x300, 0b00001000); // stop motor, close switch point, turn off lights
+   // out8(0x302, 0); // turn off led's
 
    cout << "Finish stopping system in a safely manner." << endl;
    cout << "Good bye." << endl;

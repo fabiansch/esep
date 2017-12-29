@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include <hw/inout.h>
+// #include <hw/inout.h>
 
 namespace hardwareLayer {
 namespace sensors {
