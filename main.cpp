@@ -27,18 +27,15 @@ SCENARIO( "light barriers can be interrupted and can be freed" ) {
         hal.getSignalGenerator().pushBackOnSignalBuffer(
                 Signal(Signalname::RUN));
 
-        WHEN( "LB_INPUT was interrupted and freed again" ) {
-            hal.getSignalGenerator().pushBackOnSignalBuffer(
-                Signal(Signalname::LB_INPUT_INTERRUPTED));
-            hal.getSignalGenerator().pushBackOnSignalBuffer(
-                Signal(Signalname::LB_INPUT_FREED));
+        WHEN( "in: START_TIMERS_HEIGHT" ) {
+            lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
             THEN( "to TestController was nothing sent yet" ) {
                 REQUIRE( testController.receivedSignals.size() == 0 );
 
                 WHEN( "waited for time_input_to_height" ) {
                     WAIT(time_input_to_height);
 
-                    THEN( "TIMEFRAME_HEIGHT_ENTER was fired" ) {
+                    THEN( "out: TIMEFRAME_HEIGHT_ENTER" ) {
                         if( testController.receivedSignals.size() > 0 ) {
                             Signal s1 = testController.receivedSignals.front();
                             testController.receivedSignals.erase(testController.receivedSignals.begin());
@@ -47,30 +44,70 @@ SCENARIO( "light barriers can be interrupted and can be freed" ) {
                         } else {
                             REQUIRE(false);
                         }
-                        WHEN( "LB_HEIGHT_INTERRUPTED was sent" ) {
-                            hal.getSignalGenerator().pushBackOnSignalBuffer(
-                                Signal(Signalname::LB_HEIGHT_INTERRUPTED));
+                        WHEN( "in: TIMEFRAME_HEIGHT_LEAVE_KILL" ) {
+                            lol.getTimer().getChannel() << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
 
                             WHEN( "max_delta was waited" ) {
                                 WAIT(max_delta);
 
-                                THEN( "no TIMEFRAME_HEIGHT_LEAVE was sent" ) {
+                                THEN( "not out: TIMEFRAME_HEIGHT_LEAVE" ) {
                                     REQUIRE(testController.receivedSignals.size() == 0 );
                                 }
                             }
                         }
-                        WHEN( "LB_HEIGHT_INTERRUPTED was NOT sent" ) {
-                            WHEN( "max_delta was waited" ) {
-                                WAIT(max_delta);
+                        WHEN( "max_delta was waited" ) {
+                            WAIT(max_delta);
 
-                                THEN( "TIMEFRAME_HEIGHT_LEAVE was sent" ) {
-                                    if( testController.receivedSignals.size() > 0 ) {
-                                        Signal s1 = testController.receivedSignals.front();
-                                        testController.receivedSignals.erase(testController.receivedSignals.begin());
-                                        Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
-                                        REQUIRE( s1.name == s2.name );
-                                    } else {
-                                        REQUIRE(false);
+                            THEN( "out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                if( testController.receivedSignals.size() > 0 ) {
+                                    Signal s1 = testController.receivedSignals.front();
+                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                    REQUIRE( s1.name == s2.name );
+                                } else {
+                                    REQUIRE(false);
+                                }
+                            }
+                        }
+                        WHEN( "START_TIMERS_HEIGHT" ) {
+                            lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
+
+                            WHEN( "in TIMEFRAME_HEIGHT_LEAVE_KILL" ) {
+                                lol.getTimer().getChannel() << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
+
+                                WHEN( "time_input_to_height + max_delta was waited" ) {
+                                    WAIT(time_input_to_height + max_delta);
+
+                                    THEN( "not out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                        if( testController.receivedSignals.size() > 0 ) {
+                                            Signal s1 = testController.receivedSignals.front();
+                                            Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                            REQUIRE( s1.name != s2.name );
+                                        } else {
+                                            REQUIRE(true);
+                                        }
+
+                                        THEN( "out: TIMEFRAME_HEIGHT_ENTER" ) {
+                                            if( testController.receivedSignals.size() > 0 ) {
+                                                Signal s1 = testController.receivedSignals.front();
+                                                testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                                Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_ENTER);
+                                                REQUIRE( s1.name == s2.name );
+                                            } else {
+                                                REQUIRE(false);
+                                            }
+
+                                            THEN( "out: TIMEFRAME_HEIGHT_LEAVE" ) {
+                                                if( testController.receivedSignals.size() > 0 ) {
+                                                    Signal s1 = testController.receivedSignals.front();
+                                                    testController.receivedSignals.erase(testController.receivedSignals.begin());
+                                                    Signal s2 = Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE);
+                                                    REQUIRE( s1.name == s2.name );
+                                                } else {
+                                                    REQUIRE(false);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
