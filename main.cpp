@@ -13,7 +13,7 @@ using namespace std;
 void evaluateIfCb_1();
 void printStartMessage();
 
-SCENARIO( "stop START_TIMERS_HEIGHT, fast" ) {
+SCENARIO( "stop, START_TIMERS_HEIGHT, fast, start, stop, fast, start" ) {
 
     int max_delta = 600; // ms
 
@@ -28,6 +28,12 @@ SCENARIO( "stop START_TIMERS_HEIGHT, fast" ) {
         WHEN( "in: START_TIMERS_HEIGHT" ) {
             lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_STOP);
+            WAIT(time_input_to_height);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
+
             THEN( "to TestController was nothing sent yet" ) {
                 REQUIRE( testController.receivedSignals.size() == 0 );
 
@@ -124,7 +130,7 @@ SCENARIO( "stop START_TIMERS_HEIGHT, fast" ) {
     }
 }
 
-SCENARIO( "stop START_TIMERS_HEIGHT, slow" ) {
+SCENARIO( "stop, START_TIMERS_HEIGHT, slow, start" ) {
 
     int max_delta = 600; // ms
 
@@ -141,6 +147,8 @@ SCENARIO( "stop START_TIMERS_HEIGHT, slow" ) {
         WHEN( "in: MOTOR_SLOW, START_TIMERS_HEIGHT" ) {
             lol.getTimer().getChannel() << Signal(Signalname::START_TIMERS_HEIGHT);
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_SLOW);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
+
 
             THEN( "to TestController was nothing sent yet" ) {
                 REQUIRE( testController.receivedSignals.size() == 0 );
@@ -236,7 +244,7 @@ SCENARIO( "stop START_TIMERS_HEIGHT, slow" ) {
 }
 
 
-SCENARIO( "fast START_TIMERS_HEIGHT" ) {
+SCENARIO( "start, fast, START_TIMERS_HEIGHT" ) {
 
     int max_delta = 600; // ms
 
@@ -246,6 +254,7 @@ SCENARIO( "fast START_TIMERS_HEIGHT" ) {
         time_input_to_height = 1000;
         logicLayer::TestController testController;
         lol.getTimer().setControllerChannel(&testController.getChannel());
+        lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
         lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
 
         WHEN( "in: START_TIMERS_HEIGHT" ) {
@@ -346,7 +355,7 @@ SCENARIO( "fast START_TIMERS_HEIGHT" ) {
     }
 }
 
-SCENARIO( "slow START_TIMERS_HEIGHT" ) {
+SCENARIO( "start, slow, START_TIMERS_HEIGHT" ) {
 
     int max_delta = 600; // ms
 
@@ -357,6 +366,7 @@ SCENARIO( "slow START_TIMERS_HEIGHT" ) {
         slow_factor = 0.5;
         logicLayer::TestController testController;
         lol.getTimer().setControllerChannel(&testController.getChannel());
+        lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
         lol.getTimer().getChannel() << Signal(Signalname::MOTOR_SLOW);
 
 
@@ -455,7 +465,7 @@ SCENARIO( "slow START_TIMERS_HEIGHT" ) {
     }
 }
 
-SCENARIO( "fast START_TIMERS_HEIGHT, slow, fast, stop, slow, stop, fast" ) {
+SCENARIO( "start, fast, START_TIMERS_HEIGHT, slow, fast, stop, slow, start, stop, fast, start" ) {
 
     int max_delta = 600; // ms
 
@@ -474,10 +484,14 @@ SCENARIO( "fast START_TIMERS_HEIGHT, slow, fast, stop, slow, stop, fast" ) {
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_STOP);
             WAIT(time_input_to_height);
+            // lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START); //
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_SLOW);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_STOP);
             WAIT((int)(time_input_to_height / slow_factor));
+            // lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START); //
             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
+            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
 
             THEN( "to TestController was nothing sent yet" ) {
                 REQUIRE( testController.receivedSignals.size() == 0 );
@@ -525,10 +539,14 @@ SCENARIO( "fast START_TIMERS_HEIGHT, slow, fast, stop, slow, stop, fast" ) {
                             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
                             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_STOP);
                             WAIT(time_input_to_height);
+                            // lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START); //
                             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_SLOW);
+                            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
                             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_STOP);
                             WAIT((int)(time_input_to_height / slow_factor));
+                            // lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START); //
                             lol.getTimer().getChannel() << Signal(Signalname::MOTOR_FAST);
+                            lol.getTimer().getChannel() << Signal(Signalname::MOTOR_START);
 
                             WHEN( "in TIMEFRAME_HEIGHT_LEAVE_KILL" ) {
                                 lol.getTimer().getChannel() << Signal(Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL);
