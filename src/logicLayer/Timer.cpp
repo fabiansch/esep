@@ -34,10 +34,12 @@ namespace logicLayer {
 Timer::Timer()
 : SignalReceiver::SignalReceiver()
 , controller_channel(nullptr)
+, i(0)
+, speed(Speed::fast)
+, stopped(true)
 {
 	i = 0;
 	initialize();
-	speed = Speed::fast;
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
@@ -89,8 +91,10 @@ void Timer::operator()() {
 			break;
 		case Signalname::MOTOR_STOP:
 			pauseAll();
+			stopped = true;
 			break;
 		case Signalname::MOTOR_START:
+			stopped = false;
 			startAll();
 			break;
 		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
@@ -126,8 +130,8 @@ void Timer::operator()() {
 			head_saved = i;
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
-				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow){
-					setModifiedTimerEvent(timer_events[index], true, now);
+				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow) {
+					setModifiedTimerEvent(timer_events[index], stopped ? false : true, now);
 					timer_events[index].active = false;
 				}
 			}
@@ -138,8 +142,8 @@ void Timer::operator()() {
 			head_saved = i;
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
-				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast){
-					setModifiedTimerEvent(timer_events[index], true, now);
+				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast) {
+					setModifiedTimerEvent(timer_events[index], stopped ? false : true, now);
 					timer_events[index].active = false;
 				}
 			}
@@ -196,33 +200,44 @@ void Timer::setNewTimerEvent(Signalname signal, unsigned int time){
 							Signal(signal),
 							controller_channel,
 							speed);
-	later(&fire_timer, std::ref(timer_events[i]));
+	if (not stopped) {
+		later(&fire_timer, std::ref(timer_events[i]));
+	}
+	else {
+		timer_events[i].started = false;
+	}
 	i++;
 }
 
-void Timer::setModifiedTimerEvent(TimerEvent old, bool start,std::chrono::steady_clock::time_point now){
+void Timer::setModifiedTimerEvent(TimerEvent old, bool run, std::chrono::steady_clock::time_point now){
 	checkIfAvailableSpace();
 	std::chrono::steady_clock::duration duration;
+	std::chrono::steady_clock::duration duration_passed(std::chrono::milliseconds::zero());
+	if( not stopped ) {
+		duration_passed = now - old.begin;
+	}
+
 	if(speed == Speed::fast && old.speed == Speed::slow){
-		duration = (((old.duration-(now - old.begin))) * ((int)(slow_factor*1000)));
+		duration = (old.duration - duration_passed) * (int)(slow_factor*1000);
 		duration /= 1000;
 
 	}
 	else if (speed == Speed::slow && old.speed == Speed::fast){
-		duration = (((old.duration-(now - old.begin))*1000) / ((int)(slow_factor*1000)));
+		duration = (old.duration - duration_passed) * 1000 / (int)(slow_factor * 1000);
 	}
 	else {
-		duration = old.duration-(now - old.begin);
+		duration = old.duration - duration_passed;
 	}
+
 	timer_events[i] = TimerEvent(
 								duration,
 								Signal(old.signal),
 								controller_channel,
 								speed);
-	if (start){
+	if (run) {
 		later(&fire_timer, std::ref(timer_events[i]));
 	}
-	else{
+	else {
 		timer_events[i].started = false;
 	}
 	i++;
