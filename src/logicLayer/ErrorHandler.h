@@ -61,6 +61,13 @@ private:
 			hal->redLightOn();
 		}
 
+		virtual void button_start_pushed() override {
+			pendingSignals->erase(Signal(Signalname::BUTTON_START_PUSHED));
+			if(pendingSignals->empty()) {
+				new (this) NO_ERROR;
+			}
+		}
+
 		virtual void isPending(Signal signal) override {
 			pendingSignals->erase(signal);
 
