@@ -90,7 +90,6 @@ void Timer::operator()() {
 			setNewTimerEvent(Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output + 500);
 			break;
 		case Signalname::MOTOR_STOP:
-			stopped = true;
 			pauseAll();
 			stopped = true;
 			break;
@@ -132,11 +131,7 @@ void Timer::operator()() {
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow) {
-<<<<<<< HEAD
-					setModifiedTimerEvent(timer_events[index], now);
-=======
 					setModifiedTimerEvent(timer_events[index], stopped ? false : true, now);
->>>>>>> test_timer
 					timer_events[index].active = false;
 				}
 			}
@@ -148,11 +143,7 @@ void Timer::operator()() {
 			for(int j = 0; j < SIZE; j++) {
 				int index = (head_saved + j) % SIZE;
 				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast) {
-<<<<<<< HEAD
-					setModifiedTimerEvent(timer_events[index], now);
-=======
 					setModifiedTimerEvent(timer_events[index], stopped ? false : true, now);
->>>>>>> test_timer
 					timer_events[index].active = false;
 				}
 			}
@@ -218,11 +209,7 @@ void Timer::setNewTimerEvent(Signalname signal, unsigned int time){
 	i++;
 }
 
-<<<<<<< HEAD
-void Timer::setModifiedTimerEvent(TimerEvent old, std::chrono::steady_clock::time_point now){
-=======
 void Timer::setModifiedTimerEvent(TimerEvent old, bool run, std::chrono::steady_clock::time_point now){
->>>>>>> test_timer
 	checkIfAvailableSpace();
 	std::chrono::steady_clock::duration duration;
 	std::chrono::steady_clock::duration duration_passed(std::chrono::milliseconds::zero());
@@ -247,11 +234,7 @@ void Timer::setModifiedTimerEvent(TimerEvent old, bool run, std::chrono::steady_
 								Signal(old.signal),
 								controller_channel,
 								speed);
-<<<<<<< HEAD
-	if (not stopped) {
-=======
 	if (run) {
->>>>>>> test_timer
 		later(&fire_timer, std::ref(timer_events[i]));
 	}
 	else {
@@ -267,7 +250,7 @@ void Timer::pauseAll(){
 	for(int j = 0; j < SIZE; j++) {
 		int index = (head_saved + j) % SIZE;
 		if (timer_events[index].active && (!timer_events[index].finished)) {
-			setModifiedTimerEvent(timer_events[index], now);
+			setModifiedTimerEvent(timer_events[index], false, now);
 			timer_events[index].active = false;
 		}
 	}
