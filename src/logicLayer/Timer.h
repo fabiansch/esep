@@ -71,7 +71,11 @@ private:
 	void killTimer(Signalname);
 	//void setTimerEvent(Signalname,unsigned int,bool);
 	//void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
+<<<<<<< HEAD
 	void setModifiedTimerEvent(TimerEvent old, std::chrono::steady_clock::time_point);
+=======
+	void setModifiedTimerEvent(TimerEvent old, bool run, std::chrono::steady_clock::time_point);
+>>>>>>> test_timer
 	void initialize();
 	TimerEvent timer_events[SIZE];
 	void checkIfAvailableSpace();
