@@ -414,8 +414,10 @@ void Item::resetId() {
 }
 
 void Item::stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal) {
-	if(items_on_cb <= 0) {
-		hal->motorStop();
+	if(this_slide_full) {
+		if(items_on_cb <= 1) hal->motorStop();
+	} else {
+		if(items_on_cb <= 0) hal->motorStop();
 	}
 }
 

@@ -38,6 +38,8 @@ private:
 	Sorting sorting_;
 	Dispatcher dispatcher_;
 	Menu menu_;  // have to be last one
+
+void checkIfEStopIsPushed(hardwareLayer::HardwareLayer& hal);
 };
 
 } /* namespace logicLayer */

@@ -71,12 +71,22 @@ public:
 	*/
 	void blinkRed(Speed speed);
 
+	/*
+	 * @brief lock or unlock green light
+	 * @params lock = true: green light of till called again with lock = true
+	 */
+	void lockGreen(bool lock);
 
 private:
 	TrafficLight();
 	TrafficLight(TrafficLight const&);
 	TrafficLight& operator=(TrafficLight const&);
 	virtual ~TrafficLight();
+
+	enum class LightStatus { off, blinkSlow, blinkFast, on };
+
+	LightStatus greenStatus;
+	bool greenLocked;
 
 
 	mmi::Blink blink;

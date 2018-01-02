@@ -18,52 +18,77 @@ namespace logicLayer {
 class ErrorHandler {
 private:
 	struct State {
+		void errorOccurred() { new (this) ERROR; }
 		virtual void isPending(Signal signal){}
-		virtual void errorOccurred(){}
+		virtual void button_reset_pushed(){}
+		virtual void button_start_pushed(){}
 
 		hardwareLayer::HardwareLayer* hal;
+		ErrorHandler* errorHandler;
 		std::set<Signal>* pendingSignals;
-		int* eStopCounter;
 	} *statePtr;
 
 
 	struct IDLE : public State {
-		IDLE() {
-		}
-		virtual void errorOccurred() {
-			new (this) ERROR;
-		}
 	};
 
 	struct NO_ERROR : public State {
 		NO_ERROR() {
+			cout<<"NO_ERROR"<<endl;
 			hal->motorLock(false);
+			hal->greenLightLock(false);
 			hal->redLightOff();
-			hal->blinkGreen(Speed::slow);
 			if(this_cb_busy == false && cb_this == cb_sorting_2) {
 				cout<<"send CONVEYOR_BELT_READY"<<endl;
 				hal->sendSerial(Signal(cb_this,cb_previous,Signalname::CONVEYOR_BELT_READY));
 			}
 		}
-		virtual void errorOccurred() {
-			new (this) ERROR;
-		}
-
 	};
 
 	struct ERROR : public State {
 		ERROR() {
+			errorHandler->printErrors();
 			hal->motorLock(true);
-			hal->greenLightOff();
-			hal->blinkRed(Speed::fast);
-
+			hal->greenLightLock(true);
+			if ((*pendingSignals->begin()).name != Signalname::BUTTON_RESET_PUSHED) {
+				hal->blinkRed(Speed::slow);
+			} else {
+				hal->blinkRed(Speed::fast);
+			}
 		}
-		virtual void isPending(Signal signal) {
+
+		virtual void button_reset_pushed() override {
+			hal->redLightOn();
+		}
+
+		virtual void isPending(Signal signal) override {
 			pendingSignals->erase(signal);
 
-			if(pendingSignals->empty() && *eStopCounter == 0) {
-				new (this) NO_ERROR;
+			for(auto &pendingSignal : *pendingSignals) {
+				cout<<"pending signal:"<<endl;
+				cout<<"sender: "<<(int)pendingSignal.sender<<endl;
+				cout<<"receiver: "<<(int)pendingSignal.receiver<<endl;
+				cout<<"name: "<<(int)pendingSignal.name<<endl<<endl;
+
 			}
+
+			if(pendingSignals->empty()) {
+				if(signal.name == Signalname::BUTTON_RESET_PUSHED) {
+					new (this) NO_ERROR;
+				} else {
+					new (this) WaitForStart;
+				}
+
+			}
+		}
+	};
+
+	struct WaitForStart : public State {
+		WaitForStart() {
+		}
+
+		virtual void button_start_pushed() override {
+			new (this) NO_ERROR;
 		}
 	};
 
@@ -75,9 +100,11 @@ public:
 	void addPending(Signal);
 	void handle(Signal);
 private:
+	void broadcastEStopStatus();
+	void printErrors();
+
 	hardwareLayer::HardwareLayer& hal;
 	std::set<Signal> pendingSignals;
-	int eStopCounter;
 };
 
 } /* namespace logicLayer */
