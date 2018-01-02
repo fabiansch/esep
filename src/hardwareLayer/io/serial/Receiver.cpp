@@ -56,6 +56,9 @@ namespace serial {
 							dog_.feed();
 							forwardIfNotMaster(msg);
 						break;
+						case Signalname::SERIAL_FLUSH:
+							serial_.flush();
+							break;
 						case Signalname::TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
@@ -81,6 +84,8 @@ namespace serial {
 
 			} else {
 				serial_.flush();
+				Message flushPreviousCB(Signal(cb_this, cb_previous, Signalname::SERIAL_FLUSH));
+				serial_.send(flushPreviousCB);
 			}
 		}
 	}

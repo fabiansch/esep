@@ -73,15 +73,15 @@ private:
 				hal->greenLightOff();
 				hal->yellowLightOff();
 			}
-			virtual void calibration_start() 	{ new (this) WaitingForItem; }
+			virtual void calibration_start() override	{ new (this) WaitingForItem; }
 
 		};
 
 		// ============================= IDLE =========================================
 		struct IDLE: public State {
-			virtual void calibration_start() { new (this) WaitingForItem; }
+			virtual void calibration_start()  override { new (this) WaitingForItem; }
 			virtual void calibration_timeout(uint8_t sender) override {}
-			virtual void stop() {}
+			virtual void stop() override {}
 		};
 
 		//============================ WAITING FOR ITEM =======================================
@@ -94,8 +94,8 @@ private:
 				cout << "height_conveyor_belt: " << height_conveyor_belt << endl;
 				cout << "Please put item on masters input" << endl;
 			}
-			virtual void lb_input_interrupted() { new (this) ArrivalAtInput; }
-			virtual void item_arrived() 		{ new (this) ItemArrived; }
+			virtual void lb_input_interrupted() override { new (this) ArrivalAtInput; }
+			virtual void item_arrived() override { new (this) ItemArrived; }
 		};
 
 		//============================ ITEM ARRIVED =======================================
@@ -106,7 +106,7 @@ private:
 				hal->motorRotateClockwise();
 				hal->motorStart();
 			}
-			virtual void lb_input_interrupted() { new (this) ArrivalAtInput; }
+			virtual void lb_input_interrupted() override { new (this) ArrivalAtInput; }
 		};
 
 		//============================ ARRIVAL AT INPUT =======================================
@@ -122,7 +122,7 @@ private:
 				hal->motorFast();
 				hal->motorStart();
 			}
-			virtual void lb_input_freed() {
+			virtual void lb_input_freed() override {
 				new (this) DepartureInput;
 			}
 		};
@@ -133,7 +133,7 @@ private:
 				*timeFrameStart = steady_clock::now();
 				*totalTimeStart = *timeFrameStart;
 			}
-			virtual void lb_height_interrupted() {
+			virtual void lb_height_interrupted() override {
 				new (this) ArrivalAtHeight;
 			}
 		};
@@ -151,7 +151,7 @@ private:
 				height_item = hal->getHeight();
 				cout << "height_item: " << height_item << endl;
 			}
-			virtual void lb_switch_interrupted() {
+			virtual void lb_switch_interrupted() override {
 				new (this) ArrivalSwitch;
 			}
 		};
@@ -169,7 +169,7 @@ private:
 
 				hal->switchPointOpen();
 			}
-			virtual void lb_output_interrupted() {
+			virtual void lb_output_interrupted() override {
 				new (this) ArrivalOutput;
 			}
 		};
@@ -197,7 +197,7 @@ private:
 					cout<< "Put Item on input again."<< endl;
 				}
 			}
-			virtual void lb_output_freed() {
+			virtual void lb_output_freed() override {
 				new (this) WaitForItemSlow;
 			}
 		};
@@ -210,7 +210,7 @@ private:
 					thread.detach();
 				}
 			}
-			virtual void lb_input_interrupted() {
+			virtual void lb_input_interrupted() override {
 				new (this) ArrivalAtInputSlow;
 			}
 		};
@@ -221,7 +221,7 @@ private:
 				hal->motorSlow();
 				hal->motorStart();
 			}
-			virtual void lb_input_freed() {
+			virtual void lb_input_freed() override {
 				new (this) DepartureInputSlow;
 			}
 		};
@@ -231,11 +231,11 @@ private:
 			DepartureInputSlow() {
 				*timeFrameStart = steady_clock::now();
 			}
-			virtual void lb_switch_interrupted() {
+			virtual void lb_switch_interrupted() override {
 				new (this) ArrivalSwitchSlow;
 			}
-			virtual void lb_height_interrupted() {}
-			virtual void lb_height_freed() {}
+			virtual void lb_height_interrupted() override {}
+			virtual void lb_height_freed() override {}
 		};
 
 		//============================ ARRIVAL SWITCH SLOW =======================================
@@ -243,11 +243,11 @@ private:
 			ArrivalSwitchSlow() {
 				hal->switchPointOpen();
 			}
-			virtual void lb_output_interrupted() {
+			virtual void lb_output_interrupted() override {
 				new (this) ArrivalOutputSlow;
 			}
-			virtual void lb_switch_interrupted() {}
-			virtual void lb_switch_freed() {}
+			virtual void lb_switch_interrupted() override {}
+			virtual void lb_switch_freed() override {}
 		};
 
 		//============================ ARRIVAL OUTPUT SLOW =======================================
@@ -262,11 +262,11 @@ private:
 				hal->motorRotateCounterclockwise();
 				hal->motorFast();
 			}
-			virtual void lb_height_interrupted() {
+			virtual void lb_height_interrupted() override {
 				new (this) ArrivalHeightFinish;
 			}
-			virtual void lb_switch_interrupted() {}
-			virtual void lb_switch_freed() {}
+			virtual void lb_switch_interrupted() override {}
+			virtual void lb_switch_freed() override {}
 		};
 
 		//============================ ARRIVAL HEIGHT FINISH =======================================
@@ -275,7 +275,7 @@ private:
 				hal->switchPointClose();
 				hal->motorRotateClockwise();
 			}
-			virtual void lb_switch_interrupted() {
+			virtual void lb_switch_interrupted() override {
 				new (this) ArrivalSwitchFinish;
 			}
 		};
@@ -287,10 +287,10 @@ private:
 				std::thread thread = std::thread(timeout_timer,hal,7000);
 				thread.detach();
 			}
-			virtual void lb_slide_freed() {
+			virtual void lb_slide_freed() override {
 				new (this) InSlide;
 			}
-			virtual void lb_slide_interrupted() {
+			virtual void lb_slide_interrupted() override {
 			}
 		};
 
@@ -311,12 +311,12 @@ private:
 					new (this) IDLE;
 				}
 			}
-			virtual void calibration_successful(uint8_t sender){
+			virtual void calibration_successful(uint8_t sender) override {
 				cout << "================= Calibration completed on machine " << (int)cb_this<<" =========="<<endl;
 				hal->sendSerial(Signal(cb_this, cb_next, Signalname::CALIBRATION_SUCCESSFUL));
 				new (this) IDLE;
 			}
-			virtual void calibration_timeout(uint8_t sender) {}
+			virtual void calibration_timeout(uint8_t sender) override {}
 		};
 
 		struct WaitingForOthers: public State {
@@ -326,7 +326,7 @@ private:
 					new (this) IDLE;
 				}
 			}
-			virtual void calibration_successful(uint8_t sender){
+			virtual void calibration_successful(uint8_t sender) override {
 				cout << "========== Calibration completed on all CB's===========" << endl;
 				cb_this.parameterList.showParameters();
 				new (this) IDLE;
