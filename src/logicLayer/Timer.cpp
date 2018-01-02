@@ -37,7 +37,7 @@ Timer::Timer()
 {
 	i = 0;
 	initialize();
-	speed = Speed::FAST;
+	speed = Speed::fast;
 	SignalReceiver::receiver_ = std::thread(std::ref(*this));
 }
 
@@ -49,13 +49,11 @@ void fire_timer(TimerEvent& timerEvent)
 {
 	if(timerEvent.active) {
 		if(timerEvent.receiverChannel) {
-			cout<<"FIRE"<<endl;
 			*(timerEvent.receiverChannel) << timerEvent.signal;
 		} else {
 			//error nullptr
 		}
 	} else {
-		cout<<"NOT FIRED"<<endl;
 	}
 	timerEvent.finished = true;
 	return;
@@ -63,68 +61,38 @@ void fire_timer(TimerEvent& timerEvent)
 
 void Timer::operator()() {
 	Signal signal;
-
+	int head_saved;
+	std::chrono::steady_clock::time_point now;
 	while(running) {
 
 		signal << channel_;
 
 		switch (signal.name) {
 		case Signalname::START_TIMERS_INPUT:
-			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-			timer_events[i] = TimerEvent(
-									std::chrono::milliseconds(time_output_to_input+2000),
-									Signal(Signalname::TIMEFRAME_INPUT_LEAVE),
-									controller_channel);
-			later(&fire_timer, std::ref(timer_events[i]));
-			i++;
+			setNewTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input + 2500);
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
-			cout<<"Timer got START_TIMERS_HEIGHT"<<endl;
-			setTimers(Signalname::TIMEFRAME_HEIGHT_ENTER,Signalname::TIMEFRAME_HEIGHT_LEAVE,time_input_to_height);
+			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_input_to_height - 500);
+			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_LEAVE, time_input_to_height + 500);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
-			cout<<"Timer got START_TIMERS_INPUT"<<endl;
-			setTimers(Signalname::TIMEFRAME_SWITCH_ENTER,Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch);
+			setNewTimerEvent(Signalname::TIMEFRAME_SWITCH_ENTER,time_height_to_switch - 500);
+			setNewTimerEvent(Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch + 500);
 			break;
 		case Signalname::START_TIMERS_SLIDE:
-			cout<<"Timer got START_TIMERS_SLIDE"<<endl;
-			setTimers(Signalname::TIMEFRAME_SLIDE_ENTER,Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide);
+			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_ENTER,1000);
+			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide + 2000);
 			break;
 		case Signalname::START_TIMERS_OUTPUT:
-			cout<<"Timer got START_TIMERS_OUTPUT"<<endl;
-			setTimers(Signalname::TIMEFRAME_OUTPUT_ENTER,Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output);
+			setNewTimerEvent(Signalname::TIMEFRAME_OUTPUT_ENTER,time_switch_to_output - 500);
+			setNewTimerEvent(Signalname::TIMEFRAME_OUTPUT_LEAVE,time_switch_to_output + 500);
 			break;
 		case Signalname::MOTOR_STOP:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(auto& event : timer_events) {
-				if(event.finished == false) {
-					event.duration = event.duration - (now - event.begin);
-					cout<<"TIMER STOPPED"<<endl;
-					if(event.active) {
-						event.started = false;
-					}
-					event.finished = true;
-				}
-				event.active = false;
-			}
-
+			pauseAll();
 			break;
-		}
 		case Signalname::MOTOR_START:
-		{
-			std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-			for(int j = 0; j<sizeof(timer_events)/sizeof(TimerEvent); j++) {
-				if(timer_events[j].started == false) {
-					timer_events[j].begin = now;
-					timer_events[j].finished = false;
-					timer_events[j].started = true;
-					timer_events[j].active = true;
-					later(&fire_timer, std::ref(timer_events[j]));
-				}
-			}
+			startAll();
 			break;
-		}
 		case Signalname::TIMEFRAME_INPUT_LEAVE_KILL:
 			killTimer(Signalname::TIMEFRAME_INPUT_LEAVE);
 			break;
@@ -132,7 +100,6 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_HEIGHT_ENTER);
 			break;
 		case Signalname::TIMEFRAME_HEIGHT_LEAVE_KILL:
-			cout<<"TIMEFRAME_HEIGHT_LEAVE_KILL SIGNAL"<<endl;
 			killTimer(Signalname::TIMEFRAME_HEIGHT_LEAVE);
 			break;
 		case Signalname::TIMEFRAME_SWITCH_ENTER_KILL:
@@ -154,25 +121,33 @@ void Timer::operator()() {
 			killTimer(Signalname::TIMEFRAME_OUTPUT_LEAVE);
 			break;
 		case Signalname::MOTOR_FAST:
-			speed = Speed::FAST;
-			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
-				if(timer_events[j].active == true){
-					timer_events[j].duration = timer_events[j].duration * slow_factor;
+			now = std::chrono::steady_clock::now();
+			speed = Speed::fast;
+			head_saved = i;
+			for(int j = 0; j < SIZE; j++) {
+				int index = (head_saved + j) % SIZE;
+				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::slow){
+					setModifiedTimerEvent(timer_events[index], true, now);
+					timer_events[index].active = false;
 				}
 			}
 			break;
 		case Signalname::MOTOR_SLOW:
-			speed = Speed::SLOW;
-			for (int j=0;j<sizeof(timer_events)/sizeof(TimerEvent);j++){
-				if(timer_events[j].active == true){
-					timer_events[j].duration = timer_events[j].duration / slow_factor;
+			now = std::chrono::steady_clock::now();
+			speed = Speed::slow;
+			head_saved = i;
+			for(int j = 0; j < SIZE; j++) {
+				int index = (head_saved + j) % SIZE;
+				if(!timer_events[index].finished && timer_events[index].active && timer_events[index].speed == Speed::fast){
+					setModifiedTimerEvent(timer_events[index], true, now);
+					timer_events[index].active = false;
 				}
 			}
 			break;
 		case Signalname::SIGNAL_DUMMY:
 			break;
 		default:
-			LOG_ERROR << __FUNCTION__ <<": Timer doen not handle signal: " << (int)signal.name <<endl;
+			LOG_ERROR << __FUNCTION__ <<": Timer does not handle signal: " << (int)signal.name <<endl;
 			exit(EXIT_FAILURE);
 			break;
 		}
@@ -180,59 +155,105 @@ void Timer::operator()() {
 
 }
 
-bool Timer::killTimer(Signalname signalname){
-	for(auto& event : timer_events){ // TODO walk from head to 0 and then from max to head, kill first others not
-		if (event.signal.name == signalname){
-			event.active = false;
-			cout<<"TIMER KILLED"<<endl;
+void Timer::killTimer(Signalname signalname){
+
+	int head_saved = i;
+
+	for(int j = 0; j < SIZE; j++) {
+		int index = (head_saved + j) % SIZE;
+
+		if (timer_events[index].signal.name == signalname && timer_events[index].active){
+			timer_events[index].active = false;
+			return;
 		}
 	}
-	return false;
+
 }
 
+
 void Timer::checkIfAvailableSpace(){
-	if (i == sizeof(timer_events)/sizeof(TimerEvent)-1){
+	if (i >= SIZE-1) {
 		i = 0;
 	}
-	if (timer_events[i].active == true){
-		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite active timer which was expected to be inactive";
+	if (!timer_events[i].finished){
+		LOG_ERROR<<__FUNCTION__<<"Trying to overwrite unfinished timer which was expected to be finished.";
 		//TODO FAIL
 	}
 }
 void Timer::initialize(){
-	for (int j =0;j< sizeof(timer_events)/sizeof(TimerEvent);j++ ){
+	for (int j = 0;j < SIZE; j++){
 		timer_events[j] = TimerEvent();
 	}
 }
 
-void Timer::setTimers(Signalname entry, Signalname exit, unsigned int param){
+void Timer::setNewTimerEvent(Signalname signal, unsigned int time){
 	checkIfAvailableSpace();
-	if (speed == Speed::FAST){
-		timer_events[i] = TimerEvent(
-								std::chrono::milliseconds(param-500),
-								Signal(entry),
-								controller_channel);
+	if (speed == Speed::slow){
+		time = time / slow_factor;
 	}
-//	else{
-//		auto time = std::chrono::milliseconds(param -500);
-//		time = time / slow_factor;
-//		timer_events[i] = TimerEvent(
-//								std::chrono::milliseconds(time),
-//								Signal(entry),
-//								controller_channel);
-//	}
-
-	later(&fire_timer, std::ref(timer_events[i]));
-	i++;
-
-	checkIfAvailableSpace();
-	// TODO if else
 	timer_events[i] = TimerEvent(
-							std::chrono::milliseconds(param+500),
-							Signal(exit),
-							controller_channel);
+							std::chrono::milliseconds(time),
+							Signal(signal),
+							controller_channel,
+							speed);
 	later(&fire_timer, std::ref(timer_events[i]));
 	i++;
+}
+
+void Timer::setModifiedTimerEvent(TimerEvent old, bool start,std::chrono::steady_clock::time_point now){
+	checkIfAvailableSpace();
+	std::chrono::steady_clock::duration duration;
+	if(speed == Speed::fast && old.speed == Speed::slow){
+		duration = (((old.duration-(now - old.begin))) * ((int)(slow_factor*1000)));
+		duration /= 1000;
+
+	}
+	else if (speed == Speed::slow && old.speed == Speed::fast){
+		duration = (((old.duration-(now - old.begin))*1000) / ((int)(slow_factor*1000)));
+	}
+	else {
+		duration = old.duration-(now - old.begin);
+	}
+	timer_events[i] = TimerEvent(
+								duration,
+								Signal(old.signal),
+								controller_channel,
+								speed);
+	if (start){
+		later(&fire_timer, std::ref(timer_events[i]));
+	}
+	else{
+		timer_events[i].started = false;
+	}
+	i++;
+}
+
+void Timer::pauseAll(){
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	int head_saved = i;
+
+	for(int j = 0; j < SIZE; j++) {
+		int index = (head_saved + j) % SIZE;
+		if (timer_events[index].active && (!timer_events[index].finished)) {
+			setModifiedTimerEvent(timer_events[index], false, now);
+			timer_events[index].active = false;
+		}
+	}
+}
+
+void Timer::startAll(){
+	std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+	int head_saved = i;
+
+	for(int j = 0; j < SIZE; j++) {
+		int index = (head_saved + j) % SIZE;
+		if(!timer_events[index].started){
+			timer_events[index].begin = now;
+			timer_events[index].started = true;
+			later(&fire_timer, std::ref(timer_events[index]));
+		}
+	}
+
 }
 
 void Timer::setControllerChannel(Channel<Signal>* controller) {
