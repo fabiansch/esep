@@ -170,6 +170,7 @@ private:
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
+		virtual void timeframe_input_leave( 	Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
 		virtual void timeframe_height_leave( 	Signal signal ) override {}
 		virtual void timeframe_switch_enter( 	Signal signal ) override {}
@@ -198,16 +199,6 @@ private:
 				new (this) WaitForArrivalAtInput;
 			}
 		}
-
-		virtual void timeframe_input_leave( Signal signal ) override {
-			cout<<"timeframe_input_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
-			if(cb_this == cb_sorting_2) {
-				this_cb_busy = false;
-			}
-		}
 	};
 
 	struct WaitForArrivalAtInput : public State {
@@ -229,7 +220,6 @@ private:
 				this_cb_busy = false;
 			}
 		}
-
 
 		virtual void lb_input_interrupted( Signal signal ) override {
 			new (this) ArrivalInput;
