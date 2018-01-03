@@ -319,6 +319,7 @@ private:
 			float height_at_cb_1 = item_->getType().height_cb_1;
 			item_->type = TypeIdentification::typeScans.front();
 			item_->type.height_cb_1 = height_at_cb_1;
+			Item::printItem(hal_, item_);
 
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
 
@@ -332,7 +333,7 @@ private:
 				item_->blinkYellowFor(5);
 			}
 
-			Item::printItem(hal_, item_);
+			//Item::printItem(hal_, item_);
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
@@ -453,6 +454,7 @@ private:
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL);
 			Item::onOutputAction(hal_, item_, errorHandler_);
 
+			cout << "### Print at output ###" << endl;
 			Item::printItem(hal_, item_);
 		}
 
