@@ -96,7 +96,9 @@ void TrafficLight::blinkRed(Speed speed) {
 void TrafficLight::lockGreen(bool lock) {
 	if(lock) {
 		if(greenLocked == false) {
+			LightStatus lightStatusTemp(greenStatus);
 			greenLightOff();
+			greenStatus = lightStatusTemp;
 		}
 		greenLocked = true;
 	} else {
