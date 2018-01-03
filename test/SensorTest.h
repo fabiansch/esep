@@ -618,6 +618,8 @@ public:
 			case Signalname::STOP:
 				statePtr->stop();
 			break;
+			case Signalname::CONVEYOR_BELT_READY:
+			break;
 
 			default:
 				LOG_ERROR<<"SensorTest does not support following Signal: "<<(int)signal.name<<endl;
