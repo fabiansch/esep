@@ -37,7 +37,7 @@ public:
 	static void send_CB_busy(hardwareLayer::HardwareLayer* );
 	static void send_CB_ready(hardwareLayer::HardwareLayer* );
 	static void openSwitchPoint(hardwareLayer::HardwareLayer* );
-	static void closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer*);
+	static void closeSwitchPoint(hardwareLayer::HardwareLayer*);
 	static void onOutputAction(hardwareLayer::HardwareLayer* , Item*, ErrorHandler*);
 	static void lbOutputFreedAction(hardwareLayer::HardwareLayer*);
 	static void addPendingError(ErrorHandler*, Signal);
@@ -128,10 +128,7 @@ private:
 		virtual void timeframe_output_enter( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void timeframe_output_leave( 	Signal signal ){ forwardSignal( signal ); }
 		virtual void slide_full(				Signal signal ){ forwardSignal( signal ); }
-
-
-
-
+		virtual void close_switch(   			Signal signal ){ forwardSignal( signal ); }
 
 		void createItem(){
 			cout << "create item" << endl;
@@ -180,8 +177,7 @@ private:
 		virtual void timeframe_output_enter( 	Signal signal ) override {}
 		virtual void timeframe_output_leave( 	Signal signal ) override {}
 		virtual void slide_full(				Signal signal ) override {}
-
-
+		virtual void close_switch(   			Signal signal ) override {}
 
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -327,6 +323,7 @@ private:
 			if(Sorting::amIWanted(item_)) {
 				Item::openSwitchPoint(hal_);
 				*timerChannel_ << Signal(Signalname::START_TIMERS_OUTPUT);
+				*timerChannel_ << Signal(Signalname::SWITCH_CLOSE);
 			} else {
 				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
 				item_->blinkYellowFor(5);
@@ -335,9 +332,8 @@ private:
 			Item::printItem(hal_, item_);
 		}
 
-		virtual void lb_switch_freed( Signal signal ) override {
-			cout<<"lb_switch_freed"<<endl;
-			Item::closeSwitchPoint(800, hal_);
+		virtual void close_switch(Signal signal) override {
+			Item::closeSwitchPoint(hal_);
 		}
 
 		virtual void timeframe_output_enter( Signal signal ) override {
