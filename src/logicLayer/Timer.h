@@ -66,20 +66,14 @@ public:
 
 
 private:
-
-
 	void killTimer(Signalname);
-	//void setTimerEvent(Signalname,unsigned int,bool);
-	//void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
 	void setModifiedTimerEvent(TimerEvent old, bool run, std::chrono::steady_clock::time_point);
 	void initialize();
 	TimerEvent timer_events[SIZE];
 	void checkIfAvailableSpace();
 	void setNewTimerEvent(Signalname, unsigned int);
-
 	void pauseAll();
 	void startAll();
-
 
 	Channel<Signal>* controller_channel;
 	int i;
