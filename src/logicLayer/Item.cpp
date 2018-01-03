@@ -260,6 +260,8 @@ void Item::handle(Signal signal){
 		case Signalname::SLIDE_FULL:
 			statePtr->slide_full( signal );
 			break;
+		case Signalname::CALIBRATION_TIMEOUT:
+			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
 			exit(EXIT_FAILURE);
@@ -356,9 +358,12 @@ void stopMotorIfNoItemAfter(int milliseconds, hardwareLayer::HardwareLayer* hal)
 }
 
 void Item::lbOutputFreedAction(hardwareLayer::HardwareLayer* hal) {
-	if(items_on_cb > 0) {
-		hal->motorStart();
+	if(this_slide_full) {
+		if(items_on_cb > 1) hal->motorStart();
+	} else {
+		if(items_on_cb > 0) hal->motorStart();
 	}
+
 	if(cb_this != cb_last) {
 		timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
 		timer.detach();
