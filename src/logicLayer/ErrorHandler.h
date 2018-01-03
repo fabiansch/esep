@@ -71,6 +71,12 @@ private:
 			pendingSignals->erase(signal);
 
 			if(pendingSignals->empty()) {
+				if(signal.name == Signalname::BUTTON_E_STOP_PULLED){
+					new (this) NO_ERROR;
+				}
+				if(signal.name == Signalname::LB_OUTPUT_FREED && cb_this == cb_last){
+					new (this) NO_ERROR;
+				}
 				if(signal.name == Signalname::BUTTON_RESET_PUSHED) {
 					new (this) NO_ERROR;
 				} else {
