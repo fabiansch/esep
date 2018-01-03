@@ -476,6 +476,7 @@ private:
 //					next_cb_busy.parameterList.showParameters();
 					cout<<"send item"<<endl;
 					Item::sendItem(hal_, item_);
+					Item::printItem(hal_, item_);
 				} else {
 					// TODO error Item lost
 				}
