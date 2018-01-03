@@ -48,6 +48,7 @@ void TypeIdentification::operator()(){
 			case Signalname::LB_HEIGHT_INTERRUPTED:
 				 //stop mesurement thread
 			{
+				// TODO check if detach is necessary
 				new std::thread(measureProfil, std::ref( typeScans.front().inDetection ), hal_ );
 			}
 
