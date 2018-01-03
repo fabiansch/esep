@@ -56,14 +56,10 @@ void TypeIdentification::operator()(){
 
 				//set height
 				if(cb_this == cb_sorting_1){
-					float test = toMm( hal_->getHeight() );
-					typeScans.front().height_cb_1 = test;
-					cout<<"TEST 1: "<<test<<endl;
+					typeScans.front().height_cb_1 = toMm( hal_->getHeight() );
 				}
 				else{
-					float test = toMm( hal_->getHeight() );
-					typeScans.front().height_cb_2 = test;
-					cout<<"TEST 2: "<<test<<endl;
+					typeScans.front().height_cb_2 = toMm( hal_->getHeight() );
 				}
 
 			break;

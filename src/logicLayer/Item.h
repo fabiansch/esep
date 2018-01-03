@@ -311,9 +311,16 @@ private:
 		ArrivalSwitch() {
 
 			//get values from type identification and keep value from cb 1
-			float height_at_cb_1 = item_->getType().height_cb_1;
-			item_->type = TypeIdentification::typeScans.front();
-			item_->type.height_cb_1 = height_at_cb_1;
+			if( cb_this == cb_sorting_1){
+				item_->type = TypeIdentification::typeScans.front();
+			}
+			else{
+				float height_at_cb_1 = item_->getType().height_cb_1;
+				item_->type = TypeIdentification::typeScans.front();
+				item_->type.height_cb_1 = height_at_cb_1;
+			}
+
+
 			Item::printItem(hal_, item_);
 
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
