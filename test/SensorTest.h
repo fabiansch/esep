@@ -368,6 +368,7 @@ private:
 			new (this) LB_INPUT;
 			LOG_TEST<<name()<<endl;
 		}
+		void stop() override{}
 
 		virtual void sensor_test_timeout() override {}
 	};
