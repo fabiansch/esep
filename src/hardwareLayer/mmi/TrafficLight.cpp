@@ -101,6 +101,8 @@ void TrafficLight::lockGreen(bool lock) {
 		}
 		greenLocked = true;
 	} else {
+		greenLocked = false;
+
 		switch(greenStatus) {
 		case LightStatus::on:		 	greenLightOn(); 		 	break;
 		case LightStatus::off:		 	greenLightOff(); 		 	break;
@@ -108,7 +110,6 @@ void TrafficLight::lockGreen(bool lock) {
 		case LightStatus::blinkFast: 	blinkGreen(Speed::fast); 	break;
 		default: LOG_ERROR<<__FUNCTION__<<endl; exit(EXIT_FAILURE); break;
 		}
-		greenLocked = false;
 	}
 }
 
