@@ -62,11 +62,18 @@ namespace serial {
 						case Signalname::TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
-								itemBuffer_.pushItem(msg.item);
+
 
 								cout << "### Item in Receiver ###" << endl;
 								cout << "ID: "<< msg.item.getId() << endl;
-								cout << "Height: "<< msg.item.getType().height_cb_1 << endl;
+								cout << "Type: "  << (int)  msg.item.getType().profile << endl;
+								cout << "Metal: " << (int) msg.item.getType().metal << endl;
+								cout << "Code: " << (int) msg.item.getType().code << endl;
+								cout << "Height on CB1: " << msg.item.getType().height_cb_1 << "mm" << endl;
+								cout << "Height on CB2: " << msg.item.getType().height_cb_2 << "mm" << endl;
+
+								itemBuffer_.pushItem(msg.item);
+							}
 
 
 								sgen_.pushBackOnSignalBuffer(msg.signal);
