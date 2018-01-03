@@ -66,6 +66,8 @@ namespace serial {
 
 								cout << "### Item in Receiver ###" << endl;
 								cout << "ID: "<< msg.item.getId() << endl;
+								cout << "Height: "<< msg.item.getType().height_cb_1 << endl;
+
 
 								sgen_.pushBackOnSignalBuffer(msg.signal);
 							}
