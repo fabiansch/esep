@@ -66,8 +66,8 @@ public:
 
 
 private:
-	Speed speed;
-	bool stopped;
+
+
 	void killTimer(Signalname);
 	//void setTimerEvent(Signalname,unsigned int,bool);
 	//void setTimerEvent(Signalname,std::chrono::steady_clock::duration,bool);
@@ -76,12 +76,15 @@ private:
 	TimerEvent timer_events[SIZE];
 	void checkIfAvailableSpace();
 	void setNewTimerEvent(Signalname, unsigned int);
-	int i;
+
 	void pauseAll();
 	void startAll();
 
 
 	Channel<Signal>* controller_channel;
+	int i;
+	Speed speed;
+	bool stopped;
 };
 
 } // end namespace
