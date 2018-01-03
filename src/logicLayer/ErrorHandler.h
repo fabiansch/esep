@@ -39,7 +39,6 @@ private:
 			hal->greenLightLock(false);
 			hal->redLightOff();
 			if(this_cb_busy == false && cb_this == cb_sorting_2) {
-				cout<<"send CONVEYOR_BELT_READY"<<endl;
 				hal->sendSerial(Signal(cb_this,cb_previous,Signalname::CONVEYOR_BELT_READY));
 			}
 		}
@@ -47,10 +46,9 @@ private:
 
 	struct ERROR : public State {
 		ERROR() {
-			errorHandler->printErrors();
 			hal->motorLock(true);
 			hal->greenLightLock(true);
-			if ((*pendingSignals->begin()).name != Signalname::BUTTON_RESET_PUSHED) {
+			if ((*pendingSignals->begin()).name != Signalname::BUTTON_START_PUSHED) {
 				hal->blinkRed(Speed::slow);
 			} else {
 				hal->blinkRed(Speed::fast);
@@ -58,6 +56,7 @@ private:
 		}
 
 		virtual void button_reset_pushed() override {
+			errorHandler->printErrors();
 			hal->redLightOn();
 		}
 
@@ -70,14 +69,6 @@ private:
 
 		virtual void isPending(Signal signal) override {
 			pendingSignals->erase(signal);
-
-			for(auto &pendingSignal : *pendingSignals) {
-				cout<<"pending signal:"<<endl;
-				cout<<"sender: "<<(int)pendingSignal.sender<<endl;
-				cout<<"receiver: "<<(int)pendingSignal.receiver<<endl;
-				cout<<"name: "<<(int)pendingSignal.name<<endl<<endl;
-
-			}
 
 			if(pendingSignals->empty()) {
 				if(signal.name == Signalname::BUTTON_RESET_PUSHED) {

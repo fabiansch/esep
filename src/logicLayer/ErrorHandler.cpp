@@ -106,7 +106,7 @@ void ErrorHandler::broadcastEStopStatus() {
 }
 
 void ErrorHandler::printErrors() {
-	cout<<"### pending errors ###"<<endl;
+	cout<<"\n### pending errors ###"<<endl;
 	for( auto& pending : pendingSignals ) {
 		cout<<messages[pending]<<endl;
 	}

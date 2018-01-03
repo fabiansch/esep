@@ -154,6 +154,10 @@ void HardwareLayer::clearSignalBuffer() {
 	signalGenerator.clearSignalBuffer();
 }
 
+void HardwareLayer::clearItemBuffer(){
+	serial.getReceiver().getItemBuffer().reset();
+}
+
 void HardwareLayer::sendSerial(Signal signal) {
 	serial.send(signal);
 }

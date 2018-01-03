@@ -47,7 +47,6 @@ void TrafficLight::greenLightOn() {
 }
 
 void TrafficLight::yellowLightOn() {
-	greenStatus = LightStatus::off;
 	blink.removeBitmask(PIN_YELLOW_LIGHT);
 	io::GPIO::instance().setBits(PORT::A, PIN_YELLOW_LIGHT);
 }
@@ -96,7 +95,9 @@ void TrafficLight::blinkRed(Speed speed) {
 void TrafficLight::lockGreen(bool lock) {
 	if(lock) {
 		if(greenLocked == false) {
+			LightStatus lightStatusTemp(greenStatus);
 			greenLightOff();
+			greenStatus = lightStatusTemp;
 		}
 		greenLocked = true;
 	} else {

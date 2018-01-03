@@ -213,7 +213,7 @@ void Item::handle(Signal signal){
 			hal_->switchPointOpen();
 			break;
 		case Signalname::SWITCH_CLOSE:
-			hal_->switchPointClose();
+			statePtr-> close_switch(signal);
 			break;
 		// item
 		case Signalname::TRANSFER_ITEM:
@@ -276,8 +276,8 @@ void Item::setPrevious(Item* item) {
 }
 
 void Item::copyData(Item item){
-	this->id = item.id;
-	this->type = item.type;
+	this->id = item.getId();
+	this->type.height_cb_1 = item.getType().height_cb_1;
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
@@ -317,9 +317,8 @@ void closeSwitchIfNoItemOn(int milliseconds, hardwareLayer::HardwareLayer* hal) 
 	}
 }
 
-void Item::closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer* hal) {
-	timer = std::thread(closeSwitchIfNoItemOn, milliseconds, hal);
-	timer.detach();
+void Item::closeSwitchPoint(hardwareLayer::HardwareLayer* hal) {
+	hal->switchPointClose();
 }
 
 
@@ -396,11 +395,24 @@ void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
 void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 	cout << "### Item ###" << endl;
 	cout << "ID: "<< item->id << endl;
-	cout << "Type: " << item->type << endl;
+	cout << "Type: "  << (int) item->type.profile << endl;
+	cout << "Metal: " << (int) item->type.metal << endl;
+	cout << "Code: " << (int) item->type.code << endl;
+	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;
+	cout << "Height on CB2: " << item->type.height_cb_2 << "mm" << endl;
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){
-	item->copyData( hal->getPassedItem() );
+	Item itm = hal->getPassedItem();
+
+	item->copyData( itm );
+
+	cout << "#####ITEM from HAL######" << endl;
+	cout << "ID: " <<  itm.getId() << endl;
+	cout << "HÖHE: " << itm.getType().height_cb_1 << "mm" << endl;
+	cout << "" << endl;
+	cout << "" << endl;
+
 }
 
 void Item::setID(int* id) {

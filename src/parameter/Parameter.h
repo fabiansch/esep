@@ -93,8 +93,8 @@ extern Parameter<unsigned int> time_lb_slide_freed;
 extern Parameter<unsigned int> time_cb_unit_total;
 
 extern Parameter<float> slow_factor;
-extern Parameter<float> height_conveyor_belt; //int or double?
-extern Parameter<float> height_item; //int or double?
+extern Parameter<int> height_conveyor_belt; //int or double?
+extern Parameter<int> height_item; //int or double?
 
 extern Parameter<uint8_t> cb_sorting_1;
 extern Parameter<uint8_t> cb_sorting_2;
