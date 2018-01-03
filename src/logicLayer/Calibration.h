@@ -284,7 +284,7 @@ private:
 		struct ArrivalSwitchFinish: public State {
 			ArrivalSwitchFinish() {
 				*timeFrameStart = steady_clock::now();
-				std::thread thread = std::thread(timeout_timer,hal,3000);
+				std::thread thread = std::thread(timeout_timer,hal,7000);
 				thread.detach();
 			}
 			virtual void lb_slide_freed() override {

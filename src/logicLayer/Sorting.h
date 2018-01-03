@@ -8,13 +8,22 @@
 #ifndef SORTING_H_
 #define SORTING_H_
 
+enum class Order{ BOM1, BOM2, BMM};
+
 namespace logicLayer {
 
 class Item;
 
-class Sorting {
-public:
+class Sorting
+{
+  public:
 	static bool amIWanted(Item*);
+
+  private:
+	Order orderState = Order::BOM1;
+	bool checkOrder(Item*);
+	bool checkAgainstCB1Preferences(Item*);
+	bool checkAgainstCB2Preferences(Item*);
 };
 
 } /* namespace logicLayer */

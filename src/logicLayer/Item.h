@@ -13,11 +13,13 @@
 #include "Channel.h"
 #include "SignalReceiver.h"
 #include "Sorting.h"
+#include "TypeIdentification.h"
 #include <thread>
 
 namespace hardwareLayer {
 	class HardwareLayer;
 }
+
 
 namespace logicLayer {
 
@@ -61,6 +63,17 @@ public:
 	static void resetId();
 	int getId(){ return id; }
 
+	const ItemType& getType() const { return type; }
+
+	bool isPendingSortout() const {
+		return pendingSortout;
+	}
+
+	void setPendingSortout(bool pendingSortout = false) {
+		this->pendingSortout = pendingSortout;
+	}
+
+	//only need for sensor test
 	int heightAbsolute;
 	int heightCenter;
 
@@ -75,10 +88,15 @@ private:
 	/**
 	 *  Type of passed item
 	 */
-	int type = 0;
+	ItemType type;
 
 	Item* next_;
 	Item* previous_;
+
+	/**
+	 * Flag which marks if item has to be sorted out on next cb
+	 */
+	bool pendingSortout = false;
 
 	hardwareLayer::HardwareLayer* hal_;
 	Channel<Signal>* timerChannel_;
@@ -152,6 +170,7 @@ private:
 		virtual void lb_output_interrupted( 	Signal signal ) override { addPendingError(errorHandler_, Signal(Signalname::LB_OUTPUT_FREED)); }
 		virtual void lb_output_freed( 			Signal signal ) override {}
 		virtual void conveyer_belt_ready( 		Signal signal ) override {}
+		virtual void timeframe_input_leave( 	Signal signal ) override {}
 		virtual void timeframe_height_enter( 	Signal signal ) override {}
 		virtual void timeframe_height_leave( 	Signal signal ) override {}
 		virtual void timeframe_switch_enter( 	Signal signal ) override {}
@@ -180,16 +199,6 @@ private:
 				new (this) WaitForArrivalAtInput;
 			}
 		}
-
-		virtual void timeframe_input_leave( Signal signal ) override {
-			cout<<"timeframe_input_leave"<<endl;
-			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
-			Item::dequeueAndDeleteItem(item_);
-			Item::stopMotorIfNoItemsOnCB(hal_);
-			if(cb_this == cb_sorting_2) {
-				this_cb_busy = false;
-			}
-		}
 	};
 
 	struct WaitForArrivalAtInput : public State {
@@ -200,6 +209,16 @@ private:
 
 			//copy item from hal
 			copyItemFromHAL(hal_, item_);
+		}
+
+		virtual void timeframe_input_leave( Signal signal ) override {
+			cout<<"timeframe_input_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
 		}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -226,11 +245,6 @@ private:
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
 		}
-
-		virtual void timeframe_input_leave( Signal signal ) override {
-
-		}
-
 	};
 
 	struct DepartureInput : public State {
@@ -244,10 +258,10 @@ private:
 		}
 	};
 
-		struct WaitForArrivalAtHeight : public State {
-			WaitForArrivalAtHeight() {
-				cout<<"WaitForArrivalAtHeight"<<endl;
-			}
+	struct WaitForArrivalAtHeight : public State {
+		WaitForArrivalAtHeight() {
+			cout<<"WaitForArrivalAtHeight"<<endl;
+		}
 
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
@@ -300,6 +314,14 @@ private:
 
 	struct ArrivalSwitch : public State{
 		ArrivalSwitch() {
+
+			//get values from type identification and keep value from cb 1
+			float height_at_cb_1 = item_->getType().height_cb_1;
+			item_->type = TypeIdentification::typeScans.front();
+			item_->type.height_cb_1 = height_at_cb_1;
+
+			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
+
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_SWITCH_LEAVE_KILL);
 
 			if(Sorting::amIWanted(item_)) {
@@ -309,6 +331,8 @@ private:
 				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
 				item_->blinkYellowFor(5);
 			}
+
+			Item::printItem(hal_, item_);
 		}
 
 		virtual void lb_switch_freed( Signal signal ) override {
@@ -452,6 +476,7 @@ private:
 //					next_cb_busy.parameterList.showParameters();
 					cout<<"send item"<<endl;
 					Item::sendItem(hal_, item_);
+					Item::printItem(hal_, item_);
 				} else {
 					// TODO error Item lost
 				}
