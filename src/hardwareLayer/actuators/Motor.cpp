@@ -36,7 +36,6 @@ Motor::~Motor() {
 }
 
 void Motor::start() {
-	cout<<"start"<<endl;
 	running = true;
 	if(not locked) {
 		io::GPIO::instance().clearBits(PORT::A, MOTOR_STOP);
@@ -45,20 +44,17 @@ void Motor::start() {
 }
 
 void Motor::stop() {
-	cout<<"stop"<<endl;
 	running = false;
 	io::GPIO::instance().setBits(PORT::A, MOTOR_STOP);
 	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_STOP));
 }
 
 void Motor::setSlow() {
-	cout<<"setSlow"<<endl;
 	io::GPIO::instance().setBits(PORT::A, MOTOR_SLOW);
 	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_SLOW));
 }
 
 void Motor::clearSlow() {
-	cout<<"clearSlow"<<endl;
 	io::GPIO::instance().clearBits(PORT::A, MOTOR_SLOW);
 	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_FAST));
 }
