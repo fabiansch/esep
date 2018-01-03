@@ -220,6 +220,17 @@ private:
 			copyItemFromHAL(hal_, item_);
 		}
 
+		virtual void timeframe_input_leave( Signal signal ) override {
+			cout<<"timeframe_input_leave"<<endl;
+			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
+			Item::dequeueAndDeleteItem(item_);
+			Item::stopMotorIfNoItemsOnCB(hal_);
+			if(cb_this == cb_sorting_2) {
+				this_cb_busy = false;
+			}
+		}
+
+
 		virtual void lb_input_interrupted( Signal signal ) override {
 			new (this) ArrivalInput;
 		}
@@ -244,11 +255,6 @@ private:
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
 		}
-
-		virtual void timeframe_input_leave( Signal signal ) override {
-
-		}
-
 	};
 
 	struct DepartureInput : public State {
