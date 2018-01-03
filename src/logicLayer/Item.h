@@ -179,7 +179,6 @@ private:
 		virtual void slide_full(				Signal signal ) override {}
 		virtual void close_switch(   			Signal signal ) override {}
 
-
 		virtual void lb_input_interrupted( Signal signal ) override {
 			cout<<"lb_input_interrupted"<<endl;
 			if( cb_this == cb_sorting_1 ) {
@@ -312,9 +311,17 @@ private:
 		ArrivalSwitch() {
 
 			//get values from type identification and keep value from cb 1
-			float height_at_cb_1 = item_->getType().height_cb_1;
-			item_->type = TypeIdentification::typeScans.front();
-			item_->type.height_cb_1 = height_at_cb_1;
+			if( cb_this == cb_sorting_1){
+				item_->type = TypeIdentification::typeScans.front();
+			}
+			else{
+				float height_at_cb_1 = item_->getType().height_cb_1;
+				item_->type = TypeIdentification::typeScans.front();
+				item_->type.height_cb_1 = height_at_cb_1;
+			}
+
+
+			Item::printItem(hal_, item_);
 
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
 
@@ -449,6 +456,7 @@ private:
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL);
 			Item::onOutputAction(hal_, item_, errorHandler_);
 
+			cout << "### Print at output ###" << endl;
 			Item::printItem(hal_, item_);
 		}
 
