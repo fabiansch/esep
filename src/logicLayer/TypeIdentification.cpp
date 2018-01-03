@@ -48,6 +48,7 @@ void TypeIdentification::operator()(){
 			case Signalname::LB_HEIGHT_INTERRUPTED:
 				 //stop mesurement thread
 			{
+				// TODO check if detach is necessary
 				new std::thread(measureProfil, std::ref( typeScans.front().inDetection ), hal_ );
 			}
 
@@ -55,10 +56,14 @@ void TypeIdentification::operator()(){
 
 				//set height
 				if(cb_this == cb_sorting_1){
-					typeScans.front().height_cb_1 = toMm( hal_->getHeight() );
+					float test = toMm( hal_->getHeight() );
+					typeScans.front().height_cb_1 = test;
+					cout<<"TEST 1: "<<test<<endl;
 				}
 				else{
-					typeScans.front().height_cb_2 = toMm( hal_->getHeight() );
+					float test = toMm( hal_->getHeight() );
+					typeScans.front().height_cb_2 = test;
+					cout<<"TEST 2: "<<test<<endl;
 				}
 
 			break;
