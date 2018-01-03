@@ -213,7 +213,7 @@ void Item::handle(Signal signal){
 			hal_->switchPointOpen();
 			break;
 		case Signalname::SWITCH_CLOSE:
-			hal_->switchPointClose();
+			statePtr-> close_switch(signal);
 			break;
 		// item
 		case Signalname::TRANSFER_ITEM:
@@ -318,9 +318,8 @@ void closeSwitchIfNoItemOn(int milliseconds, hardwareLayer::HardwareLayer* hal) 
 	}
 }
 
-void Item::closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer* hal) {
-	timer = std::thread(closeSwitchIfNoItemOn, milliseconds, hal);
-	timer.detach();
+void Item::closeSwitchPoint(hardwareLayer::HardwareLayer* hal) {
+	hal->switchPointClose();
 }
 
 
