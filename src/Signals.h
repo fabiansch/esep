@@ -129,6 +129,7 @@ enum class Signalname : uint16_t {
 	//Serial Interface
 	SERIAL_WATCHDOG_TOKEN,
 	SERIAL_WATCHDOG_FEED,
+	SERIAL_FLUSH,
 
 	//CONNECTION
 	CONNECTION_LOST,
@@ -202,10 +203,25 @@ struct Signal {
 	{
 		LOG_SCOPE
 	}
+
 	bool operator<(const Signal& signal) const
 	{
-	   return name < signal.name;
+		if(sizeof(Signal::sender) + sizeof(Signal::name) > sizeof(int)) {
+			LOG_WARNING<<__FUNCTION__<<": comparation of Signal may overflows."<<endl;
+		}
+		int left  = ( (int)sender << (sizeof(Signalname) * 8) )
+					+ (int)name;
+		int right = ( (int)signal.sender << (sizeof(Signalname) * 8) )
+					+ (int)signal.name;
+
+		return left < right;
 	}
+
+	bool operator==(const Signal& signal) const
+	{
+		return name == signal.name;
+	}
+
 	Signalname name;
 	uint8_t sender;
 	uint8_t receiver;

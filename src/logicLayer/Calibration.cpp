@@ -212,8 +212,10 @@ namespace logicLayer {
 			case Signalname::SENSOR_SWITCH_IS_CLOSED:
 				break;
 			case Signalname::CONVEYOR_BELT_BUSY:
+				// hotfix - signal should not occure here
 				break;
 			case Signalname::CONVEYOR_BELT_READY:
+				// hotfix - signal should not occure here
 				break;
 			default:
 				LOG_ERROR<<"Calibration does not support following Signal: "<<(int)signal.name<<endl;

@@ -30,6 +30,7 @@ namespace hardwareLayer {
 
 		void greenLightOn();
 		void greenLightOff();
+		void greenLightLock(bool lock);
 		void yellowLightOn();
 		void yellowLightOff();
 		void redLightOn();
@@ -103,8 +104,12 @@ namespace hardwareLayer {
 
 
 
-		//GETTER
+		/*
+		 * @return SignalGenerator reference
+		 */
 		io::SignalGenerator& getSignalGenerator();
+
+
 
 	private:
 		void startUpRoutine();

@@ -40,6 +40,8 @@ private:
 	//Sorting sorting_; <-- no need because its static
 	Dispatcher dispatcher_;
 	Menu menu_;  // have to be last one
+
+void checkIfEStopIsPushed(hardwareLayer::HardwareLayer& hal);
 };
 
 } /* namespace logicLayer */

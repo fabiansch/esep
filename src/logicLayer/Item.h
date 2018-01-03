@@ -77,8 +77,6 @@ public:
 	int heightAbsolute;
 	int heightCenter;
 
-
-
 private:
 
 
@@ -136,12 +134,12 @@ private:
 
 
 		void createItem(){
-			//cout << "create item" << endl;
+			cout << "create item" << endl;
 			item_->previous_ = new Item(item_->hal_, item_->timerChannel_, item_, errorHandler_);
 		}
 
 		void forwardSignal( Signal signal ){
-			//cout<<"forwardSignal"<<endl;
+			cout<<"forwardSignal"<<endl;
 			if(item_->previous_ == nullptr ){
 				createItem();
 			}
@@ -226,7 +224,6 @@ private:
 			new (this) ArrivalInput;
 		}
 
-
 	};
 
 	struct ArrivalInput : public State {
@@ -248,6 +245,10 @@ private:
 			new (this) DepartureInput;
 		}
 
+		virtual void timeframe_input_leave( Signal signal ) override {
+
+		}
+
 	};
 
 	struct DepartureInput : public State {
@@ -261,10 +262,10 @@ private:
 		}
 	};
 
-		struct WaitForArrivalAtHeight : public State {
-			WaitForArrivalAtHeight() {
-				cout<<"WaitForArrivalAtHeight"<<endl;
-			}
+	struct WaitForArrivalAtHeight : public State {
+		WaitForArrivalAtHeight() {
+			cout<<"WaitForArrivalAtHeight"<<endl;
+		}
 
 		virtual void timeframe_height_leave( Signal signal ) override {
 			cout<<"timeframe_height_leave"<<endl;
@@ -341,7 +342,6 @@ private:
 		virtual void lb_switch_freed( Signal signal ) override {
 			cout<<"lb_switch_freed"<<endl;
 			Item::closeSwitchPoint(800, hal_);
-
 		}
 
 		virtual void timeframe_output_enter( Signal signal ) override {
@@ -384,7 +384,6 @@ private:
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
 			}
-
 			Item::stopMotorIfOneOrZeroItemsOnCB(hal_);
 			std::thread([=]() {
 				WAIT(500);
@@ -392,7 +391,6 @@ private:
 					this->item_->handle(Signal(Signalname::SLIDE_FULL));
 				}
 			}).detach();
-
 		}
 
 		virtual void slide_full (Signal signal ) override {
@@ -459,6 +457,7 @@ private:
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_OUTPUT_LEAVE_KILL);
 			Item::onOutputAction(hal_, item_, errorHandler_);
 
+			Item::printItem(hal_, item_);
 		}
 
 		virtual void conveyer_belt_ready( Signal signal ) override {
