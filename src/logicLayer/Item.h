@@ -441,6 +441,12 @@ private:
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
 			}
+
+			//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+			if( cb_this == cb_sorting_2 ){
+				Sorting::instance().amIWanted(item_);
+			}
+
 		}
 
 		virtual void lb_output_interrupted( Signal signal ) override {
