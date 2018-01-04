@@ -213,7 +213,10 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
+
 		}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -236,6 +239,8 @@ private:
 				Item::startMotor(hal_);
 			}
 		}
+
+
 
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
@@ -265,6 +270,8 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
 		}
 
@@ -298,6 +305,8 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
 		}
 
@@ -321,13 +330,12 @@ private:
 			}
 
 
-			Item::printItem(hal_, item_);
-
 			TypeIdentification::typeScans.erase(TypeIdentification::typeScans.begin());
 
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_SWITCH_LEAVE_KILL);
 
-			if(Sorting::amIWanted(item_)) {
+			bool sortOut = Sorting::amIWanted(item_);
+			if(sortOut) {
 				Item::openSwitchPoint(hal_);
 				*timerChannel_ << Signal(Signalname::START_TIMERS_OUTPUT);
 				*timerChannel_ << Signal(Signalname::SWITCH_CLOSE);
@@ -340,6 +348,11 @@ private:
 			}
 
 			Item::printItem(hal_, item_);
+
+			//check if pending sortout flag and current scan result dont fit togehter on cb2
+			if(!item_->isPendingSortout() && sortOut && cb_this == cb_sorting_2){
+				Sorting::instance().informCB1SortingUnit( hal_ ); //inform cb1 about cb2's sorting state
+			}
 		}
 
 		virtual void close_switch(Signal signal) override {
@@ -368,7 +381,10 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
+			item_->turnYellowLightOn(false);
 		}
 
 		virtual void lb_slide_interrupted( Signal signal ) override {
@@ -441,9 +457,18 @@ private:
 			addPendingError(errorHandler_, Signal(Signalname::BUTTON_START_PUSHED));
 			Item::dequeueAndDeleteItem(item_);
 			Item::stopMotorIfNoItemsOnCB(hal_);
+
+			//set sorting to previous state
+			Sorting::instance().setOrderState(Sorting::instance().getPreviousState());
+
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
+
+
+
 		}
 
 		virtual void lb_output_interrupted( Signal signal ) override {

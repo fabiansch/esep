@@ -163,6 +163,11 @@ enum class Signalname : uint16_t {
 	CALIBRATION,
 	STOP,
 
+	//update cb1 about cb2s sorting unit
+	SORTING_BOM1,
+	SORTING_BOM2,
+	SORTING_BMM
+
 };
 
 /**
