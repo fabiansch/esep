@@ -49,9 +49,9 @@ public:
 	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
 	static void stopMotorIfOneOrZeroItemsOnCB(hardwareLayer::HardwareLayer* hal);
 	static void sendSlideFull(hardwareLayer::HardwareLayer* hal);
-	static void sendSlideEmpty(hardwareLayer::HardwareLayer* hal);
+	static void broadcastSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler);
 
-	void blinkYellowFor(int seconds);
+	void turnYellowLightOn(bool on);
 
 
 
@@ -307,7 +307,7 @@ private:
 		}
 	};
 
-	struct ArrivalSwitch : public State{
+	struct ArrivalSwitch : public State {
 		ArrivalSwitch() {
 
 			//get values from type identification and keep value from cb 1
@@ -333,7 +333,10 @@ private:
 				*timerChannel_ << Signal(Signalname::SWITCH_CLOSE);
 			} else {
 				*timerChannel_ << Signal(Signalname::START_TIMERS_SLIDE);
-				item_->blinkYellowFor(5);
+				if(this_slide_full) {
+					addPendingError(errorHandler_, Signal(Signalname::SLIDE_EMPTY));
+				}
+				item_->turnYellowLightOn(true);
 			}
 
 			Item::printItem(hal_, item_);
@@ -414,7 +417,7 @@ private:
 		virtual void lb_slide_freed( Signal signal ) override {
 			cout<<"lb_slide_freed"<<endl;
 			this_slide_full = false;
-			Item::sendSlideEmpty(hal_);
+			Item::broadcastSlideEmpty(hal_, errorHandler_);
 			new (this) DepatureSlide;
 		}
 
@@ -424,8 +427,8 @@ private:
 		DepatureSlide() {
 			cout<<"DepatureSlide"<<endl;
 			Item::dequeueAndDeleteItem(item_);
+			item_->turnYellowLightOn(false);
 		}
-
 	};
 
 	struct WaitForArrivalAtOuput : public State {
