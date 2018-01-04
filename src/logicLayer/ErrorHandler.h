@@ -20,7 +20,7 @@ private:
 	struct State {
 		void errorOccurred() { new (this) ERROR; }
 		virtual void isPending(Signal signal){}
-		virtual void button_reset_pushed(){}
+		virtual void button_reset_pushed(){ errorHandler->printErrors(); }
 		virtual void button_start_pushed(){}
 
 		hardwareLayer::HardwareLayer* hal;
@@ -74,12 +74,10 @@ private:
 				if(signal.name == Signalname::BUTTON_E_STOP_PULLED){
 					new (this) NO_ERROR;
 				}
-				if(signal.name == Signalname::LB_OUTPUT_FREED && cb_this == cb_last){
+				else if(signal.name == Signalname::LB_OUTPUT_FREED && cb_this == cb_last){
 					new (this) NO_ERROR;
 				}
-				if(signal.name == Signalname::BUTTON_RESET_PUSHED) {
-					new (this) NO_ERROR;
-				} else {
+				else {
 					new (this) WaitForStart;
 				}
 
