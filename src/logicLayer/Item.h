@@ -444,7 +444,7 @@ private:
 
 			//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
 			if( cb_this == cb_sorting_2 ){
-				Sorting::instance().amIWanted(item_);
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
 
 		}

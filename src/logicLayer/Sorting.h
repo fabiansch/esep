@@ -25,12 +25,16 @@ class Item;
 class Sorting
 {
   public:
-	static bool amIWanted(Item*);
 
 	static Sorting& instance() {
 		static Sorting instance;
 		return instance;
 	}
+
+	static bool amIWanted(Item*);
+
+	void informCB1SortingUnit(  hardwareLayer::HardwareLayer* );
+
 
 	Order getOrderState() const {
 		return orderState;
@@ -45,7 +49,6 @@ class Sorting
 	bool checkOrder(Item*);
 	bool checkAgainstCB1Preferences(Item*);
 	bool checkAgainstCB2Preferences(Item*);
-	void updateCB1sSortingUnit(  hardwareLayer::HardwareLayer& );
 };
 
 } /* namespace logicLayer */

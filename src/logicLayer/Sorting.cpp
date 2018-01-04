@@ -123,16 +123,16 @@ bool Sorting::checkAgainstCB2Preferences(Item* item){
 	return result;
 }
 
-void Sorting::updateCB1sSortingUnit( hardwareLayer::HardwareLayer& hal ){
+void Sorting::informCB1SortingUnit( hardwareLayer::HardwareLayer* hal ){
 	switch ( instance().getOrderState() ) {
 		case Order::BOM1:
-			hal.sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BOM1 ) );
+			hal->sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BOM1 ) );
 		break;
 		case Order::BOM2:
-			hal.sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BOM2 ) );
+			hal->sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BOM2 ) );
 		break;
 		case Order::BMM:
-			hal.sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BMM ) );
+			hal->sendSerial( Signal(cb_this, cb_sorting_1, Signalname::SORTING_BMM ) );
 		break;
 	}
 }
