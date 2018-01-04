@@ -131,7 +131,7 @@ int Interface::flush() {
 	// ret = tcflush(this->fd_read, TCIOFLUSH);
 	// ret += tcflush(this->fd_send, TCIOFLUSH);
 
-	// if(ret == -1) {
+	// if(ret < 0) {
 	// 	LOG_ERROR << __FUNCTION__ << ": error while flushing file descriptor occurred."<<endl;
 	// 	LOG_ERROR<<errno<<" "<<strerror(errno)<<endl;
 	// }

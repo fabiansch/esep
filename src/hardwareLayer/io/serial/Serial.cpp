@@ -17,7 +17,7 @@ constexpr auto COM2 = "/dev/ser2";
 Serial::Serial(SignalGenerator& signalGenerator)
 : _serialClockwise(COM1, COM2)
 , _receiver(_serialClockwise, _watchDog, signalGenerator)
-, _watchDog(_serialClockwise, signalGenerator)
+, _watchDog(this, signalGenerator)
 {
 	LOG_SCOPE
 }
