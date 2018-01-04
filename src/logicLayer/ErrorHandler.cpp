@@ -121,7 +121,7 @@ void initMessages() {
 	messages[Signal(Signalname::LB_SLIDE_FREED)]  = "Item on slide. Please remove it.";
 	messages[Signal(Signalname::LB_OUTPUT_FREED)] = "Item on output. Please remove it.";
 	messages[Signal(Signalname::BUTTON_RESET_PUSHED)] = "Item lost. Press RESET button to go on.";
-	messages[Signal(Signalname::SLIDE_EMPTY)] = "Slides full. Please empty at least one slide.";
+	messages[Signal(Signalname::SLIDE_EMPTY)] = "This slide full. Please empty it.";
 	messages[Signal(Signalname::BUTTON_E_STOP_PULLED)] = "At least one E STOP pushed.";
 }
 
