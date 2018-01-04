@@ -21,7 +21,7 @@ bool Sorting::amIWanted(Item* item) {
 
 	//CASE 1 of 4 : both cb slides are full
 	if( this_slide_full && other_slide_full ){
-		//throw error & stop cb's
+		result = instance().checkOrder(item);
 	}
 
 	//CASE 2 of 4 : this cb has to pass through everything on cb1
