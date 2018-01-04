@@ -33,12 +33,16 @@ public:
 private:
 	hardwareLayer::HardwareLayer& hal;
 	Timer timer_;
-	Controller controller_;
+
 	TypeIdentification typeIdent_;
+
+	Controller controller_;
 	Calibration calibration_;
-	Sorting sorting_;
+	//Sorting sorting_; <-- no need because its static
 	Dispatcher dispatcher_;
 	// Menu menu_;  // have to be last one
+
+void checkIfEStopIsPushed(hardwareLayer::HardwareLayer& hal);
 };
 
 } /* namespace logicLayer */

@@ -107,6 +107,11 @@ public:
 	 */
 	void pollOnSensors();
 
+	/*
+	 * @brief: clears E_STOP_PUSHED in stored_bitmask
+	 */
+	void clearEStoppPushed();
+
 	// sensor events for higher byte of PORT C
 	static SensorEvent BUTTON_START;
 	static SensorEvent BUTTON_STOP;
@@ -134,6 +139,7 @@ private:
 	*@return: true if no clatter
 	*/
 	bool noChatterOn(SensorEvent& event);
+
 
 	/*
 	 * events holds all sensor events

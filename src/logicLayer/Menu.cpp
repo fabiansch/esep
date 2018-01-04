@@ -95,7 +95,10 @@ void Menu::computeInput(){
 			restart = true;
 			return;
 		} else if (!(textInput.compare("help"))){
+
 			printOptions();
+		} else if (!(textInput.compare("parameters"))){
+			cb_this.parameterList.showParameters();
 		} else {
 			cout<< "Invalid command." <<endl;
 			printInfo();
@@ -119,6 +122,7 @@ void Menu::printOptions() {
 			cout<< "\nstop\t\tStops current activity. You can then enter a new command." <<endl;
 			cout<< "\nshutdown\tShut down system." <<endl;
 			cout<< "\nrestart\t\tRestart System." <<endl;
+			cout<< "\nparameters\t\tShows the parameters.\n" <<endl;
 			cout<< "\nhelp\t\tShows this help text.\n" <<endl;
 }
 

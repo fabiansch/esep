@@ -82,6 +82,11 @@ void HardwareLayer::greenLightOff(){
 	_trafficLight.greenLightOff();
 }
 
+void HardwareLayer::greenLightLock(bool lock) {
+	_trafficLight.lockGreen(lock);
+}
+
+
 void HardwareLayer::yellowLightOn(){
 	_trafficLight.yellowLightOn();
 }
@@ -147,6 +152,10 @@ Signal HardwareLayer::getSignal() {
 
 void HardwareLayer::clearSignalBuffer() {
 	signalGenerator.clearSignalBuffer();
+}
+
+void HardwareLayer::clearItemBuffer(){
+	// serial.getReceiver().getItemBuffer().reset();
 }
 
 void HardwareLayer::sendSerial(Signal signal) {

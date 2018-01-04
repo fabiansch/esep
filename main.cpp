@@ -20,6 +20,7 @@ SCENARIO( "stop, START_TIMERS_HEIGHT, fast, start, stop, fast, start" ) {
     GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
+        hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::BUTTON_E_STOP_PULLED));
         time_input_to_height = 1000;
         logicLayer::TestController testController;
         lol.getTimer().setControllerChannel(&testController.getChannel());
@@ -137,6 +138,7 @@ SCENARIO( "stop, START_TIMERS_HEIGHT, slow, start" ) {
     GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
+        hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::BUTTON_E_STOP_PULLED));
         time_input_to_height = 1000;
         slow_factor = 0.5;
         logicLayer::TestController testController;
@@ -251,6 +253,7 @@ SCENARIO( "start, fast, START_TIMERS_HEIGHT" ) {
     GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
+        hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::BUTTON_E_STOP_PULLED));
         time_input_to_height = 1000;
         logicLayer::TestController testController;
         lol.getTimer().setControllerChannel(&testController.getChannel());
@@ -362,6 +365,7 @@ SCENARIO( "start, slow, START_TIMERS_HEIGHT" ) {
     GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
+        hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::BUTTON_E_STOP_PULLED));
         time_input_to_height = 1000;
         slow_factor = 0.5;
         logicLayer::TestController testController;
@@ -472,6 +476,7 @@ SCENARIO( "start, fast, START_TIMERS_HEIGHT, slow, fast, stop, slow, start, stop
     GIVEN( "a sortingmachine in IDLE state" ) {
         hardwareLayer::HardwareLayer hal;
         logicLayer::LogicLayer lol(hal);
+        hal.getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::BUTTON_E_STOP_PULLED));
         time_input_to_height = 1000;
         slow_factor = 0.5;
         logicLayer::TestController testController;

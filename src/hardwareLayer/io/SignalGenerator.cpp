@@ -196,5 +196,9 @@ void SignalGenerator::printEvents() {
 	}
 }
 
+void SignalGenerator::clearEStoppPushed() {
+	stored_mask |= BUTTON_E_STOP.bitmask;
+}
+
 } /* namespace io */
 } /* namespace hardwareLayer */

@@ -22,10 +22,13 @@ TrafficLight& TrafficLight::instance() {
 	return instance;
 }
 
-TrafficLight::TrafficLight() {
+TrafficLight::TrafficLight()
+: greenStatus(LightStatus::off)
+, greenLocked(false)
+, blink()
+{
 	LOG_SCOPE;
 	io::GPIO::instance().gainAccess();
-	blink = mmi::Blink();
 	thread = std::thread(std::ref(blink));
 }
 
@@ -36,8 +39,11 @@ TrafficLight::~TrafficLight() {
 }
 
 void TrafficLight::greenLightOn() {
-	blink.removeBitmask(PIN_GREEN_LIGHT);
-	io::GPIO::instance().setBits(PORT::A, PIN_GREEN_LIGHT);
+	greenStatus = LightStatus::on;
+	if (not greenLocked) {
+		blink.removeBitmask(PIN_GREEN_LIGHT);
+		io::GPIO::instance().setBits(PORT::A, PIN_GREEN_LIGHT);
+	}
 }
 
 void TrafficLight::yellowLightOn() {
@@ -51,8 +57,11 @@ void TrafficLight::redLightOn() {
 }
 
 void TrafficLight::greenLightOff() {
-	blink.removeBitmask(PIN_GREEN_LIGHT);
-	io::GPIO::instance().clearBits(PORT::A, PIN_GREEN_LIGHT);
+	greenStatus = LightStatus::off;
+	if (not greenLocked) {
+		blink.removeBitmask(PIN_GREEN_LIGHT);
+		io::GPIO::instance().clearBits(PORT::A, PIN_GREEN_LIGHT);
+	}
 }
 
 void TrafficLight::yellowLightOff() {
@@ -67,7 +76,12 @@ void TrafficLight::redLightOff() {
 
 
 void TrafficLight::blinkGreen(Speed speed) {
-	blink.add(PIN_GREEN_LIGHT, speed);
+	switch (speed) {
+	case Speed::slow: greenStatus = LightStatus::blinkSlow;		break;
+	case Speed::fast: greenStatus = LightStatus::blinkFast; 	break;
+	default: LOG_ERROR<<__FUNCTION__<<endl; exit(EXIT_FAILURE); break;
+	}
+	if (not greenLocked) blink.add(PIN_GREEN_LIGHT, speed);
 }
 
 void TrafficLight::blinkYellow(Speed speed) {
@@ -77,6 +91,28 @@ void TrafficLight::blinkYellow(Speed speed) {
 void TrafficLight::blinkRed(Speed speed) {
 	blink.add(PIN_RED_LIGHT, speed);
 }
+
+void TrafficLight::lockGreen(bool lock) {
+	if(lock) {
+		if(greenLocked == false) {
+			LightStatus lightStatusTemp(greenStatus);
+			greenLightOff();
+			greenStatus = lightStatusTemp;
+		}
+		greenLocked = true;
+	} else {
+		greenLocked = false;
+
+		switch(greenStatus) {
+		case LightStatus::on:		 	greenLightOn(); 		 	break;
+		case LightStatus::off:		 	greenLightOff(); 		 	break;
+		case LightStatus::blinkSlow: 	blinkGreen(Speed::slow); 	break;
+		case LightStatus::blinkFast: 	blinkGreen(Speed::fast); 	break;
+		default: LOG_ERROR<<__FUNCTION__<<endl; exit(EXIT_FAILURE); break;
+		}
+	}
+}
+
 
 } /* namespace hmi */
 } /* namespace hardwareLayer */

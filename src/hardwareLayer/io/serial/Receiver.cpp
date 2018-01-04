@@ -56,9 +56,22 @@ namespace serial {
 							dog_.feed();
 							forwardIfNotMaster(msg);
 						break;
+						case Signalname::SERIAL_FLUSH:
+							serial_.flush();
+							break;
 						case Signalname::TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
+
+
+								cout << "### Item in Receiver ###" << endl;
+								cout << "ID: "<< msg.item.getId() << endl;
+								cout << "Type: "  << (int)msg.item.getType().profile << endl;
+								cout << "Metal: " << (int) msg.item.getType().metal << endl;
+								cout << "Code: " << (int) msg.item.getType().code << endl;
+								cout << "Height on CB1: " << msg.item.getType().height_cb_1 << "mm" << endl;
+								cout << "Height on CB2: " << msg.item.getType().height_cb_2 << "mm" << endl;
+
 								itemBuffer_.pushItem(msg.item);
 								sgen_.pushBackOnSignalBuffer(msg.signal);
 							}
@@ -77,6 +90,8 @@ namespace serial {
 
 			} else {
 				serial_.flush();
+				Message flushPreviousCB(Signal(cb_this, cb_previous, Signalname::SERIAL_FLUSH));
+				serial_.send(flushPreviousCB);
 			}
 		}
 	}

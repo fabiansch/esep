@@ -213,7 +213,7 @@ void Item::handle(Signal signal){
 			hal_->switchPointOpen();
 			break;
 		case Signalname::SWITCH_CLOSE:
-			hal_->switchPointClose();
+			statePtr-> close_switch(signal);
 			break;
 		// item
 		case Signalname::TRANSFER_ITEM:
@@ -260,6 +260,8 @@ void Item::handle(Signal signal){
 		case Signalname::SLIDE_FULL:
 			statePtr->slide_full( signal );
 			break;
+		case Signalname::CALIBRATION_TIMEOUT:
+			break;
 		default:
 			LOG_ERROR<<"Item does not support following Signal: "<<(int)signal.name<<endl;
 			exit(EXIT_FAILURE);
@@ -276,13 +278,12 @@ void Item::setPrevious(Item* item) {
 }
 
 void Item::copyData(Item item){
-	this->id = item.id;
-	this->type = item.type;
+	this->id = item.getId();
+	this->type.height_cb_1 = item.getType().height_cb_1;
 }
 
 void Item::startMotor(hardwareLayer::HardwareLayer* hal) {
 	if (hal != nullptr) {
-		hal->motorFast();
 		hal->motorRotateClockwise();
 		hal->motorStart();
 	} else {
@@ -318,9 +319,8 @@ void closeSwitchIfNoItemOn(int milliseconds, hardwareLayer::HardwareLayer* hal) 
 	}
 }
 
-void Item::closeSwitchPoint(int milliseconds,hardwareLayer::HardwareLayer* hal) {
-	timer = std::thread(closeSwitchIfNoItemOn, milliseconds, hal);
-	timer.detach();
+void Item::closeSwitchPoint(hardwareLayer::HardwareLayer* hal) {
+	hal->switchPointClose();
 }
 
 
@@ -351,15 +351,21 @@ void Item::onOutputAction(hardwareLayer::HardwareLayer* hal, Item* item, ErrorHa
 
 void stopMotorIfNoItemAfter(int milliseconds, hardwareLayer::HardwareLayer* hal) {
 	WAIT(milliseconds);
-	if (items_on_cb == 0) {
-		hal->motorStop();
+
+	if(this_slide_full) {
+		if(items_on_cb <= 1) hal->motorStop();
+	} else {
+		if(items_on_cb <= 0) hal->motorStop();
 	}
 }
 
 void Item::lbOutputFreedAction(hardwareLayer::HardwareLayer* hal) {
-	if(items_on_cb > 0) {
-		hal->motorStart();
+	if(this_slide_full) {
+		if(items_on_cb > 1) hal->motorStart();
+	} else {
+		if(items_on_cb > 0) hal->motorStart();
 	}
+
 	if(cb_this != cb_last) {
 		timer = std::thread(stopMotorIfNoItemAfter, 1000, hal);
 		timer.detach();
@@ -395,13 +401,30 @@ void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
 }
 
 void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
-	cout << "### Item ###" << endl;
-	cout << "ID: "<< item->id << endl;
-	cout << "Type: " << item->type << endl;
+
+	if( item->type.profile == Profile::HOLED && item->type.metal ){
+		cout << "### Werkstück mit Bohrung und Metalleinsatz (WPT 1/2)" << endl;
+	}
+	else if( item->type.profile == Profile::HOLED && !item->type.metal ){
+		cout << "### Werkstück mit Bohrung (WPT 3)" << endl;
+	}
+	else if( item->type.profile == Profile::FLAT && !item->type.metal ){
+		cout << "### Flaches Werkstück (WPT 4)" << endl;
+	}
+	else if( item->type.profile == Profile::NORMAL && !item->type.metal && item->type.code > 0 ){
+		cout << "### Codiertes Werkstück (WPT 5." << item->type.code << ")" << endl;
+	}
+	else if( item->type.profile == Profile::NORMAL && !item->type.metal ){
+		cout << "### Werkstück mit Bohrung unten (WPT 6)" << endl;
+	}
+
+	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;
+	cout << "Height on CB2: " << item->type.height_cb_2 << "mm" << endl;
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){
-	item->copyData( hal->getPassedItem() );
+	Item itm = hal->getPassedItem();
+	item->copyData( itm );
 }
 
 void Item::setID(int* id) {
@@ -414,8 +437,10 @@ void Item::resetId() {
 }
 
 void Item::stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal) {
-	if(items_on_cb <= 0) {
-		hal->motorStop();
+	if(this_slide_full) {
+		if(items_on_cb <= 1) hal->motorStop();
+	} else {
+		if(items_on_cb <= 0) hal->motorStop();
 	}
 }
 
@@ -429,18 +454,19 @@ void Item::sendSlideFull(hardwareLayer::HardwareLayer* hal) {
 	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_FULL));
 }
 
-void Item::sendSlideEmpty(hardwareLayer::HardwareLayer* hal) {
+void Item::broadcastSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler) {
+	errorHandler->handle(Signal(Signalname::SLIDE_EMPTY));
 	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_EMPTY));
 }
 
-void Item::blinkYellowFor(int seconds) {
-	std::thread ([=]() {
-		if(this->hal_) {
-			this->hal_->blinkYellow(Speed::fast);
-			WAIT(seconds*1000);
+void Item::turnYellowLightOn(bool on) {
+	if(this->hal_) {
+		if(on){
+			this->hal_->yellowLightOn();
+		} else {
 			this->hal_->yellowLightOff();
 		}
-	}).detach();
+	}
 }
 
 

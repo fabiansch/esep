@@ -10,10 +10,16 @@
 
 namespace logicLayer {
 
+void LogicLayer::checkIfEStopIsPushed(hardwareLayer::HardwareLayer& hal) {
+	hal.getSignalGenerator().clearEStoppPushed();
+	hal.getSignalGenerator().pollOnSensors();
+}
+
 LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 : hal(hal)
-, controller_(hal, timer_.getChannel())
-,calibration_(hal)
+, typeIdent_(&hal)
+, controller_(hal, timer_.getChannel(), typeIdent_.getChannel())
+, calibration_(hal)
 , dispatcher_(
 		hal,
 		controller_.getChannel(),
@@ -23,6 +29,7 @@ LogicLayer::LogicLayer(hardwareLayer::HardwareLayer& hal)
 {
 	LOG_SCOPE
 	timer_.setControllerChannel(&controller_.getChannel());
+	checkIfEStopIsPushed(hal);
 	// menu_.computeInput();
 }
 
