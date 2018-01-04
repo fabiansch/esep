@@ -147,7 +147,6 @@ private:
 			this_cb_busy = false;
 			next_cb_busy = false;
 			Item::resetId();
-			other_slide_full = true;
 
 			TypeIdentification::setUnitToMm();
 			TypeIdentification::setHoleLevel();

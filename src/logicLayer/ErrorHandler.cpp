@@ -6,12 +6,12 @@
  */
 
 #include "ErrorHandler.h"
-#include <unordered_map>
+#include <map>
 
 
 namespace logicLayer {
 
-std::unordered_map<Signal,string> messages;
+std::map<Signal,string> messages;
 
 void initMessages();
 
@@ -45,6 +45,7 @@ void ErrorHandler::handle(Signal signal) {
 		LOG_WARNING<<"ERROR CONNECTION LOST"<<endl;
 		break;
 	case Signalname::CONNECTION_CONNECTED:
+		initMessages();
 		statePtr->isPending(signal);
 		broadcastEStopStatus();
 
@@ -58,11 +59,6 @@ void ErrorHandler::handle(Signal signal) {
 		}
 
 		LOG_DEBUG<<"E STOP pushed on cb: "<<(int)signal.sender<<endl;
-		if(signal.sender == cb_this) {
-			cout<<"E STOP pushed on this cb."<<endl;
-		} else {
-			cout<<"E STOP pushed on other cb."<<endl;
-		}
 		break;
 	case Signalname::BUTTON_E_STOP_PULLED:
 		statePtr->isPending(signal);
@@ -71,11 +67,6 @@ void ErrorHandler::handle(Signal signal) {
 		}
 
 		LOG_DEBUG<<"E STOP pulled on cb: "<<(int)signal.sender<<endl;
-		if(signal.sender == cb_this) {
-			cout<<"E STOP pulled on this cb."<<endl;
-		} else {
-			cout<<"E STOP pulled on other cb."<<endl;
-		}
 		break;
 	case Signalname::BUTTON_RESET_PUSHED:
 		statePtr->button_reset_pushed();
@@ -120,9 +111,12 @@ void initMessages() {
 	messages[Signal(Signalname::LB_SWITCH_FREED)] = "Item on switch. Please remove it.";
 	messages[Signal(Signalname::LB_SLIDE_FREED)]  = "Item on slide. Please remove it.";
 	messages[Signal(Signalname::LB_OUTPUT_FREED)] = "Item on output. Please remove it.";
-	messages[Signal(Signalname::BUTTON_RESET_PUSHED)] = "Item lost. Press RESET button to go on.";
-	messages[Signal(Signalname::SLIDE_EMPTY)] = "This slide full. Please empty it.";
-	messages[Signal(Signalname::BUTTON_E_STOP_PULLED)] = "At least one E STOP pushed.";
+	messages[Signal(Signalname::BUTTON_START_PUSHED)] = "Item lost. Press Start button to go on.";
+	messages[Signal(Signalname::CONNECTION_CONNECTED)] = "Connection to other conveyer belt lost.";
+	messages[Signal(cb_sorting_2, cb_all, Signalname::BUTTON_E_STOP_PULLED)] = "E STOP on cb_sorting_2 pushed.";
+	messages[Signal(cb_sorting_1, cb_all, Signalname::BUTTON_E_STOP_PULLED)] = "E STOP on cb_sorting_1 pushed.";
+	messages[Signal(cb_sorting_2, cb_all, Signalname::SLIDE_EMPTY)] = "Slide 2 full. Please empty it.";
+	messages[Signal(cb_sorting_1, cb_all, Signalname::SLIDE_EMPTY)] = "Slide 1 full. Please empty it.";
 }
 
 

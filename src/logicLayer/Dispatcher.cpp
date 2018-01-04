@@ -49,9 +49,11 @@ void Dispatcher::notify() {
 			other_slide_full.showValue();
 			break;
 		case Signalname::SLIDE_EMPTY:
-			other_slide_full = false;
-			this_slide_full.showValue();
-			other_slide_full.showValue();
+			if(signal.sender == cb_this) {
+				this_slide_full = false;
+			} else {
+				other_slide_full = false;
+			}
 			break;
 		case Signalname::START_TIMERS_INPUT:
 			timer_ << signal;

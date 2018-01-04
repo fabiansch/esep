@@ -49,7 +49,7 @@ public:
 	static void stopMotorIfNoItemsOnCB(hardwareLayer::HardwareLayer* hal);
 	static void stopMotorIfOneOrZeroItemsOnCB(hardwareLayer::HardwareLayer* hal);
 	static void sendSlideFull(hardwareLayer::HardwareLayer* hal);
-	static void sendSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler);
+	static void broadcastSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler);
 
 	void turnYellowLightOn(bool on);
 
@@ -307,7 +307,7 @@ private:
 		}
 	};
 
-	struct ArrivalSwitch : public State{
+	struct ArrivalSwitch : public State {
 		ArrivalSwitch() {
 
 			//get values from type identification and keep value from cb 1
@@ -417,7 +417,7 @@ private:
 		virtual void lb_slide_freed( Signal signal ) override {
 			cout<<"lb_slide_freed"<<endl;
 			this_slide_full = false;
-			Item::sendSlideEmpty(hal_, errorHandler_);
+			Item::broadcastSlideEmpty(hal_, errorHandler_);
 			new (this) DepatureSlide;
 		}
 

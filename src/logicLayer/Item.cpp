@@ -448,7 +448,7 @@ void Item::sendSlideFull(hardwareLayer::HardwareLayer* hal) {
 	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_FULL));
 }
 
-void Item::sendSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler) {
+void Item::broadcastSlideEmpty(hardwareLayer::HardwareLayer* hal, logicLayer::ErrorHandler* errorHandler) {
 	errorHandler->handle(Signal(Signalname::SLIDE_EMPTY));
 	hal->sendSerial(Signal(cb_this, cb_available, Signalname::SLIDE_EMPTY));
 }
