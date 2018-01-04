@@ -9,6 +9,7 @@
 #define WATCHDOG_H_
 
 
+#include "Interface.h"
 #include "SignalGenerator.h"
 #include <thread>
 
@@ -17,19 +18,17 @@ namespace hardwareLayer {
 namespace io {
 namespace serial {
 
-class Serial;
-
 enum class Connection { CONNECTED, LOST };
 
 class WatchDog {
 public:
-	WatchDog(Serial* serial, SignalGenerator& sgen);
+	WatchDog(Interface& serial, SignalGenerator& sgen);
 	virtual ~WatchDog();
 	void operator()();
 	void terminate();
 	void feed();
 private:
-	Serial* serial_;
+	Interface& serial_;
 	SignalGenerator& sgen_;
 	std::thread watchdog;
 	bool dogWasFed;

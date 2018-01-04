@@ -18,7 +18,7 @@ Serial::Serial(SignalGenerator& signalGenerator)
 : signalGenerator(signalGenerator)
 , _serialClockwise(COM1, COM2)
 , _receiver(_serialClockwise, _watchDog, signalGenerator)
-, _watchDog(this, signalGenerator)
+, _watchDog(_serialClockwise, signalGenerator)
 {
 	LOG_SCOPE
 }
@@ -37,13 +37,6 @@ void Serial::send(logicLayer::Item* item) {
 	// TODO error handling
 	Message message(*item);
 	_serialClockwise.send(message);
-}
-
-void Serial::flush() {
-  _serialClockwise.flush();
-  _serialClockwise.flush();
-  _serialClockwise.flush();
-  _serialClockwise.send(Signal(cb_this, cb_all, Signalname::SERIAL_FLUSH));
 }
 
 Receiver& Serial::getReceiver() {

@@ -24,7 +24,6 @@ public:
 	virtual ~Serial();
 	void send(Signal& signal);
 	void send(logicLayer::Item* item);
-  void flush();
 	Receiver& getReceiver();
 
 private:

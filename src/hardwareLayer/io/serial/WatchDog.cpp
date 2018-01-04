@@ -7,7 +7,6 @@
 
 #include "Header.h"
 #include "WatchDog.h"
-#include "Serial.h"
 
 namespace hardwareLayer {
 namespace io {
@@ -16,7 +15,7 @@ namespace serial {
 constexpr int period = 250;
 int connectionLostCounter = 0;
 
-WatchDog::WatchDog(Serial* serial, SignalGenerator& sgen) :
+WatchDog::WatchDog(Interface& serial, SignalGenerator& sgen) :
 serial_(serial),
 sgen_(sgen),
 watchdog(std::ref(*this)),
@@ -38,33 +37,37 @@ WatchDog::~WatchDog() {
 void WatchDog::operator()(){
 	LOG_SCOPE
 
-	Signal token( Signal(cb_1, cb_all, Signalname::SERIAL_WATCHDOG_TOKEN) );
+	Message token( Signal(cb_1, cb_all, Signalname::SERIAL_WATCHDOG_TOKEN) );
 
 	while(running) {
 
 		dogWasFed = false;
 
-		if(cb_this == cb_1) serial_->send(token);
+		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
-		if(cb_this == cb_1) serial_->send(token);
+		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
-		if(cb_this == cb_1) serial_->send(token);
+		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
 
-    dogWasFed ? connectionLostCounter = 0 : connectionLostCounter += 1;
+		dogWasFed ? connectionLostCounter = 0 : connectionLostCounter += 1;
 
 		if(status == Connection::LOST && dogWasFed){
 			status = Connection::CONNECTED;
 			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_CONNECTED));
 		}
-		else if(status == Connection::CONNECTED && !dogWasFed) {
+		else if(status == Connection::CONNECTED && !dogWasFed){
 			status = Connection::LOST;
 			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_LOST));
 		}
 
 		if(connectionLostCounter >= 3) {
-			serial_->flush();
-			WAIT(500);
+			serial_.flush(); WAIT(10);
+			serial_.flush(); WAIT(10);
+			serial_.flush();
+
+			Message flushAll( Signal(cb_1, cb_all, Signalname::SERIAL_FLUSH) );
+			serial_.send(flushAll);
 		}
 
 	}

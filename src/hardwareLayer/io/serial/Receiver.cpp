@@ -94,8 +94,8 @@ namespace serial {
 				serial_.flush(); WAIT(10);
 				serial_.flush(); WAIT(10);
 				serial_.flush();
-				Message flushAllCBs(Signal(cb_this, cb_all, Signalname::SERIAL_FLUSH));
-				serial_.send(flushAllCBs);
+				Message flushAll(Signal(cb_this, cb_all, Signalname::SERIAL_FLUSH));
+				serial_.send(flushAll);
 			}
 		}
 	}
