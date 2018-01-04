@@ -213,7 +213,10 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
+
 		}
 
 		virtual void lb_input_interrupted( Signal signal ) override {
@@ -236,6 +239,8 @@ private:
 				Item::startMotor(hal_);
 			}
 		}
+
+
 
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
@@ -265,6 +270,8 @@ private:
 			Item::stopMotorIfNoItemsOnCB(hal_);
 			if(cb_this == cb_sorting_2) {
 				this_cb_busy = false;
+				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
+				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
 		}
 
@@ -442,10 +449,7 @@ private:
 				this_cb_busy = false;
 			}
 
-			//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
-			if( cb_this == cb_sorting_2 ){
-				Sorting::instance().informCB1SortingUnit( hal_ );
-			}
+
 
 		}
 
