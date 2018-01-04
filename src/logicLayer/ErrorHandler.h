@@ -53,6 +53,7 @@ private:
 			} else {
 				hal->blinkRed(Speed::fast);
 			}
+			errorHandler->printErrors();
 		}
 
 		virtual void button_reset_pushed() override {

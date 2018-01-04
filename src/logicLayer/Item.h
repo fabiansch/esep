@@ -384,6 +384,7 @@ private:
 				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
 				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
+			item_->turnYellowLightOn(false);
 		}
 
 		virtual void lb_slide_interrupted( Signal signal ) override {
