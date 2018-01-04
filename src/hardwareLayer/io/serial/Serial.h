@@ -24,9 +24,11 @@ public:
 	virtual ~Serial();
 	void send(Signal& signal);
 	void send(logicLayer::Item* item);
+  void flush();
 	Receiver& getReceiver();
 
 private:
+  SignalGenerator& signalGenerator;
 	Interface _serialClockwise;
 	Receiver _receiver;
 	WatchDog _watchDog; // needs to be below Receiver

@@ -15,7 +15,8 @@ constexpr auto COM1 = "/dev/ser1";
 constexpr auto COM2 = "/dev/ser2";
 
 Serial::Serial(SignalGenerator& signalGenerator)
-: _serialClockwise(COM1, COM2)
+: signalGenerator(signalGenerator)
+, _serialClockwise(COM1, COM2)
 , _receiver(_serialClockwise, _watchDog, signalGenerator)
 , _watchDog(this, signalGenerator)
 {
@@ -36,6 +37,13 @@ void Serial::send(logicLayer::Item* item) {
 	// TODO error handling
 	Message message(*item);
 	_serialClockwise.send(message);
+}
+
+void Serial::flush() {
+  _serialClockwise.flush();
+  _serialClockwise.flush();
+  _serialClockwise.flush();
+  _serialClockwise.send(Signal(cb_this, cb_all, Signalname::SERIAL_FLUSH));
 }
 
 Receiver& Serial::getReceiver() {
