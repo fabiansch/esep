@@ -398,26 +398,30 @@ void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
 }
 
 void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
-	cout << "### Item ###" << endl;
-	cout << "ID: "<< item->id << endl;
-	cout << "Type: "  << (int) item->type.profile << endl;
-	cout << "Metal: " << (int) item->type.metal << endl;
-	cout << "Code: " << (int) item->type.code << endl;
+
+	if( item->type.profile == Profile::HOLED && item->type.metal ){
+		cout << "### Werkstück mit Bohrung und Metalleinsatz (WPT 1/2)" << endl;
+	}
+	else if( item->type.profile == Profile::HOLED && !item->type.metal ){
+		cout << "### Werkstück mit Bohrung (WPT 3)" << endl;
+	}
+	else if( item->type.profile == Profile::FLAT && !item->type.metal ){
+		cout << "### Flaches Werkstück (WPT 4)" << endl;
+	}
+	else if( item->type.profile == Profile::NORMAL && !item->type.metal && item->type.code > 0 ){
+		cout << "### Codiertes Werkstück (WPT 5." << item->type.code << ")" << endl;
+	}
+	else if( item->type.profile == Profile::NORMAL && !item->type.metal ){
+		cout << "### Werkstück mit Bohrung unten (WPT 6)" << endl;
+	}
+
 	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;
 	cout << "Height on CB2: " << item->type.height_cb_2 << "mm" << endl;
 }
 
 void Item::copyItemFromHAL(hardwareLayer::HardwareLayer* hal, Item* item){
 	Item itm = hal->getPassedItem();
-
 	item->copyData( itm );
-
-	cout << "#####ITEM from HAL######" << endl;
-	cout << "ID: " <<  itm.getId() << endl;
-	cout << "HÖHE: " << itm.getType().height_cb_1 << "mm" << endl;
-	cout << "" << endl;
-	cout << "" << endl;
-
 }
 
 void Item::setID(int* id) {

@@ -24,14 +24,19 @@ bool Sorting::amIWanted(Item* item) {
 		//throw error & stop cb's
 	}
 
-	//CASE 2 of 4 : this cb has to pass through everything
+	//CASE 2 of 4 : this cb has to pass through everything on cb1
 	if( this_slide_full && !other_slide_full  ){
 		result = instance().checkOrder(item);
-		//mark pending sorting flag to determine sorting out on next cb, but only if item is undesired
-		if(!result){
-			item->setPendingSortout(true);
+
+		//need to do only on first cb
+		if( cb_this == cb_sorting_1 ){
+			//mark pending sorting flag to determine sorting out on next cb, but only if item is undesired
+			if(!result){
+				item->setPendingSortout(true);
+			}
+			result = true; // passing through all items
 		}
-		result = true;
+
 	}
 
 	//CASE 3 of 4 : this cb have to sort everything out
@@ -72,6 +77,7 @@ bool Sorting::checkOrder(Item* passedItem){
 			cout << "In BOM1" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && !passedItem->getType().metal ){
 				result = true;
+				previousState = orderState;
 				orderState = Order::BOM2;
 			}
 		break;
@@ -79,6 +85,7 @@ bool Sorting::checkOrder(Item* passedItem){
 			cout << "In BOM2" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && !passedItem->getType().metal ){
 				result = true;
+				previousState = orderState;
 				orderState = Order::BMM;
 			}
 		break;
@@ -86,6 +93,7 @@ bool Sorting::checkOrder(Item* passedItem){
 			cout << "In BMM" << endl;
 			if( passedItem->getType().profile == Profile::HOLED && passedItem->getType().metal ){
 				result = true;
+				previousState = orderState;
 				orderState = Order::BOM1;
 			}
 		break;

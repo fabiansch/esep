@@ -44,8 +44,13 @@ class Sorting
 		this->orderState = orderState;
 	}
 
+	Order getPreviousState() const {
+		return previousState;
+	}
+
   private:
 	Order orderState = Order::BOM1;
+	Order previousState = Order::BOM1;
 	bool checkOrder(Item*);
 	bool checkAgainstCB1Preferences(Item*);
 	bool checkAgainstCB2Preferences(Item*);

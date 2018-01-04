@@ -40,48 +40,60 @@ void TypeIdentification::operator()(){
 				createScan();
 			break;
 			case Signalname::LB_HEIGHT_FREED:
-				 //stop mesurement
-				inMeasurement = false;
-				typeScans.front().inDetection = false;
-				hal_->motorFast();
+				if( typeScans.size() > 0){ //only start if there is an type object on vector
+					 //stop mesurement
+					inMeasurement = false;
+					typeScans.front().inDetection = false;
+					hal_->motorFast();
+				}
 			break;
 			case Signalname::LB_HEIGHT_INTERRUPTED:
-				 //stop mesurement thread
-			{
-				// TODO check if detach is necessary
-				new std::thread(measureProfil, std::ref( typeScans.front().inDetection ), hal_ );
-			}
+				if( typeScans.size() > 0){ //only start if there is an type object on vector
+					 //stop mesurement thread
+					{
+						// TODO check if detach is necessary
+						new std::thread(measureProfil, std::ref( typeScans.front().inDetection ), hal_ );
+					}
 
-				typeScans.front().profile = heightMapping(hal_->getHeight());
+					typeScans.front().profile = heightMapping(hal_->getHeight());
 
-				//set height
-				if(cb_this == cb_sorting_1){
-					typeScans.front().height_cb_1 = toMm( hal_->getHeight() );
-				}
-				else{
-					typeScans.front().height_cb_2 = toMm( hal_->getHeight() );
+					//set height
+					if(cb_this == cb_sorting_1){
+						typeScans.front().height_cb_1 = toMm( hal_->getHeight() );
+					}
+					else{
+						typeScans.front().height_cb_2 = toMm( hal_->getHeight() );
+					}
 				}
 
 			break;
+			case Signalname::SENSOR_METAL_NOT_MATCH:
+				if( typeScans.size() > 0){ //only start if there is an type object on vector
+					typeScans.front().metal = false;
+				}
+				break;
 			case Signalname::SENSOR_METAL_MATCH:
-
-				typeScans.front().metal = true;
+				if( typeScans.size() > 0){ //only start if there is an type object on vector
+					typeScans.front().metal = true;
+				}
 			break;
 			case Signalname::LB_SWITCH_INTERRUPTED:
 					//silence is golden
 			break;
 			case Signalname::SENSOR_HEIGHT_MATCH:
-				if(!inMeasurement){
-					inMeasurement = true;
+				if( typeScans.size() > 0){ //only start if there is an type object on vector
+					if(!inMeasurement){
+						inMeasurement = true;
 
-					if(typeScans.front().profile!=Profile::HOLED){
-						typeScans.front().profile = Profile::NORMAL;
+						if(typeScans.front().profile!=Profile::HOLED){
+							typeScans.front().profile = Profile::NORMAL;
+						}
+
+						//start mesurement
+						//start thread - periodically read height -> e.g. 20 ms
+						hal_->motorSlow();
+
 					}
-
-					//start mesurement
-					//start thread - periodically read height -> e.g. 20 ms
-					hal_->motorSlow();
-
 				}
 			break;
 			default:
