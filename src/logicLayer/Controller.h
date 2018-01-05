@@ -20,7 +20,7 @@
 
 namespace logicLayer {
 
-class Controller: public SignalReceiver {
+class Controller : public SignalReceiver {
 
 private:
 	hardwareLayer::HardwareLayer& hal;
@@ -67,69 +67,44 @@ private:
 		Channel<Signal>* typeIdCh_;
 	} *statePtr;
 
-	struct Start : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-	};
-
 	struct Idle : public State {
 		Idle(){
 		}
-		virtual void run(){
+		virtual void run() override {
 			new (this) Run;
 		}
-		virtual void sensor_test(){
+		virtual void sensor_test() override {
 			new (this) Sensor_Test;
 		}
-		virtual void button_test(){
+		virtual void button_test() override {
 			new (this) Button_Test;
 		}
-		virtual void actuator_test(){
+		virtual void actuator_test() override {
 			new (this) Actuator_Test;
 		}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){
+		virtual void calibrate() override {
 			new (this) Calibrate;
 		}
 	};
 
-	struct Sensor_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
+	struct Sensor_Test : public State {
+		virtual void forward(Signal signal) override {
 			sensorTest->handle(signal);
 		}
 	};
 
-	struct Actuator_Test : public State{
-		virtual void run(){}
-		virtual void sensor_test(){
+	struct Actuator_Test : public State {
+		virtual void sensor_test() override {
 			new (this) Sensor_Test;
 		}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
+		virtual void forward(Signal signal) override {
 			test::Test::actuatorsTestHelper(hal, signal);
 		}
 	};
 
-	struct Button_Test : public State{
+	struct Button_Test : public State {
 		virtual void run(){}
 		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
 		virtual void ready(){}
 		virtual void calibrate(){}
 		virtual void forward(Signal signal) {
@@ -139,7 +114,6 @@ private:
 
 	struct Run : public State{
 		Run(){
-			cout << "enter run"<<endl;
 			hal->blinkGreen(Speed::slow);
 			items_on_cb = 0;
 			item_on_switch = false;
@@ -152,43 +126,17 @@ private:
 			TypeIdentification::setHoleLevel();
 			hal->clearItemBuffer();
 		}
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
+		virtual void forward(Signal signal) override {
 			head_->handle( signal );
 			*typeIdCh_ << signal;
 		}
-
-	};
-
-	struct Safe : public State{
-		Safe() {
-			cout<<"In SAFE State"<<endl;
-		}
-		virtual void run(){}
-		virtual void stop(){/* do nothing */ }
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
 	};
 
 	struct Calibrate : public State{
 		Calibrate() {
 			calibration->handle(Signal(Signalname::CALIBRATION_START));
 		}
-		virtual void run(){}
-		virtual void sensor_test(){}
-		virtual void alert(){}
-		virtual void restart(){}
-		virtual void ready(){}
-		virtual void calibrate(){}
-		virtual void forward(Signal signal) {
+		virtual void forward(Signal signal) override {
 			calibration->handle(signal);
 		}
 	};

@@ -94,7 +94,6 @@ void Menu::computeInput(){
 			return;
 		} else if (!(textInput.compare("restart"))){
 			cout << "====================== Restarting Sortingmachine =====================" << endl;
-			controller_ << Signalname::STOP;
 			restart = true;
 			return;
 		} else if (!(textInput.compare("help"))){
