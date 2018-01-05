@@ -18,6 +18,7 @@ Menu::Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>& controller)
 , restart(false)
 {
 	LOG_SCOPE
+	Menu::printInfo();
 }
 
 void Menu::computeInput(){
@@ -89,8 +90,10 @@ void Menu::computeInput(){
 		} else if (!(textInput.compare("stop"))){
 			controller_ << Signalname::STOP;
 		} else if (!(textInput.compare("shutdown"))){
+			cout << "================= Shutting down Sortingmachine start =================" << endl;
 			return;
 		} else if (!(textInput.compare("restart"))){
+			cout << "====================== Restarting Sortingmachine =====================" << endl;
 			controller_ << Signalname::STOP;
 			restart = true;
 			return;

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 		restart = loLay.getMenu().isRestart();
 	} while (restart);
 
-	cout << "===================== Shutting down Sortingmachine =========================" << endl;
+	cout << "================= Shutting down Sortingmachine done =================" << endl;
 
 	return EXIT_SUCCESS;
 }

@@ -58,19 +58,16 @@ public:
 
 	void showValue()
 	{
-
 		if(std::is_same<T, uint8_t>::value) {
 			cout<<name<<": "<<(int)value<<endl;
 		}
 		else {
 			cout<<name<<": "<<value<<endl;
 		}
-
-
 	}
 
 	void initValue() {
-		value = 0;
+		value = T();
 	}
 
 	T value;
@@ -93,8 +90,8 @@ extern Parameter<unsigned int> time_lb_slide_freed;
 extern Parameter<unsigned int> time_cb_unit_total;
 
 extern Parameter<float> slow_factor;
-extern Parameter<int> height_conveyor_belt; //int or double?
-extern Parameter<int> height_item; //int or double?
+extern Parameter<int> height_conveyor_belt;
+extern Parameter<int> height_item;
 
 extern Parameter<uint8_t> cb_sorting_1;
 extern Parameter<uint8_t> cb_sorting_2;

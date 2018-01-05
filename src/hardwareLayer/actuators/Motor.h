@@ -67,6 +67,8 @@ private:
 	io::SignalGenerator& signalGenerator;
 	bool locked;
 	bool running;
+	bool slow;
+	bool clockwise;
 };
 
 } /* namespace actuators */

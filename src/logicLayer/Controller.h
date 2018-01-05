@@ -47,6 +47,7 @@ private:
 			hal->greenLightOn();
 			hal->motorStop();
 			hal->switchPointClose();
+			Menu::printInfo();
 			new (this) Idle;
 		}
 		virtual void sensor_test(){}
@@ -77,7 +78,6 @@ private:
 
 	struct Idle : public State {
 		Idle(){
-			Menu::printInfo();
 		}
 		virtual void run(){
 			new (this) Run;
