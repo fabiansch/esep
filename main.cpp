@@ -4,8 +4,6 @@
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
 
-#include <chrono>
-
 using namespace std;
 
 void evaluateIfCb_1();
@@ -15,21 +13,6 @@ int main(int argc, char *argv[])
 {
 	LOG_SET_LEVEL(DEBUG);
 	LOG_SCOPE;
-
-	std::chrono::steady_clock::time_point tp1,tp2,tp3;
-	std::chrono::steady_clock::duration d1,d2(std::chrono::milliseconds(1000));
-	float f1 = 0.5;
-
-	tp1 = std::chrono::steady_clock::now();
-	WAIT(200);
-	tp2 = std::chrono::steady_clock::now();
-
-	//tp3 = std::chrono::steady_clock::time_point(tp2-tp1);
-//
-//	d1 = ((d2-(tp2-tp1))*1000) / (int)(0*1000);
-//
-//	cout<<"time: "<<std::chrono::duration_cast<std::chrono::milliseconds>(d1).count()<<endl;
-
 
 	bool restart = false;
 	do {

@@ -41,7 +41,6 @@ void ErrorHandler::handle(Signal signal) {
 	case Signalname::CONNECTION_LOST:
 		addPending(Signal(Signalname::CONNECTION_CONNECTED));
 
-		cout<<"CONNECTION LOST"<<endl;
 		LOG_WARNING<<"ERROR CONNECTION LOST"<<endl;
 		break;
 	case Signalname::CONNECTION_CONNECTED:
@@ -49,7 +48,6 @@ void ErrorHandler::handle(Signal signal) {
 		statePtr->isPending(signal);
 		broadcastEStopStatus();
 
-		cout<<"CONNECTION CONNECTED"<<endl;
 		LOG_DEBUG<<"CONNECTION CONNECTED"<<endl;
 		break;
 	case Signalname::BUTTON_E_STOP_PUSHED:
