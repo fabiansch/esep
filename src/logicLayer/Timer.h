@@ -8,7 +8,6 @@
 #ifndef TIMER_H_
 #define TIMER_H_
 
-#include <thread>
 #include <chrono>
 
 #include "Channel.h"
@@ -63,7 +62,6 @@ public:
 	virtual ~Timer();
 	void operator()();
 	void setControllerChannel(Channel<Signal>*);
-
 
 private:
 	void killTimer(Signalname);
