@@ -53,7 +53,7 @@ AsyncChannel::~AsyncChannel() {
 	LOG_DEBUG<<__FUNCTION__ << " channel destroyed." << endl;;
 }
 
-AsyncMsg AsyncChannel::nextMessage(){
+AsyncMsg AsyncChannel::nextMessage() {
 	LOG_SCOPE
 
 	AsyncMsg msg;

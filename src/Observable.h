@@ -14,7 +14,7 @@
 
 class Observable {
 public:
-	void register_observer(Observer* o) {
+	virtual void register_observer(Observer* o) {
 		LOG_SCOPE
 		//check if observer already exists
 		if (observers.size() > 0) {
@@ -29,7 +29,7 @@ public:
 
 	}
 
-	void unregister_observer(Observer* o) {
+	virtual void unregister_observer(Observer* o) {
 		LOG_SCOPE
 
 		for (auto it = observers.begin(); it != observers.end(); ) {

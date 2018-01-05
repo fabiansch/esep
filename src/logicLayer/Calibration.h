@@ -319,17 +319,19 @@ private:
 			virtual void calibration_timeout(uint8_t sender) override {}
 		};
 
-		struct WaitingForOthers: public State {
+		struct WaitingForOthers : public State {
 			WaitingForOthers() {
-				if (cb_this == cb_next ) {
+				if (cb_this == cb_last ) {
 					cout<<"========== Calibration completed ==========="<<endl;
 					new (this) IDLE;
+					hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::STOP));
 				}
 			}
 			virtual void calibration_successful(uint8_t sender) override {
 				cout << "========== Calibration completed on all CB's===========" << endl;
-				cb_this.parameterList.showParameters();
 				new (this) IDLE;
+				hal->getSignalGenerator().pushBackOnSignalBuffer(Signal(Signalname::STOP));
+				hal->sendSerial(Signal(cb_this, cb_available, Signalname::STOP));
 			}
 			virtual void calibration_timeout(uint8_t sender) override {}
 		};
