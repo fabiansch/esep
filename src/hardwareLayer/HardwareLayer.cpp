@@ -6,12 +6,19 @@
  */
 
 #include "HardwareLayer.h"
+#include "Header.h"
+
+#include <csignal>
+#include <sys/neutrino.h>
+#include <hw/inout.h>
 
 namespace hardwareLayer {
 
+void signalHandler( int signum );
+
 HardwareLayer::HardwareLayer() :
 serial(signalGenerator),
-_motor(actuators::Motor::instance()),
+_motor(actuators::Motor::instance(signalGenerator)),
 _switchPoint(actuators::SwitchPoint::instance()),
 _trafficLight(mmi::TrafficLight::instance()),
 _heightSensor(sensors::HeightSensor::instance()),
@@ -19,23 +26,16 @@ _ButtonLEDs(mmi::ButtonLEDs::instance())
 {
 	LOG_SCOPE;
 
-	motorStop();
-	motorRotateClockwise();
-	switchPointClose();
-	greenLightOff();
-	redLightOff();
-	yellowLightOff();
+	signal(SIGINT,  signalHandler);
+	signal(SIGTERM, signalHandler);
+
+	startUpRoutine();
 }
 
 HardwareLayer::~HardwareLayer() {
 	LOG_SCOPE;
 
-	motorStop();
-	switchPointClose();
-	greenLightOff();
-	redLightOff();
-	yellowLightOff();
-
+	shutDownRoutine();
 }
 
 void HardwareLayer::motorStart() {
@@ -52,6 +52,10 @@ void HardwareLayer::motorSlow() {
 
 void HardwareLayer::motorFast() {
 	_motor.clearSlow();
+}
+
+void HardwareLayer::motorLock(bool lock) {
+	_motor.lock(lock);
 }
 
 void HardwareLayer::motorRotateClockwise() {
@@ -77,6 +81,11 @@ void HardwareLayer::greenLightOn(){
 void HardwareLayer::greenLightOff(){
 	_trafficLight.greenLightOff();
 }
+
+void HardwareLayer::greenLightLock(bool lock) {
+	_trafficLight.lockGreen(lock);
+}
+
 
 void HardwareLayer::yellowLightOn(){
 	_trafficLight.yellowLightOn();
@@ -145,15 +154,19 @@ void HardwareLayer::clearSignalBuffer() {
 	signalGenerator.clearSignalBuffer();
 }
 
+void HardwareLayer::clearItemBuffer(){
+	serial.getReceiver().getItemBuffer().reset();
+}
+
 void HardwareLayer::sendSerial(Signal signal) {
 	serial.send(signal);
 }
 
-void HardwareLayer::sendItemViaSerial(Item* item) {
+void HardwareLayer::sendItemViaSerial(logicLayer::Item* item) {
 	serial.send(item);
 }
 
-Item HardwareLayer::getPassedItem() {
+logicLayer::Item HardwareLayer::getPassedItem() {
 	return serial.getReceiver().getItemBuffer().pullItem();
 }
 
@@ -167,6 +180,71 @@ uint16_t HardwareLayer::getHeight() {
 
 io::SignalGenerator& HardwareLayer::getSignalGenerator(){
 	return this->signalGenerator;
+}
+
+void HardwareLayer::startUpRoutine() {
+	redLightOff();
+	yellowLightOff();
+	greenLightOff();
+	switchPointClose();
+	motorStop();
+	motorFast();
+	motorRotateClockwise();
+
+	switchPointOpen();
+	greenLightOn();		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
+	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
+
+	switchPointClose();
+	greenLightOn();		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	redLightOn(); 		WAIT(250);
+	greenLightOff();	WAIT(250);
+	yellowLightOff();	WAIT(250);
+	redLightOff();		WAIT(250);
+
+}
+
+void HardwareLayer::shutDownRoutine() {
+	redLightOff();
+	yellowLightOff();
+	greenLightOff();
+	switchPointClose();
+	motorStop();
+	motorFast();
+	motorRotateClockwise();
+
+	redLightOn(); 		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
+	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
+
+	redLightOn(); 		WAIT(250);
+	yellowLightOn();	WAIT(250);
+	greenLightOn();		WAIT(250);
+	redLightOff();		WAIT(250);
+	yellowLightOff();	WAIT(250);
+	greenLightOff();	WAIT(250);
+}
+
+void signalHandler( int signum ) {
+   cout << "Interrupt signal (" << signum << ") received."<<endl;
+   cout << "Begin stopping system in a safely manner.." << endl;
+   LOG_ERROR << "Interrupt signal (" << signum << ") received."<<endl;
+
+   out8(0x300, 0b00001000); // stop motor, close switch point, turn off lights
+   out8(0x302, 0); // turn off led's
+
+   cout << "Finish stopping system in a safely manner." << endl;
+   cout << "Good bye." << endl;
+
+   _Exit(signum);
 }
 
 } /* hardwareLayer */

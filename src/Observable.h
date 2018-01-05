@@ -15,6 +15,7 @@
 class Observable {
 public:
 	void register_observer(Observer* o) {
+		LOG_SCOPE
 		//check if observer already exists
 		if (observers.size() > 0) {
 			for (auto &observer : observers) {
@@ -27,6 +28,18 @@ public:
 		observers.push_back(o);
 
 	}
+
+	void unregister_observer(Observer* o) {
+		LOG_SCOPE
+
+		for (auto it = observers.begin(); it != observers.end(); ) {
+			if (*it  == o) {
+				observers.erase(it);
+			}
+		}
+
+	}
+
 	void notify_observers() {
 		for (auto &observer : observers) {
 			observer->notify();

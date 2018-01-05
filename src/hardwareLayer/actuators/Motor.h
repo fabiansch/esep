@@ -8,6 +8,8 @@
 #ifndef MOTOR_H_
 #define MOTOR_H_
 
+#include "SignalGenerator.h"
+
 namespace hardwareLayer {
 namespace actuators {
 
@@ -17,7 +19,7 @@ public:
 	* @brief creates singleton instance on first call, otherwise returns instance
 	* @return singleton instance
 	*/
-	static Motor& instance();
+	static Motor& instance(io::SignalGenerator& signalGenerator);
 
 	/**
 	* @brief starts the motor without changing other behaviors
@@ -49,11 +51,22 @@ public:
 	*/
 	void clearSlow();
 
+	/**
+	* @brief (un)lock motor
+	* @param lock == true -> lock
+	* @param lock == false -> unlock
+	*/
+	void lock(bool lock);
+
 private:
-	Motor();
+	Motor(io::SignalGenerator& signalGenerator);
 	Motor(Motor const&);
 	Motor& operator=(Motor const&);
 	~Motor();
+
+	io::SignalGenerator& signalGenerator;
+	bool locked;
+	bool running;
 };
 
 } /* namespace actuators */

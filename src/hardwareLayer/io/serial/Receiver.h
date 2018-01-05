@@ -28,11 +28,14 @@ public:
     ItemBuffer& getItemBuffer();
 
 private:
+    void setPrevious_cb();
 	void setNext_cb();
+	void setSorting_cbs();
 	void evaluateTokenAndSendFeed(const Message& msg);
 	void registerOnToken(Message& msg);
 	void sendFeed();
 	void evaluateFeed(const Message& msg);
+	void forward(Message& msg);
 	void forwardIfNotMaster(Message& msg);
 
     Interface& serial_;

@@ -23,13 +23,14 @@
 
 namespace hardwareLayer {
 
-	class HardwareLayer : public Observable{
+	class HardwareLayer {
 	public:
 		HardwareLayer();
 		virtual ~HardwareLayer();
 
 		void greenLightOn();
 		void greenLightOff();
+		void greenLightLock(bool lock);
 		void yellowLightOn();
 		void yellowLightOff();
 		void redLightOn();
@@ -52,6 +53,7 @@ namespace hardwareLayer {
 		void motorStop();
 		void motorSlow();
 		void motorFast();
+		void motorLock(bool lock);
 		void motorRotateClockwise();
 		void motorRotateCounterclockwise();
 
@@ -68,7 +70,7 @@ namespace hardwareLayer {
 		/**
 		 *  @brief Sends Item via serial interface to other machine(s)
 		 */
-		void sendItemViaSerial(Item* item);
+		void sendItemViaSerial(logicLayer::Item* item);
 
 		/**
 		 * @brief 	If a pending signal exists
@@ -81,7 +83,7 @@ namespace hardwareLayer {
 		 * @brief	gets passed item
 		 * @return	returns the last passed Item from ItemBuffer.
 		 */
-		Item getPassedItem();
+		logicLayer::Item getPassedItem();
 
 		/**
 		 *
@@ -95,10 +97,24 @@ namespace hardwareLayer {
 		 */
 		void clearSignalBuffer();
 
-		//GETTER
+		/**
+		 * @brief deletes all element in buffer
+		 */
+		void clearItemBuffer();
+
+
+
+		/*
+		 * @return SignalGenerator reference
+		 */
 		io::SignalGenerator& getSignalGenerator();
 
+
+
 	private:
+		void startUpRoutine();
+		void shutDownRoutine();
+
 		io::SignalGenerator signalGenerator;
 		io::serial::Serial serial;
 		actuators::Motor& _motor;

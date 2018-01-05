@@ -3,6 +3,11 @@
 .qnx_internal.mk
 .settings
 common.mk
-x86
+x86/o/*.*
+x86/Makefile
+x86/o-g/Makefile
+x86/o/Makefile
 .metadata
 **/*/Thumbs.db
+*.vux
+*.vpp.*

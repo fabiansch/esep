@@ -14,6 +14,7 @@
 #include "Observable.h"
 #include <chrono>
 #include <thread>
+#include <mutex>
 
 namespace hardwareLayer {
 namespace io {
@@ -91,22 +92,25 @@ public:
 	static void printEvents();
 
 	/*
-	 *@brief: pushs back Signal on signalBuffer.
+	 *@brief: threadsafely pushs back Signal on signalBuffer.
 	 *@param: signal Signal
 	 */
 	void pushBackOnSignalBuffer(Signal signal);
 
 	/*
-	 *@brief clears signalBuffer
+	 *@brief threadsafely clears signalBuffer
 	 */
 	void clearSignalBuffer();
-
 
 	/*
 	 * @brief performs poll on sensors and generates signal when change has occurred and signal's chatter protection has passed
 	 */
 	void pollOnSensors();
 
+	/*
+	 * @brief: clears E_STOP_PUSHED in stored_bitmask
+	 */
+	void clearEStoppPushed();
 
 	// sensor events for higher byte of PORT C
 	static SensorEvent BUTTON_START;
@@ -136,6 +140,7 @@ private:
 	*/
 	bool noChatterOn(SensorEvent& event);
 
+
 	/*
 	 * events holds all sensor events
 	 */
@@ -149,6 +154,7 @@ private:
 	int stored_mask;
 	std::vector<Signal> signalBuffer;
 	std::thread chatter_timer_th;
+	std::mutex mutex;
 };
 
 } /* namespace io */

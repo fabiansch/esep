@@ -49,33 +49,39 @@ namespace serial {
 								evaluateTokenAndSendFeed(msg);
 							}
 							registerOnToken(msg);
+							forwardIfNotMaster(msg);
 							break;
 						case Signalname::SERIAL_WATCHDOG_FEED:
 							evaluateFeed(msg);
 							dog_.feed();
+							forwardIfNotMaster(msg);
 						break;
-						case Signalname::SERIAL_TRANSFER_ITEM:
-							cout << "ITEM arrived" << endl;
-							itemBuffer_.pushItem(msg.item);
-							sgen_.pushBackOnSignalBuffer(
-									Signal(
-											msg.signal.sender,
-											msg.signal.receiver,
-											Signalname::ITEM_ARRIVED
-									)
-							);
+						case Signalname::SERIAL_FLUSH:
+							serial_.flush();
+							break;
+						case Signalname::TRANSFER_ITEM:
+							if(msg.signal.sender != cb_this) {
+
+								itemBuffer_.pushItem(msg.item);
+								sgen_.pushBackOnSignalBuffer(msg.signal);
+							}
 						break;
 						default: // push signal to logic layer
-							sgen_.pushBackOnSignalBuffer(msg.signal);
+							if(msg.signal.sender != cb_this) {
+								sgen_.pushBackOnSignalBuffer(msg.signal);
+								forward(msg);
+							}
 						break;
 					}
 				}
-			forwardIfNotMaster(msg);
+
 			}
 			else if (msg.checkNumber == WRONG_CN) {  // timeout of blocking receive
 
 			} else {
 				serial_.flush();
+				Message flushPreviousCB(Signal(cb_this, cb_previous, Signalname::SERIAL_FLUSH));
+				serial_.send(flushPreviousCB);
 			}
 		}
 	}
@@ -98,6 +104,8 @@ namespace serial {
 			if (cb_last == 0) {
 				cb_last = (cb_available + 1) >> 1;
 			}
+			setPrevious_cb();
+			setSorting_cbs();
 			sendFeed();
 		}
 	}
@@ -124,12 +132,32 @@ namespace serial {
 			cb_available = msg.signal.receiver;
 			cb_last = (msg.signal.receiver + 1) >> 1;
 			setNext_cb();
+			setPrevious_cb();
+			setSorting_cbs();
 		}
 	}
 
 	void Receiver::forwardIfNotMaster(Message& msg) {
 		if (cb_this != cb_1 && msg.signal.receiver > 0) {
-			serial_.send(msg);
+			forward(msg);
+		}
+	}
+
+	void Receiver::forward(Message& msg) {
+		serial_.send(msg);
+	}
+
+	void Receiver::setPrevious_cb() {
+		LOG_SCOPE
+		if(cb_this == 0 or cb_available == 0 or cb_last == 0) {
+			LOG_ERROR<<"cb_this or cb_available or cb_last not yet set."<<endl;
+			exit(EXIT_FAILURE);
+		} else {
+			if((cb_this >> 1) == 0) {
+				cb_previous = cb_last;
+			} else {
+				cb_previous = cb_this >> 1;
+			}
 		}
 	}
 
@@ -144,6 +172,24 @@ namespace serial {
 			} else {
 				cb_next = cb_this << 1;
 			}
+		}
+	}
+
+	void Receiver::setSorting_cbs() {
+		LOG_SCOPE
+		switch (cb_available) {
+		case 0b00000001:
+			cb_sorting_1 = 0b00000001;
+			cb_sorting_2 = 0b00000001;
+			break;
+		case 0b00000011:
+			cb_sorting_1 = 0b00000001;
+			cb_sorting_2 = 0b00000010;
+			break;
+		default:
+			cb_sorting_1 = 0b00000010;
+			cb_sorting_2 = 0b00000100;
+			break;
 		}
 	}
 

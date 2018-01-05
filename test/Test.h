@@ -18,39 +18,45 @@ namespace test{
 
 class Test {
 public:
-	Test( hardwareLayer::HardwareLayer* hal);
+	Test();
 	virtual ~Test();
 
 	/**
 	 *  @brief test actuators
 	 */
-	void actuatorsTest();
+	static void actuatorsTest(hardwareLayer::HardwareLayer& hal);
+
+	static void actuatorsTestHelper(hardwareLayer::HardwareLayer* hal, Signal& signal);
 
 	/**
 	 *  @brief test mmi
 	 */
-	void mmiTest();
+	static void mmiTest(hardwareLayer::HardwareLayer& hal);
+
+	/*
+	 * @brief adds signal to testSignalBuffer
+	 */
+	static void testSignalBufferAdd(Signal signal);
 
 	/**
 	 *@brief test buttons
 	 *@brief just working without LogicLayer started. LogicLayer is using
 	 *@brief SensorTest for testing other sensors
 	 */
-	void buttonsTest();
+	static void buttonsTest();
 
 	/**
 	*  @brief test singleton thread safeness
 	*/
-	void singletonThreadSafeTest();
+	static void singletonThreadSafeTest();
 
 	/**
 	 *  @brief test thread safeness in GPIO class
 	 */
-	void threadSafenessInGpioTest();
+	static void threadSafenessInGpioTest();
+
+	static void channelTest();
 private:
-
-	hardwareLayer::HardwareLayer* _hal;
-
 	/**
 	 *
 	 */
@@ -59,10 +65,13 @@ private:
 	/**
 	 *	@brief go to next test
 	 */
-	bool nextTest(string functionName);
+	static bool nextTest(string functionName);
 
-	void buttonTestHelper(hardwareLayer::io::SensorEvent signalbitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd);
+	static Signal nextSignal();
 
+	static void buttonTestHelper(hardwareLayer::io::SensorEvent signalbitmask, Signalname eventTriggerStart, Signalname eventTriggerEnd);
+
+	static vector<Signal> testSignalBuffer;
 };
 
 

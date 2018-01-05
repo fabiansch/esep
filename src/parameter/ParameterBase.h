@@ -22,6 +22,8 @@ public:
 	virtual ~ParameterBase();
 
 	virtual void showValue() = 0;
+	virtual void initValue() = 0;
+
 
 	std::string name;
 	ParameterList& parameterList;

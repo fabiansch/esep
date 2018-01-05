@@ -13,25 +13,30 @@ namespace serial {
 
 ItemBuffer::ItemBuffer() {
 	// TODO Auto-generated constructor stub
-
 }
 
 ItemBuffer::~ItemBuffer() {
 	// TODO Auto-generated destructor stub
 }
 
-void ItemBuffer::pushItem(Item item){
+void ItemBuffer::pushItem(logicLayer::Item item){
 	items.push_back(item);
 }
 
-Item ItemBuffer::pullItem() {
-	Item item = items.front();
-	items.pop_back();
+logicLayer::Item ItemBuffer::pullItem() {
+
+	logicLayer::Item item = items.front();
+	items.erase( items.begin() );
+
 	return item;
 }
 
 int ItemBuffer::size(){
 	return items.size();
+}
+
+void ItemBuffer::reset(){
+	return items.clear();
 }
 
 } /* namespace itembuffer */

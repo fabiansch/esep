@@ -38,9 +38,6 @@ void WatchDog::operator()(){
 
 	Message token( Signal(cb_1, cb_all, Signalname::SERIAL_WATCHDOG_TOKEN) );
 
-	Signal connectionLost(cb_this,cb_this, Signalname::CONNECTION_LOST);
-	Signal connectionConnected(cb_this,cb_this, Signalname::CONNECTION_CONNECTED);
-
 	while(running) {
 
 		dogWasFed = false;
@@ -49,14 +46,16 @@ void WatchDog::operator()(){
 		WAIT(period);
 		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
+		if(cb_this == cb_1) serial_.send(token);
+		WAIT(period);
 
 		if(status == Connection::LOST && dogWasFed){
 			status = Connection::CONNECTED;
-			sgen_.pushBackOnSignalBuffer(connectionConnected);
+			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_CONNECTED));
 		}
 		else if(status == Connection::CONNECTED && !dogWasFed){
 			status = Connection::LOST;
-			sgen_.pushBackOnSignalBuffer(connectionLost);
+			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_LOST));
 		}
 	}
 }

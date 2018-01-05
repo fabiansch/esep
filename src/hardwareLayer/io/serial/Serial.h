@@ -23,13 +23,13 @@ public:
 	Serial(SignalGenerator& signalGenerator);
 	virtual ~Serial();
 	void send(Signal& signal);
-	void send(Item* item);
+	void send(logicLayer::Item* item);
 	Receiver& getReceiver();
 
 private:
 	Interface _serialClockwise;
-	WatchDog _watchDog;
 	Receiver _receiver;
+	WatchDog _watchDog; // needs to be below Receiver
 };
 
 } /* namespace serial */

@@ -8,20 +8,40 @@
 #ifndef LOGICLAYER_H_
 #define LOGICLAYER_H_
 
-#include "Observer.h"
+
+#include "Controller.h"
+#include "TypeIdentification.h"
+#include "Timer.h"
+#include "Calibration.h"
+#include "ErrorHandler.h"
+#include "Sorting.h"
+#include "Dispatcher.h"
 #include "HardwareLayer.h"
-#include "SensorTest.h"
+#include "Menu.h"
+
 
 namespace logicLayer {
 
-class LogicLayer : public Observer {
+class LogicLayer {
 public:
 	LogicLayer(hardwareLayer::HardwareLayer&);
 	virtual ~LogicLayer();
-	void notify();
+	Controller& getController();
+	Menu& getMenu();
+
 private:
 	hardwareLayer::HardwareLayer& hal;
-	SensorTest sensorTest;
+	Timer timer_;
+
+	TypeIdentification typeIdent_;
+
+	Controller controller_;
+	Calibration calibration_;
+	//Sorting sorting_; <-- no need because its static
+	Dispatcher dispatcher_;
+	Menu menu_;  // have to be last one
+
+void checkIfEStopIsPushed(hardwareLayer::HardwareLayer& hal);
 };
 
 } /* namespace logicLayer */
