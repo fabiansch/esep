@@ -13,6 +13,7 @@ namespace io {
 namespace serial {
 
 constexpr int period = 250;
+int connectionLostCounter = 0;
 
 WatchDog::WatchDog(Interface& serial, SignalGenerator& sgen) :
 serial_(serial),
@@ -49,6 +50,8 @@ void WatchDog::operator()(){
 		if(cb_this == cb_1) serial_.send(token);
 		WAIT(period);
 
+		dogWasFed ? connectionLostCounter = 0 : connectionLostCounter += 1;
+
 		if(status == Connection::LOST && dogWasFed){
 			status = Connection::CONNECTED;
 			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_CONNECTED));
@@ -57,6 +60,13 @@ void WatchDog::operator()(){
 			status = Connection::LOST;
 			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_LOST));
 		}
+
+		if(connectionLostCounter >= 3) {
+			serial_.flush();
+			WAIT(500);
+		}
+
+
 	}
 }
 
