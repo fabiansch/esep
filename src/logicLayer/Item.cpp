@@ -408,7 +408,7 @@ void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 		cout << "### Item coded (WPT 5.: " << item->type.code << ")" << endl;
 	}
 	else if( item->type.profile == Profile::NORMAL && !item->type.metal ){
-		cout << "### Item with hole above (WPT 6)" << endl;
+		cout << "### Item with hole below (WPT 6)" << endl;
 	}
 
 	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;

@@ -10,6 +10,7 @@
 #include "AsyncChannel.h"
 #include "ISR.h"
 #include "GPIO.h"
+#include "Motor.h"
 #include <iostream>
 #include <ctime>
 
@@ -58,6 +59,7 @@ SignalGenerator::SignalGenerator()
 , chatter_timer_th(std::thread(chatter_timer, this, nullptr))
 {
 	LOG_SCOPE
+	mutex.lock();
 	init_events();
 	GPIO::instance().gainAccess();
 	stored_mask = GPIO::instance().read(PORT::C)<<8 | GPIO::instance().read(PORT::B);
@@ -198,6 +200,18 @@ void SignalGenerator::printEvents() {
 
 void SignalGenerator::clearEStoppPushed() {
 	stored_mask |= BUTTON_E_STOP.bitmask;
+}
+
+void SignalGenerator::register_observer(Observer* o) {
+	Observable::register_observer(o);
+	mutex.unlock();
+	actuators::Motor::instance(std::ref(*this)).lock(false);
+}
+
+void SignalGenerator::unregister_observer(Observer* o) {
+	actuators::Motor::instance(std::ref(*this)).lock(true);
+	mutex.lock();
+	Observable::unregister_observer(o);
 }
 
 } /* namespace io */

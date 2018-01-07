@@ -4,11 +4,11 @@
 #include "HardwareLayer.h"
 #include "LogicLayer.h"
 
-
 using namespace std;
 
 void evaluateIfCb_1();
 void printStartMessage();
+void resetNonCalibrationParameters();
 
 int main(int argc, char *argv[])
 {
@@ -18,7 +18,11 @@ int main(int argc, char *argv[])
 	bool restart = false;
 	do {
 		printStartMessage();
-		cb_this.parameterList.initParameters();
+		if(restart) {
+			resetNonCalibrationParameters();
+		} else {
+			cb_this.parameterList.initParameters();
+		}
 		evaluateIfCb_1();
 
 		hardwareLayer::HardwareLayer hal;
@@ -27,7 +31,7 @@ int main(int argc, char *argv[])
 		restart = loLay.getMenu().isRestart();
 	} while (restart);
 
-	cout << "===================== Shutting down Sortingmachine =========================" << endl;
+	cout << "================= Shutting down Sortingmachine done =================" << endl;
 
 	return EXIT_SUCCESS;
 }
@@ -61,4 +65,31 @@ void printStartMessage() {
 			cout<< "	 ___) | (_) | |  | |_| | | | | (_| |  ___) | |_| \\__ \\ ||  __/ | | | | |" <<endl;
 			cout<< "	|____/ \\___/|_|   \\__|_|_| |_|\\__, | |____/ \\__, |___/\\__\\___|_| |_| |_|" <<endl;
 			cout<< " 	                              |___/         |___/                       " <<endl;
+}
+
+void resetNonCalibrationParameters() {
+	auto time_output_to_input_temp 	= time_output_to_input;
+	auto time_input_to_height_temp  = time_input_to_height;
+	auto time_height_to_switch_temp = time_height_to_switch;
+	auto time_switch_to_output_temp = time_switch_to_output;
+	auto time_switch_to_slide_temp 	= time_switch_to_slide;
+	auto time_lb_slide_freed_temp 	= time_lb_slide_freed;
+	auto time_cb_unit_total_temp 	= time_cb_unit_total;
+	auto slow_factor_temp 			= slow_factor;
+	auto height_conveyor_belt_temp 	= height_conveyor_belt;
+	auto height_item_temp 			= height_item;
+
+	cb_this.parameterList.initParameters();
+
+	time_output_to_input	= time_output_to_input_temp;
+	time_input_to_height	= time_input_to_height_temp;
+	time_height_to_switch	= time_height_to_switch_temp;
+	time_switch_to_output	= time_switch_to_output_temp;
+	time_switch_to_slide	= time_switch_to_slide_temp;
+	time_lb_slide_freed		= time_lb_slide_freed_temp;
+	time_cb_unit_total		= time_cb_unit_total_temp;
+	slow_factor				= slow_factor_temp;
+	height_conveyor_belt	= height_conveyor_belt_temp;
+	height_item				= height_item_temp;
+
 }

@@ -186,7 +186,6 @@ void HardwareLayer::startUpRoutine() {
 	redLightOff();
 	yellowLightOff();
 	greenLightOff();
-	switchPointClose();
 	motorStop();
 	motorFast();
 	motorRotateClockwise();
