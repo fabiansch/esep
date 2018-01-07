@@ -57,6 +57,7 @@ namespace serial {
 							forwardIfNotMaster(msg);
 						break;
 						case Signalname::SERIAL_FLUSH:
+							serial_.flush();
 							if(msg.signal.sender != cb_this) forward(msg);
 							break;
 						case Signalname::TRANSFER_ITEM:
