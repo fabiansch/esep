@@ -240,8 +240,8 @@ private:
 			}
 		}
 
-		virtual void lb_height_interrupted( 	Signal signal ) override {
-			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
 		}
 
 		virtual void lb_input_freed( Signal signal ) override {
@@ -254,9 +254,9 @@ private:
 			cout<<"DepartureInput"<<endl;
 			*timerChannel_ << Signal(Signalname::START_TIMERS_HEIGHT);
 		}
-		void timeframe_height_enter( Signal signal ) override {
-			cout<<"timeframe_height_enter"<<endl;
-			new (this) WaitForArrivalAtHeight;
+
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
 		}
 
 		virtual void lb_height_interrupted( 	Signal signal ) override {
@@ -287,8 +287,8 @@ private:
 			new (this) ArrivalHeight;
 		}
 
-		virtual void lb_height_interrupted( 	Signal signal ) override {
-			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
 		}
 
 	};
