@@ -79,7 +79,7 @@ void Timer::operator()() {
 			setNewTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input + 1500);
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
-			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_input_to_height - 500);
+			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_input_to_height - 800);
 			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_LEAVE, time_input_to_height + 500);
 			break;
 		case Signalname::START_TIMERS_SWITCH:
