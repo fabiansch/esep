@@ -35,7 +35,7 @@ public:
 	TypeIdentification(hardwareLayer::HardwareLayer*);
 	virtual ~TypeIdentification();
 	void operator()();
-	Profile heightMapping( int );
+	static Profile heightMapping( int );
 
 	static ItemType* createScan();
 	static vector<ItemType> typeScans;
@@ -75,13 +75,16 @@ public:
 	/**
 	 *	@brief
 	 */
-	static float validHeightReference;
+	static float holeLevel;
 
-	static void switchToState(int, ProfileState*, ProfileState, int*, int*, int* );
-	static void switchToState(int, ProfileState*, ProfileState, int* );
 
 	static void setUnitToMm();
 	static void setHoleLevel();
+
+	/**
+	 * @brief convert sensor units to mm
+	 */
+	static float toMm( int );
 
 private:
 	hardwareLayer::HardwareLayer* hal_;
@@ -97,10 +100,7 @@ private:
 
 
 
-	/**
-	 * @brief convert sensor units to mm
-	 */
-	float toMm( int );
+
 
 };
 

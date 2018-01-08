@@ -14,7 +14,7 @@ namespace logicLayer {
 vector<ItemType> TypeIdentification::typeScans = vector<ItemType>();
 int TypeIdentification::delta = 200;
 float TypeIdentification::mmPerUnit = 0;
-float TypeIdentification::validHeightReference = 0;
+float TypeIdentification::holeLevel = 0;
 
 
 TypeIdentification::TypeIdentification(hardwareLayer::HardwareLayer* hal) :
@@ -52,21 +52,20 @@ void TypeIdentification::operator()(){
 			break;
 			case Signalname::LB_HEIGHT_INTERRUPTED:
 				if( typeScans.size() > 0){ //only start if there is an type object on vector
-
 					int height = hal_->getHeight();
 					typeScans.front().profile = heightMapping( height );
-
 					//set height
 					if(cb_this == cb_sorting_1){
-						typeScans.front().height_cb_1 = toMm( height );
+						if( typeScans.front().height_cb_1 == 0){
+							typeScans.front().height_cb_1 = toMm( height );
+						}
 					}
 					else{
-						typeScans.front().height_cb_2 = toMm( height );
+						if( typeScans.front().height_cb_2 == 0){
+							typeScans.front().height_cb_2 = toMm( height );
+						}
 					}
-
-
 				}
-
 			break;
 			case Signalname::SENSOR_METAL_NOT_MATCH:
 				if( typeScans.size() > 0){ //only start if there is an type object on vector
@@ -87,6 +86,8 @@ void TypeIdentification::operator()(){
 						inMeasurement = true;
 
 						hal_->motorSlow();
+						typeScans.front().profile = Profile::NORMAL;
+
 
 						 //start mesurement thread
 
@@ -97,7 +98,6 @@ void TypeIdentification::operator()(){
 						}
 						forceEnding = true;
 						measure_t = std::thread(measureProfil, &forceEnding, hal_ );
-
 
 					}
 				}
@@ -114,28 +114,26 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 
 	ProfileState state = ProfileState::SPACE;
 
-	int code_lsb = 0;
-	int code_cb = 0;
-	int code_msb = 0;
 
 	int code  = 0;
-	int code2 = 0;
+
 
 	int height = 0;
 
-	int expectedValues = 10;
+	int expectedValues = 5;
 	int deltaEdge = 100;
 	int deltaSpace = 100;
 	int edgeCount = 0;
 	int spaceCount = 0;
 	int validValueCount = 0;
 
-	cout<<"START"<<endl;
+	int edgeAvg = 0;
+
 
 	//profile recognition via following state machine
 	while( *running ){
 		height = hal->getHeight();
-		cout << "EVAL:" << height << endl;
+
 
 		switch ( state ) {
 			case ProfileState::EDGE:
@@ -144,7 +142,7 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 				}
 
 				if(validValueCount==expectedValues){
-					if( height <= (height_conveyor_belt - 100) ){
+					if( height <= (height_conveyor_belt - deltaSpace) ){
 						state = ProfileState::SPACE;
 					}
 					else{
@@ -153,12 +151,20 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 
 					validValueCount = 0;
 					spaceCount++;
-					cout << "Zwischenraum " << spaceCount << endl;
-					if(spaceCount<=3){
-						code |= mapToBinary(height) << spaceCount-1;
-					}
-					else{
-						code2 |= mapToBinary(height) << spaceCount-4;
+
+
+					switch (spaceCount) {
+						case 2:
+							code |= mapToBinary(height) << 2;
+							break;
+						case 3:
+							code |= mapToBinary(height) << 1;
+							break;
+						case 4:
+							code |= mapToBinary(height);
+							typeScans.front().code = code;
+
+							break;
 					}
 
 				}
@@ -168,13 +174,29 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 			case ProfileState::SPACE:
 				if(height <= (height_item+deltaEdge) ){
 					validValueCount++;
+					edgeAvg += height;
 				}
 
 				if(validValueCount==expectedValues){
 					state = ProfileState::EDGE;
 					validValueCount = 0;
 					edgeCount++;
-					cout << "Kante " << edgeCount << endl;
+
+
+					//get height of first edge
+					if( edgeCount == 1 ){
+
+						//set height
+						if(cb_this == cb_sorting_1){
+							typeScans.front().height_cb_1 = toMm( edgeAvg/expectedValues );
+						}
+						else{
+							typeScans.front().height_cb_2 = toMm( edgeAvg/expectedValues );
+						}
+					}
+
+					edgeAvg = 0;
+
 				}
 			break;
 			case ProfileState::CENTER:
@@ -182,9 +204,8 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 			break;
 			case ProfileState::FINAL:
 				*running = false;
-				cout << "### FINAL " << endl;
+
 				cout << code << endl;
-				cout << code2 << endl;
 			break;
 		}
 
@@ -194,9 +215,9 @@ void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLay
 }
 
 Profile TypeIdentification::heightMapping(int height){
-	cout << height << endl;
-	cout << validHeightReference << endl;
-	if( abs(height - validHeightReference ) < delta ){
+	cout << "MAP ### " << height << endl;
+	cout << holeLevel << endl;
+	if( abs(height - holeLevel ) < delta ){
 		return Profile::HOLED;
 	}
 
@@ -219,58 +240,10 @@ int TypeIdentification::mapToBinary( int height ){
 	if( height > zero + delta ){
 		binaryValue = 1;
 	}
-	cout << "Binary:" << binaryValue << " - zero: " << zero << "height: " << height <<  endl;
+
 	return binaryValue;
 }
 
-void TypeIdentification::switchToState(int measuredHeight, ProfileState* currentState, ProfileState switchToState, int* avgValue, int* count, int* code ){
-
-
-	//int amountOfNeededValues = (*currentState != ProfileState::NL1) ? 3 : 2;
-	int amountOfNeededValues = 5;
-	int delta = 100;
-
-	if( abs( measuredHeight - height_item ) > delta  && measuredHeight > height_item ){
-		*count = *count + 1;
-
-		*avgValue = *avgValue + measuredHeight;
-		cout << "Count: " << *count << " Sum: " << *avgValue << endl;
-	}
-	else{
-		*count = 0;
-		*avgValue = 0;
-	}
-
-	//switch to next state after "count" valid values
-	if( *count == amountOfNeededValues ){
-
-		//average values & map to 0 | 1
-		*avgValue = *avgValue / amountOfNeededValues;
-		*code = mapToBinary( *avgValue );
-
-		//clean up
-		*count = 0;
-		*avgValue   = 0;
-
-		*currentState = switchToState; // needs to be last
-	}
-}
-
-void TypeIdentification::switchToState(int measuredHeight, ProfileState* currentState, ProfileState switchToState, int* count ){
-
-	int amountOfNeededValues = 3;
-
-	if( abs( measuredHeight - height_item ) < 100 ){
-		*count = *count + 1;
-	}
-
-	//switch to next state after "count" valid values
-	if(*count == amountOfNeededValues){
-		*currentState = switchToState;
-		//clean up
-		*count = 0;
-	}
-}
 
 float TypeIdentification::toMm( int measuredHeight ){
 	return mmPerUnit * ( height_conveyor_belt - measuredHeight );
@@ -284,7 +257,7 @@ void TypeIdentification::setUnitToMm(){
 }
 
 void TypeIdentification::setHoleLevel(){
-	validHeightReference = height_conveyor_belt - ( 8 / mmPerUnit ); //<-- !need to be parameter from calibration ( 8mm hole height )
+	holeLevel = height_conveyor_belt - ( ( height_conveyor_belt-height_item) / 25 ) * 8 ; //<-- !need to be parameter from calibration ( 8mm hole height )
 }
 
 
