@@ -19,6 +19,7 @@ Menu::Menu(hardwareLayer::HardwareLayer& hal, Channel<Signal>& controller)
 {
 	LOG_SCOPE
 	Menu::printInfo();
+	hal.blinkGreen(Speed::slow);
 }
 
 void Menu::computeInput(){
