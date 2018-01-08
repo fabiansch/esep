@@ -32,6 +32,9 @@ TypeIdentification::~TypeIdentification() {
 void TypeIdentification::operator()(){
 	LOG_SCOPE
 	Signal sig;
+	std::thread measure_t;
+	bool forceEnding = true;
+
 	while(running){
 		sig << channel_;
 		switch (sig.name) {
@@ -61,11 +64,7 @@ void TypeIdentification::operator()(){
 						typeScans.front().height_cb_2 = toMm( height );
 					}
 
-					 //start mesurement thread
-					{
-						// TODO check if detach is necessary
-						new std::thread(measureProfil, std::ref( typeScans.front().inDetection ), hal_ );
-					}
+
 				}
 
 			break;
@@ -87,13 +86,18 @@ void TypeIdentification::operator()(){
 					if(!inMeasurement){
 						inMeasurement = true;
 
-						if(typeScans.front().profile!=Profile::HOLED){
-							typeScans.front().profile = Profile::NORMAL;
-						}
-
-						//start mesurement
-						//start thread - periodically read height -> e.g. 20 ms
 						hal_->motorSlow();
+
+						 //start mesurement thread
+
+						if(measure_t.joinable()){
+							forceEnding = false;
+							measure_t.join();
+
+						}
+						forceEnding = true;
+						measure_t = std::thread(measureProfil, &forceEnding, hal_ );
+
 
 					}
 				}
@@ -106,51 +110,86 @@ void TypeIdentification::operator()(){
 
 }
 
-void TypeIdentification::measureProfil(bool& running, hardwareLayer::HardwareLayer* hal){
-	ProfileState state = ProfileState::NL1;
-	int validCount = 0;
-	int avgValue = 0;
+void TypeIdentification::measureProfil(bool* running, hardwareLayer::HardwareLayer* hal){
+
+	ProfileState state = ProfileState::SPACE;
 
 	int code_lsb = 0;
 	int code_cb = 0;
 	int code_msb = 0;
+
+	int code  = 0;
+	int code2 = 0;
+
 	int height = 0;
 
+	int expectedValues = 10;
+	int deltaEdge = 100;
+	int deltaSpace = 100;
+	int edgeCount = 0;
+	int spaceCount = 0;
+	int validValueCount = 0;
+
+	cout<<"START"<<endl;
+
 	//profile recognition via following state machine
-	while(running && (height <= 4000) ){
+	while( *running ){
 		height = hal->getHeight();
 		cout << "EVAL:" << height << endl;
 
 		switch ( state ) {
-			case ProfileState::NL1:
-				cout << "NL1" << endl;
-				switchToState(height, &state, ProfileState::S1, &avgValue, &validCount, &code_lsb);
-			break;
-			case ProfileState::S1:
-				cout << "S1" << endl;
-				switchToState(height, &state, ProfileState::NL2, &validCount);
-			break;
-			case ProfileState::NL2:
-				cout << "NL2" << endl;
-				switchToState(height, &state, ProfileState::S2, &avgValue, &validCount, &code_cb);
-			break;
-			case ProfileState::S2:
-				cout << "S2" << endl;
-				switchToState(height, &state, ProfileState::NL3, &validCount);
-			break;
-			case ProfileState::NL3:
-				cout << "NL3" << endl;
-				switchToState(height, &state, ProfileState::S3, &avgValue, &validCount, &code_msb);
-			break;
-			case ProfileState::S3:
-				cout << "S3" << endl;
-				int code = code_lsb | (code_cb << 1) | (code_msb << 2);
-				TypeIdentification::typeScans.front().code = code;
+			case ProfileState::EDGE:
+				if(height >= (height_item+deltaSpace) ){
+					validValueCount++;
+				}
 
+				if(validValueCount==expectedValues){
+					if( height <= (height_conveyor_belt - 100) ){
+						state = ProfileState::SPACE;
+					}
+					else{
+						state = ProfileState::FINAL;
+					}
+
+					validValueCount = 0;
+					spaceCount++;
+					cout << "Zwischenraum " << spaceCount << endl;
+					if(spaceCount<=3){
+						code |= mapToBinary(height) << spaceCount-1;
+					}
+					else{
+						code2 |= mapToBinary(height) << spaceCount-4;
+					}
+
+				}
+
+
+			break;
+			case ProfileState::SPACE:
+				if(height <= (height_item+deltaEdge) ){
+					validValueCount++;
+				}
+
+				if(validValueCount==expectedValues){
+					state = ProfileState::EDGE;
+					validValueCount = 0;
+					edgeCount++;
+					cout << "Kante " << edgeCount << endl;
+				}
+			break;
+			case ProfileState::CENTER:
+
+			break;
+			case ProfileState::FINAL:
+				*running = false;
+				cout << "### FINAL " << endl;
+				cout << code << endl;
+				cout << code2 << endl;
 			break;
 		}
 
-		WAIT(2);
+		WAIT( 5 );
+
 	}
 }
 
@@ -174,13 +213,13 @@ ItemType* TypeIdentification::createScan(){
 int TypeIdentification::mapToBinary( int height ){
 	int binaryValue = 0;
 
-	int low = height_item + (5 / mmPerUnit); // need to be parameter from calibration
-	int delta = 75; // need to be figured out by empirical investigation
+	int zero  = height_item + (height_item/25)*2; // need to be parameter from calibration
+	int delta = 100; // need to be figured out by empirical investigation
 
-	if( height > low-delta ){
+	if( height > zero + delta ){
 		binaryValue = 1;
 	}
-	cout << "Binary:" << binaryValue << " - low: " << low << "avg: " << height <<  endl;
+	cout << "Binary:" << binaryValue << " - zero: " << zero << "height: " << height <<  endl;
 	return binaryValue;
 }
 

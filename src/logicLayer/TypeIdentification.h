@@ -15,7 +15,7 @@ namespace hardwareLayer{
 	class HardwareLayer;
 }
 
-enum class ProfileState {NL1, NL2, NL3, S1, S2, S3};
+enum class ProfileState {EDGE, SPACE, CENTER, FINAL};
 enum class Profile {HOLED, FLAT, NORMAL};
 
 struct ItemType{
@@ -59,7 +59,7 @@ public:
 	/**
 	 * @brief measure cycle
 	 */
-	static void measureProfil(bool&, hardwareLayer::HardwareLayer*);
+	static void measureProfil(bool*, hardwareLayer::HardwareLayer*);
 
 	/**
 	 *
