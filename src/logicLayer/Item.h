@@ -240,6 +240,10 @@ private:
 			}
 		}
 
+		virtual void lb_height_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		}
+
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
 		}
@@ -254,6 +258,11 @@ private:
 			cout<<"timeframe_height_enter"<<endl;
 			new (this) WaitForArrivalAtHeight;
 		}
+
+		virtual void lb_height_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		}
+
 	};
 
 	struct WaitForArrivalAtHeight : public State {
@@ -277,6 +286,11 @@ private:
 			cout<<"lb_height_interrupted"<<endl;
 			new (this) ArrivalHeight;
 		}
+
+		virtual void lb_height_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		}
+
 	};
 
 	struct ArrivalHeight : public State {
