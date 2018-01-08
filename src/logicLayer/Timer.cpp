@@ -8,6 +8,9 @@
 #include "Header.h"
 #include "Timer.h"
 #include "Signals.h"
+#include "ThreadPool.h"
+
+ThreadPool thread_pool(logicLayer::SIZE);
 
 class later
 {
@@ -15,17 +18,17 @@ public:
     template <class callable, class... arguments>
     later(callable&& f, arguments&&... args)
     {
-        std::function<typename std::result_of<callable(arguments...)>::type()> task(std::bind(std::forward<callable>(f), std::forward<arguments>(args)...));
+      std::function<typename std::result_of<callable(arguments...)>::type()> task(std::bind(std::forward<callable>(f), std::forward<arguments>(args)...));
 
-        std::tuple<arguments...> tuples{args...};
-        logicLayer::TimerEvent& event = std::get<0>(tuples);
+      std::tuple<arguments...> tuples{args...};
+      logicLayer::TimerEvent& event = std::get<0>(tuples);
 
-        std::thread([event, task]() {
-			cout << std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count() << endl;
-			WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count());
-			task();
-		}).detach();
-    }
+   		thread_pool.enqueue([event, task]() {
+				cout << std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count() << endl;
+				WAIT(std::chrono::duration_cast<std::chrono::milliseconds>(event.duration).count());
+				task();
+			});
+		}
 
 };
 
@@ -74,7 +77,7 @@ void Timer::operator()() {
 			setNewTimerEvent(Signalname::SWITCH_CLOSE, 1000);
 			break;
 		case Signalname::START_TIMERS_INPUT:
-			setNewTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input + 2500);
+			setNewTimerEvent(Signalname::TIMEFRAME_INPUT_LEAVE, time_output_to_input + 1500);
 			break;
 		case Signalname::START_TIMERS_HEIGHT:
 			setNewTimerEvent(Signalname::TIMEFRAME_HEIGHT_ENTER, time_input_to_height - 500);

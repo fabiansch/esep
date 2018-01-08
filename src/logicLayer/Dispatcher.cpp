@@ -7,6 +7,7 @@
 
 #include "Header.h"
 #include "Dispatcher.h"
+#include "Sorting.h"
 
 
 namespace logicLayer {
@@ -70,6 +71,18 @@ void Dispatcher::notify() {
 			break;
 		case Signalname::MOTOR_FAST:
 			timer_ << signal;
+			break;
+		case Signalname::SORTING_BMM:
+			cout << "<!-- RESET SORTING TO BMM" << endl;
+			Sorting::instance().setOrderState(Order::BMM);
+			break;
+		case Signalname::SORTING_BOM1:
+			cout << "<!-- RESET SORTING TO BM1" << endl;
+			Sorting::instance().setOrderState(Order::BOM1);
+			break;
+		case Signalname::SORTING_BOM2:
+			cout << "<!-- RESET SORTING TO BM2" << endl;
+			Sorting::instance().setOrderState(Order::BOM2);
 			break;
 		default:
 			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;

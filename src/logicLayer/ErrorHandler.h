@@ -53,6 +53,7 @@ private:
 			} else {
 				hal->blinkRed(Speed::fast);
 			}
+			errorHandler->printErrors();
 		}
 
 		virtual void button_reset_pushed() override {
@@ -68,7 +69,11 @@ private:
 		}
 
 		virtual void isPending(Signal signal) override {
+			auto savedSize = pendingSignals->size();
 			pendingSignals->erase(signal);
+			if(pendingSignals->size() < savedSize) {
+				errorHandler->printErrors();
+			}
 
 			if(pendingSignals->empty()) {
 				if(signal.name == Signalname::BUTTON_E_STOP_PULLED){

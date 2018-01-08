@@ -58,6 +58,7 @@ namespace serial {
 						break;
 						case Signalname::SERIAL_FLUSH:
 							serial_.flush();
+							if(msg.signal.sender != cb_this) forward(msg);
 							break;
 						case Signalname::TRANSFER_ITEM:
 							cout << "ITEM arrived" << endl;
@@ -89,9 +90,12 @@ namespace serial {
 			else if (msg.checkNumber == WRONG_CN) {  // timeout of blocking receive
 
 			} else {
+				serial_.flush(); WAIT(10);
+				serial_.flush(); WAIT(10);
 				serial_.flush();
-				Message flushPreviousCB(Signal(cb_this, cb_previous, Signalname::SERIAL_FLUSH));
-				serial_.send(flushPreviousCB);
+				Message flushAllCBs(Signal(cb_this, cb_all, Signalname::SERIAL_FLUSH));
+				serial_.send(flushAllCBs);
+
 			}
 		}
 	}
