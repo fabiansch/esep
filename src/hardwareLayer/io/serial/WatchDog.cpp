@@ -61,9 +61,11 @@ void WatchDog::operator()(){
 			sgen_.pushBackOnSignalBuffer(Signal(Signalname::CONNECTION_LOST));
 		}
 
-		if(connectionLostCounter >= 3) {
+		if(cb_this == cb_1 and connectionLostCounter >= 3) {
+			serial_.flush(); WAIT(10);
+			serial_.flush(); WAIT(10);
 			serial_.flush();
-			WAIT(500);
+			WAIT(period);
 		}
 
 

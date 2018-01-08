@@ -25,8 +25,10 @@ Motor& Motor::instance(io::SignalGenerator& signalGenerator) {
 
 Motor::Motor(io::SignalGenerator& signalGenerator)
 : signalGenerator(signalGenerator)
-, locked(false)
+, locked(true)
 , running(false)
+, slow(false)
+, clockwise(false)
 {
 	LOG_SCOPE;
 }
@@ -45,40 +47,58 @@ void Motor::start() {
 
 void Motor::stop() {
 	running = false;
-	io::GPIO::instance().setBits(PORT::A, MOTOR_STOP);
-	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_STOP));
+	if(not locked) {
+		io::GPIO::instance().setBits(PORT::A, MOTOR_STOP);
+		signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_STOP));
+	}
 }
 
 void Motor::setSlow() {
-	io::GPIO::instance().setBits(PORT::A, MOTOR_SLOW);
-	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_SLOW));
+	slow = true;
+	if(not locked) {
+		io::GPIO::instance().setBits(PORT::A, MOTOR_SLOW);
+		signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_SLOW));
+	}
 }
 
 void Motor::clearSlow() {
-	io::GPIO::instance().clearBits(PORT::A, MOTOR_SLOW);
-	signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_FAST));
+	slow = false;
+	if(not locked) {
+		io::GPIO::instance().clearBits(PORT::A, MOTOR_SLOW);
+		signalGenerator.pushBackOnSignalBuffer(Signal(Signalname::MOTOR_FAST));
+	}
 }
 
 void Motor::setClockwiseRotation() {
-	io::GPIO::instance().clearBits(PORT::A, COUNTERCLOCKWISE_ROTATION);
-	io::GPIO::instance().setBits(PORT::A, CLOCKWISE_ROTATION);
+	clockwise = true;
+	if(not locked) {
+		io::GPIO::instance().clearBits(PORT::A, COUNTERCLOCKWISE_ROTATION);
+		io::GPIO::instance().setBits(PORT::A, CLOCKWISE_ROTATION);
+	}
 }
 
 void Motor::setCounterclockwiseRotation() {
-	io::GPIO::instance().clearBits(PORT::A, CLOCKWISE_ROTATION);
-	io::GPIO::instance().setBits(PORT::A, COUNTERCLOCKWISE_ROTATION);
+	clockwise = false;
+	if(not locked) {
+		io::GPIO::instance().clearBits(PORT::A, CLOCKWISE_ROTATION);
+		io::GPIO::instance().setBits(PORT::A, COUNTERCLOCKWISE_ROTATION);
+	}
 }
 
 void Motor::lock(bool lock) {
-	locked = lock;
-	if(locked) {
+	if(lock == true) {
 		bool running_temp = running;
 		stop();
 		running = running_temp;
-	} else {
-		if(running) {
-			start();
-		}
+		locked = lock;
+	}
+
+	locked = lock;
+
+	if(lock == false) {
+		running ? start() : stop();
+		slow ? setSlow() : clearSlow();
+		clockwise ? setClockwiseRotation() : setCounterclockwiseRotation();
 	}
 }
 

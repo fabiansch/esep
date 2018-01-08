@@ -112,6 +112,9 @@ public:
 	 */
 	void clearEStoppPushed();
 
+	virtual void register_observer(Observer* o) override;
+	virtual void unregister_observer(Observer* o) override;
+
 	// sensor events for higher byte of PORT C
 	static SensorEvent BUTTON_START;
 	static SensorEvent BUTTON_STOP;
@@ -147,7 +150,6 @@ private:
 	static std::vector<SensorEvent> events;
 
 	static void chatter_timer(SignalGenerator* signalGenerator, SensorEvent* event);
-
 
 	std::thread signal_generator_th;
 	bool running;
