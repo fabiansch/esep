@@ -240,8 +240,6 @@ private:
 			}
 		}
 
-
-
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
 		}
@@ -466,8 +464,6 @@ private:
 				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
 				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
-
-
 
 		}
 
