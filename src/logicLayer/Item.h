@@ -259,8 +259,9 @@ private:
 			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
 		}
 
-		virtual void lb_height_interrupted( 	Signal signal ) override {
-			addPendingError(errorHandler_, Signal(Signalname::LB_HEIGHT_FREED));
+		void timeframe_height_enter( Signal signal ) override {
+			cout<<"timeframe_height_enter"<<endl;
+			new (this) WaitForArrivalAtHeight;
 		}
 
 	};
