@@ -23,6 +23,7 @@ namespace io {
 
 const int NO_CHATTER_TIME = 0;
 const int CHATTER_TIME = 40;
+const int LB_CHATTER_TIME = 100;
 const int CHATTER_TIME_ESTOP = 750;
 const int CHATTER_TIME_SWITCH = 100;
 
@@ -35,21 +36,21 @@ SensorEvent SignalGenerator::BUTTON_RESET( 		0b01000000<<8, "BUTTON_RESET", CHAT
 																													Signalname::BUTTON_RESET_PULLED));
 SensorEvent SignalGenerator::BUTTON_E_STOP(		0b10000000<<8, "BUTTON_E_STOP", CHATTER_TIME_ESTOP, SPair(	  		Signalname::BUTTON_E_STOP_PULLED,
 																						  	  	  	  	  	  	 	Signalname::BUTTON_E_STOP_PUSHED));
-SensorEvent SignalGenerator::LIGHT_BARRIER_INPUT( 	0b00000001, "LIGHT_BARRIER_INPUT", CHATTER_TIME, SPair( 		Signalname::LB_INPUT_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_INPUT( 	0b00000001, "LIGHT_BARRIER_INPUT", LB_CHATTER_TIME, SPair( 		Signalname::LB_INPUT_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_INPUT_INTERRUPTED));
-SensorEvent SignalGenerator::LIGHT_BARRIER_HEIGHT(	0b00000010, "LIGHT_BARRIER_HEIGHT", NO_CHATTER_TIME, SPair(		Signalname::LB_HEIGHT_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_HEIGHT(	0b00000010, "LIGHT_BARRIER_HEIGHT", LB_CHATTER_TIME, SPair(		Signalname::LB_HEIGHT_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_HEIGHT_INTERRUPTED));
 SensorEvent SignalGenerator::SENSOR_HEIGHT_MATCH(	0b00000100, "SENSOR_HEIGHT_MATCH", NO_CHATTER_TIME, SPair( 		Signalname::SENSOR_HEIGHT_MATCH,
 																													Signalname::SENSOR_HEIGHT_NOT_MATCH));
-SensorEvent SignalGenerator::LIGHT_BARRIER_SWITCH(	0b00001000, "LIGHT_BARRIER_SWITCH", NO_CHATTER_TIME, SPair(		Signalname::LB_SWITCH_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_SWITCH(	0b00001000, "LIGHT_BARRIER_SWITCH", LB_CHATTER_TIME, SPair(		Signalname::LB_SWITCH_FREED,
 																													Signalname::LB_SWITCH_INTERRUPTED));
-SensorEvent SignalGenerator::SENSOR_METAL_MATCH(	0b00010000, "SENSOR_METAL_MATCH", NO_CHATTER_TIME, SPair(  		Signalname::SENSOR_METAL_MATCH,
+SensorEvent SignalGenerator::SENSOR_METAL_MATCH(	0b00010000, "SENSOR_METAL_MATCH", LB_CHATTER_TIME, SPair(  		Signalname::SENSOR_METAL_MATCH,
 																						  	  	  	  	  	  	  	Signalname::SENSOR_METAL_NOT_MATCH));
 SensorEvent SignalGenerator::SENSOR_SWITCH_OPEN(	0b00100000, "SENSOR_SWITCH_OPEN", CHATTER_TIME_SWITCH, SPair(	Signalname::SENSOR_SWITCH_IS_OPEN,
 																													Signalname::SENSOR_SWITCH_IS_CLOSED));
-SensorEvent SignalGenerator::LIGHT_BARRIER_SLIDE(	0b01000000, "LIGHT_BARRIER_SLIDE", NO_CHATTER_TIME, SPair( 		Signalname::LB_SLIDE_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_SLIDE(	0b01000000, "LIGHT_BARRIER_SLIDE", LB_CHATTER_TIME, SPair( 		Signalname::LB_SLIDE_FREED,
 																						  	  	  	  	  	  	  	Signalname::LB_SLIDE_INTERRUPTED));
-SensorEvent SignalGenerator::LIGHT_BARRIER_OUTPUT(	0b10000000, "LIGHT_BARRIER_OUTPUT", CHATTER_TIME, SPair(		Signalname::LB_OUTPUT_FREED,
+SensorEvent SignalGenerator::LIGHT_BARRIER_OUTPUT(	0b10000000, "LIGHT_BARRIER_OUTPUT", LB_CHATTER_TIME, SPair(		Signalname::LB_OUTPUT_FREED,
 																								  	  	  	  	  	Signalname::LB_OUTPUT_INTERRUPTED));
 
 std::vector< SensorEvent>  SignalGenerator::events = init_events();
