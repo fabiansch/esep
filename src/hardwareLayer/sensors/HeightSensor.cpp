@@ -40,6 +40,7 @@ HeightSensor::~HeightSensor() {
 
 uint16_t HeightSensor::getHeight(void) {
 
+  mutex_.lock();
 
   uint16_t height;
 
@@ -58,6 +59,11 @@ uint16_t HeightSensor::getHeight(void) {
 
   // height sensor value is only 12 bit
   height &= only12BitBitmask;
+
+  //clear interrupts
+  io::GPIO::instance().clearBits(0x20,0xFF);
+
+  mutex_.unlock();
 
   return height;
 }

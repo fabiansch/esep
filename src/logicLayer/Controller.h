@@ -44,7 +44,7 @@ private:
 		virtual void stop() {
 			hal->redLightOff();
 			hal->yellowLightOff();
-			hal->greenLightOn();
+			hal->blinkGreen(Speed::slow);
 			hal->motorStop();
 			hal->switchPointClose();
 			Menu::printInfo();
@@ -114,7 +114,7 @@ private:
 
 	struct Run : public State{
 		Run(){
-			hal->blinkGreen(Speed::slow);
+			hal->greenLightOn();
 			items_on_cb = 0;
 			item_on_switch = false;
 			item_on_output = false;

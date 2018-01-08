@@ -396,21 +396,22 @@ void Item::send_CB_ready(hardwareLayer::HardwareLayer* hal) {
 void Item::printItem(hardwareLayer::HardwareLayer* hal, Item* item){
 
 	if( item->type.profile == Profile::HOLED && item->type.metal ){
-		cout << "### Item with hole filled with metal (WPT 1/2)" << endl;
+		cout << "### Werkstück mit Bohrung und Metalleinsatz (WPT 1/2)" << endl;
 	}
 	else if( item->type.profile == Profile::HOLED && !item->type.metal ){
-		cout << "### Item with hole (WPT 3)" << endl;
+		cout << "### Werkstück mit Bohrung (WPT 3)" << endl;
 	}
 	else if( item->type.profile == Profile::FLAT && !item->type.metal ){
-		cout << "### Item flat (WPT 4)" << endl;
+		cout << "### Flaches Werkstück (WPT 4)" << endl;
 	}
 	else if( item->type.profile == Profile::NORMAL && !item->type.metal && item->type.code > 0 ){
-		cout << "### Item coded (WPT 5.: " << item->type.code << ")" << endl;
+		cout << "### Codiertes Werkstück (WPT 5." << item->type.code << ")" << endl;
 	}
 	else if( item->type.profile == Profile::NORMAL && !item->type.metal ){
-		cout << "### Item with hole below (WPT 6)" << endl;
+		cout << "### Werkstück mit Bohrung unten (WPT 6)" << endl;
 	}
 
+	cout << "ID: " << item->getId() << endl;
 	cout << "Height on CB1: " << item->type.height_cb_1 << "mm" << endl;
 	cout << "Height on CB2: " << item->type.height_cb_2 << "mm" << endl;
 }

@@ -82,7 +82,6 @@ void Dispatcher::notify() {
 			Sorting::instance().setOrderState(Order::BOM2);
 			break;
 		default:
-			LOG_ERROR<<"Dispatcher got unknown Signal"<<endl;
 			controller_ << signal;
 			break;
 		}

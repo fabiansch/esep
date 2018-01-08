@@ -233,7 +233,9 @@ private:
 			}
 		}
 
-
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
+		}
 
 		virtual void lb_input_freed( Signal signal ) override {
 			new (this) DepartureInput;
@@ -244,7 +246,13 @@ private:
 		DepartureInput() {
 			*timerChannel_ << Signal(Signalname::START_TIMERS_HEIGHT);
 		}
+
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
+		}
+
 		void timeframe_height_enter( Signal signal ) override {
+			cout<<"timeframe_height_enter"<<endl;
 			new (this) WaitForArrivalAtHeight;
 		}
 	};
@@ -267,6 +275,11 @@ private:
 		virtual void lb_height_interrupted( Signal signal ) override {
 			new (this) ArrivalHeight;
 		}
+
+		virtual void lb_input_interrupted( 	Signal signal ) override {
+			addPendingError(errorHandler_, Signal(Signalname::LB_INPUT_FREED));
+		}
+
 	};
 
 	struct ArrivalHeight : public State {
@@ -376,7 +389,6 @@ private:
 
 	struct ArrivalSlide : public State {
 		ArrivalSlide() {
-
 			*timerChannel_ << Signal(Signalname::TIMEFRAME_SLIDE_LEAVE_KILL);
 			if(cb_this == cb_sorting_2) {
 				send_CB_ready(hal_);
@@ -438,8 +450,6 @@ private:
 				//item is lost -> so inform cb1's sorting unit, which item is desired on cb2
 				Sorting::instance().informCB1SortingUnit( hal_ );
 			}
-
-
 
 		}
 

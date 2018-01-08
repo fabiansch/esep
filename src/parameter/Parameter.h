@@ -106,5 +106,4 @@ extern Parameter<int> height_conveyor_belt;
 extern Parameter<int> height_item;
 
 
-
 #endif /* PARAMETER_H_ */

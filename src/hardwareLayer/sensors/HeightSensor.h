@@ -9,6 +9,7 @@
 #define HEIGHTSENSOR_H_
 
 #include "Header.h"
+#include <mutex>
 
 
 namespace hardwareLayer {
@@ -32,6 +33,8 @@ private:
 	HeightSensor(HeightSensor const&);
 	HeightSensor& operator=(HeightSensor const&);
 	~HeightSensor();
+
+	std::mutex mutex_;
 };
 
 

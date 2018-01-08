@@ -61,6 +61,7 @@ namespace serial {
 							if(msg.signal.sender != cb_this) forward(msg);
 							break;
 						case Signalname::TRANSFER_ITEM:
+							cout << "ITEM arrived" << endl;
 							if(msg.signal.sender != cb_this) {
 								itemBuffer_.pushItem(msg.item);
 								sgen_.pushBackOnSignalBuffer(msg.signal);
