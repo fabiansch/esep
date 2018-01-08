@@ -15,7 +15,7 @@ namespace hardwareLayer{
 	class HardwareLayer;
 }
 
-enum class ProfileState {NL1, NL2, NL3, S1, S2, S3};
+enum class ProfileState {EDGE, SPACE, CENTER, FINAL};
 enum class Profile {HOLED, FLAT, NORMAL};
 
 struct ItemType{
@@ -35,7 +35,7 @@ public:
 	TypeIdentification(hardwareLayer::HardwareLayer*);
 	virtual ~TypeIdentification();
 	void operator()();
-	Profile heightMapping( int );
+	static Profile heightMapping( int );
 
 	static ItemType* createScan();
 	static vector<ItemType> typeScans;
@@ -59,7 +59,7 @@ public:
 	/**
 	 * @brief measure cycle
 	 */
-	static void measureProfil(bool&, hardwareLayer::HardwareLayer*);
+	static void measureProfil(bool*, hardwareLayer::HardwareLayer*);
 
 	/**
 	 *
@@ -75,13 +75,16 @@ public:
 	/**
 	 *	@brief
 	 */
-	static float validHeightReference;
+	static float holeLevel;
 
-	static void switchToState(int, ProfileState*, ProfileState, int*, int*, int* );
-	static void switchToState(int, ProfileState*, ProfileState, int* );
 
 	static void setUnitToMm();
 	static void setHoleLevel();
+
+	/**
+	 * @brief convert sensor units to mm
+	 */
+	static float toMm( int );
 
 private:
 	hardwareLayer::HardwareLayer* hal_;
@@ -97,10 +100,7 @@ private:
 
 
 
-	/**
-	 * @brief convert sensor units to mm
-	 */
-	float toMm( int );
+
 
 };
 

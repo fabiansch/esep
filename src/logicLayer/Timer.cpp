@@ -88,7 +88,7 @@ void Timer::operator()() {
 			setNewTimerEvent(Signalname::TIMEFRAME_SWITCH_LEAVE,time_height_to_switch + 500);
 			break;
 		case Signalname::START_TIMERS_SLIDE:
-			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_ENTER,1000);
+			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_ENTER,500);
 			setNewTimerEvent(Signalname::TIMEFRAME_SLIDE_LEAVE,time_switch_to_slide + 2000);
 			break;
 		case Signalname::START_TIMERS_OUTPUT:
